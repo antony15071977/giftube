@@ -1,4 +1,4 @@
-<!-- <?php $id=$_GET["id"] ?? "";  ?> -->
+<?php $id = $_GET['id'] ?? ''?> 
 <div class="content__main-col">
     <header class="content__header">
         <h2 class="content__header-text"><?= $gifs [$id]['gif_title']; ?></h2>
