@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <title>Главная страница | GifTube</title>
+  <link rel="stylesheet" href="../css/normalize.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/custom.css">
+
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+</head>
+<body>
+  <div class="container">
+    <header class="main-header">
+      <h1 class="visually-hidden">Giftube</h1>
+      <a class="logo" href="/">
+        <img class="logo__img" src="../img/logotype.svg" alt="Giftube" width="160" height="38">
+      </a>
+      <form class="search" action="pages/search.html" method="get">
+        <div class="search__control">
+          <input class="search__text" type="text" name="q" value="" placeholder="Поиск гифки…">
+
+          <div class="search__submit">
+            <input class="button" type="submit" name="" value="Найти">
+          </div>
+        </div>
+      </form>
+    </header>
+
+    <div class="main-content">
+      <section class="navigation">
+        <h2 class="visually-hidden">Навигация</h2>
+        <div class="navigation__item">
+          <h3 class="navigation__title navigation__title--account">Мой Giftube</h3>
+          <nav class="navigation__links">
+            <a href="pages/signup.html">Регистрация</a>
+            <a href="pages/signin.html">Вход для своих</a>
+          </nav>
+        </div>
+
+        <div class="navigation__item">
+          <h3 class="navigation__title navigation__title--list">Категории</h3>
+          <nav class="navigation__links">
+            <a href="/category?id=4">Видеоигры</a>
+            <a href="/category?id=2">Животные</a>
+            <a href="/category?id=8">Люди</a>
+            <a href="/category?id=6">Наука</a>
+            <a href="/category?id=5">Приколы</a>
+            <a href="/category?id=3">Спорт</a>
+            <a href="/category?id=7">Фейлы</a>
+            <a href="/category?id=1">Фильмы и анимация</a>
+          </nav>
+        </div>
+      </section>
+
+      <main class="content">
+
+        <div class="content__main-col">
+          <header class="content__header">
+            <h2 class="content__header-text">Премии на моей бывшей работе</h2>
+            <label for="gifControl">click</label>
+          </header>
+
+          <div class="gif gif--large">
+            <div class="gif__picture">
+              <input type="checkbox" name="" id="gifControl" value="1" class="hide">
+              <label for="gifControl">Проиграть</label>
+              <img src="uploads/dna.gif" alt="" class="gif_img main hide">
+              <img src="uploads/preview_gif58dbdf3251fcf.gif" alt="" class="gif_img preview">
+            </div>
+
+            <div class="gif__desctiption">
+              <div class="gif__description-data">
+                <span class="gif__username">@frexin</span>
+                <span class="gif__views">2807</span>
+                <span class="gif__likes">3</span>
+              </div>
+              <div class="gif__description">
+                <p>Горькая правда</p>
+              </div>
+            </div>
+
+            <!-- Для зарегистрированных пользователей -->
+            <div class="gif__controls">
+              <a class="button gif__control" href="/gif/like?id=11&amp;rem=1">Мне нравится</a>
+              <a class="button gif__control" href="/gif/fav?id=11&amp;rem=1">В избранное</a>
+            </div>
+            <!-- end Для зарегистрированных пользователей -->
+
+          </div>
+
+          <div class="comment-list">
+            <h3 class="comment-list__title">Комментарии:</h3>
+            <article class="comment">
+              <img class="comment__picture" src="uploads/avatar5ba064590735c." alt="" width="100" height="100">
+              <div class="comment__data">
+                <div class="comment__author">@pestovpvl</div>
+                <p class="comment__text">Teahsbhx</p>
+              </div>
+            </article>
+          </div>
+
+          <!-- Для зарегистрированных пользователей -->
+          <form class="comment-form" action="" method="post">
+            <label class="comment-form__label" for="comment">Добавить комментарий:</label>
+            <textarea class="comment-form__text " name="comment[content]" id="comment" rows="8" cols="80" placeholder="Помните о правилах и этикете. "></textarea>
+            <input type="hidden" name="comment[gif_id]" value="11">
+            <input class="button comment-form__button" type="submit" name="" value="Отправить">
+          </form>
+          <!-- end Для зарегистрированных пользователей -->
+
+        </div>
+
+        <aside class="content__additional-col">
+          <h3 class="content__additional-title">Похожие гифки:</h3>
+
+          <ul class="gif-list gif-list--vertical">
+            <li class="gif gif--small gif-list__item">
+              <div class="gif__picture">
+                <a href="/gif/view?id=4" class="gif__preview">
+                  <img src="uploads/preview_gif58dbde81b4a8b.gif" alt="" width="200" height="200">
+                </a>
+              </div>
+              <div class="gif__desctiption">
+                <h3 class="gif__desctiption-title">
+                  <a href="/gif/view?id=4">Когда любишь порядок</a>
+                </h3>
+                <div class="gif__description-data">
+                  <span class="gif__username">@frexin</span>
+                  <span class="gif__likes">3</span>
+                </div>
+              </div>
+            </li>
+
+            <li class="gif gif--small gif-list__item">
+              <div class="gif__picture">
+                <a href="/gif/view?id=5" class="gif__preview">
+                  <img src="uploads/preview_gif58dbdf3251fcf.gif" alt="" width="200" height="200">
+                </a>
+              </div>
+              <div class="gif__desctiption">
+                <h3 class="gif__desctiption-title">
+                  <a href="/gif/view?id=5">Премии на моей бывшей работе</a>
+                </h3>
+                <div class="gif__description-data">
+                  <span class="gif__username">@frexin</span>
+                  <span class="gif__likes">3</span>
+                </div>
+              </div>
+            </li>
+
+            <li class="gif gif--small gif-list__item">
+              <div class="gif__picture">
+                <a href="/gif/view?id=6" class="gif__preview">
+                  <img src="uploads/preview_gif58dbdfc01c1a4.gif" alt="" width="200" height="200">
+                </a>
+              </div>
+              <div class="gif__desctiption">
+                <h3 class="gif__desctiption-title">
+                  <a href="/gif/view?id=6">Отличные витаминки</a>
+                </h3>
+                <div class="gif__description-data">
+                  <span class="gif__username">@frexin</span>
+                  <span class="gif__likes">2</span>
+                </div>
+              </div>
+            </li>
+
+            <li class="gif gif--small gif-list__item">
+              <div class="gif__picture">
+                <a href="/gif/view?id=16" class="gif__preview">
+                  <img src="uploads/preview_gif58dbe4506f446.gif" alt="" width="200" height="200">
+                </a>
+              </div>
+              <div class="gif__desctiption">
+                <h3 class="gif__desctiption-title">
+                  <a href="/gif/view?id=16">Рыжая</a>
+                </h3>
+                <div class="gif__description-data">
+                  <span class="gif__username">@frexin</span>
+                  <span class="gif__likes">34</span>
+                </div>
+              </div>
+            </li>
+
+            <li class="gif gif--small gif-list__item">
+              <div class="gif__picture">
+                <a href="/gif/view?id=25" class="gif__preview">
+                  <img src="uploads/preview_gif59e0af59ef743.gif" alt="" width="200" height="200">
+                </a>
+              </div>
+              <div class="gif__desctiption">
+                <h3 class="gif__desctiption-title">
+                  <a href="/gif/view?id=25">Во все тяжкие</a>
+                </h3>
+                <div class="gif__description-data">
+                  <span class="gif__username">@Enerdil</span>
+                  <span class="gif__likes">0</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </aside>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="main-footer__col">
+        Если у вас вдруг возникли вопросы, свяжитесь с нами по почте: <a href="mailto:info@giftube.com">info@giftube.com</a>.
+      </div>
+      <div class="main-footer__col">
+        Сохранение смешных гифок разрешено только для личного использования.
+      </div>
+      <div class="main-footer__col main-footer__col--short">
+        <a class="copyright-logo" href="/"><img src="img/htmlacademy.svg" alt="" width="27" height="34"></a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
