@@ -1,7 +1,6 @@
-<?php $id = $_GET['id'] ?? ''?> 
 <div class="content__main-col">
     <header class="content__header">
-        <h2 class="content__header-text"><?= $gifs [$id]['gif_title']; ?></h2>
+        <h2 class="content__header-text"><?= $gif['title']; ?></h2>
         <label for="gifControl">click</label>
     </header>
 
@@ -9,18 +8,18 @@
         <div class="gif__picture">
             <input type="checkbox" name="" id="gifControl" value="1" class="hide">
             <label for="gifControl">Проиграть</label>
-            <img src="<?= $gifs [$id]['gif_img']; ?>" alt="" class="gif_img main hide">
-            <img src="<?= $gifs [$id]['gif_preview']; ?>" alt="" class="gif_img preview">
+            <img src="<?= $gif['img_path']; ?>" alt="" class="gif_img main hide">
+            <img src="uploads/preview_gif58dbdf3251fcf.gif" alt="" class="gif_img preview">
         </div>
 
         <div class="gif__desctiption">
             <div class="gif__description-data">
-                <span class="gif__username"><?= $gifs [$id]['gif_username']; ?></span>
-                <span class="gif__views"><?= $gifs [$id]['gif_views']; ?></span>
-                <span class="gif__likes"><?= $gifs [$id]['gif_likes']; ?></span>
+                <span class="gif__username"><?= $gif['name']; ?></span>
+                <span class="gif__views"><?= $gif['views_count']; ?></span>
+                <span class="gif__likes"><?= $gif['likes_count']; ?></span>
             </div>
             <div class="gif__description">
-                <p><?= $gifs [$id]['gif_description']; ?></p>
+                <p><?= $gif['description']; ?></p>
             </div>
         </div>
 
@@ -34,13 +33,16 @@
 
     <div class="comment-list">
         <h3 class="comment-list__title">Комментарии:</h3>
-        <article class="comment">
-            <img class="comment__picture" src="uploads/avatar5ba064590735c." alt="" width="100" height="100">
-            <div class="comment__data">
-                <div class="comment__author">@pestovpvl</div>
-                <p class="comment__text">Teahsbhx</p>
-            </div>
-        </article>
+
+        <?php foreach($comments as $comment) : ?>
+            <article class="comment">
+                <img class="comment__picture" src="<?= $comment['avatar_path']; ?>" alt="" width="100" height="100">
+                <div class="comment__data">
+                    <div class="comment__author"><?= $comment['name']; ?></div>
+                    <p class="comment__text"><?= $comment['comment_text']; ?></p>
+                </div>
+            </article>
+        <?php endforeach; ?>
     </div>
 
     <!-- Для зарегистрированных пользователей -->

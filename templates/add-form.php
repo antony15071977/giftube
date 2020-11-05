@@ -25,7 +25,7 @@
                     <option value="">Выберите категорию</option>
 
                     <?php foreach($categories as $category): ?>
-                        <option value="4"><?= $category; ?></option>
+                        <option value="4"><?= $category['name']; ?></option>
                     <?php endforeach; ?>
 
                 </select>

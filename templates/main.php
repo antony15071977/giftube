@@ -5,8 +5,17 @@
         <h2 class="visually-hidden"><?= $title; ?></h2>
         <header class="content__header">
             <nav class="filter">
-                <a class="filter__item filter__item--active" href="/">Топовые гифки</a>
-                <a class="filter__item " href="/?tab=new">Свежачок</a>
+                <?php if(isset($_GET['tab'])) : ?>
+
+                    <a class="filter__item " href="/">Топовые гифки</a>
+                    <a class="filter__item filter__item--active" href="/?tab=new">Свежачок</a>
+
+                <?php else :?>
+
+                    <a class="filter__item filter__item--active" href="/">Топовые гифки</a>
+                    <a class="filter__item " href="/?tab=new">Свежачок</a>
+
+                <?php endif; ?>
             </nav>
             <a class="button button--transparent button--transparent-thick content__header-button" href="/add.php">Загрузить свою</a>
         </header>
@@ -26,6 +35,10 @@
     <?php if($isFormPage) : ?>
 
         <?= $form; ?>
+
+        <?php elseif($is404error) : ?>
+
+        <?= include_template('error404.php'); ?>
 
     <?php else : ?>
 
