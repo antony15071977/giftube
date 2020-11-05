@@ -26,7 +26,7 @@ if(!$connect) {
 
 
     if (isset($_GET['id'])) {
-        $gif_id = $_GET['id'];
+        $gif_id = intval($_GET['id']);
     }
 
     // 2. запрос для получения данных гифки по id
