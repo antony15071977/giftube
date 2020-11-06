@@ -18,7 +18,7 @@
             </a>
             <form class="search" action="/search.php" method="get">
                 <div class="search__control">
-                    <input class="search__text" type="text" name="q" value="" placeholder="Поиск гифки…">
+                    <input class="search__text" type="text" name="q" value="<?= $search; ?>" placeholder="Поиск гифки…">
 
                     <div class="search__submit">
                         <input class="button" type="submit" name="" value="Найти">
