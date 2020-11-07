@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 $isGifPage = true;
 
 require_once('functions.php');
@@ -110,11 +112,21 @@ else {
         'isGifPage' => $isGifPage
     ]);
 
-    $layout_content = include_template('layout.php', [
-        'content' => $page_content,
-        'categories' => $categories,
-        'title' => $gif['title']
-    ]);
+    if (isset($_SESSION['user'])) {
+        $layout_content = include_template('layout.php', [
+            'username' => $_SESSION['user']['name'],
+            'content' => $page_content,
+            'categories' => $categories,
+            'title' => $gif['title']
+        ]);
+    }
+    else {
+        $layout_content = include_template('layout.php', [
+            'content' => $page_content,
+            'categories' => $categories,
+            'title' => $gif['title']
+        ]);
+    }
 
 }
 

@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 require_once('functions.php');
 
 $connect = mysqli_connect("localhost", "root", "", "giftube");
@@ -39,10 +41,16 @@ $page_content = include_template('main.php', [
     'title' => 'Избранное'
 ]);
 
-$layout_content = include_template('layout.php', [
-    'content' => $page_content,
-    'categories' => $categories,
-    'title' => 'Моё избранное'
-]);
+if (isset($_SESSION['user'])) {
+    $layout_content = include_template('layout.php', [
+        'username' => $_SESSION['user']['name'],
+        'content' => $page_content,
+        'categories' => $categories,
+        'title' => 'Моё избранное'
+    ]);
+}
+else {
+    http_response_code(403);
+}
 
 print($layout_content);

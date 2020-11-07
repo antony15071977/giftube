@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 $isFormPage = true;
 
 require_once('functions.php');
@@ -119,14 +121,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $page_content = include_template('main.php', [
     'form' => $add_form,
-    'title' => 'Добавить гифку',
-    'isFormPage' => $isFormPage
-]);
+        'title' => 'Добавить гифку',
+        'isFormPage' => $isFormPage
+    ]);
 
-$layout_content = include_template('layout.php', [
-    'content' => $page_content,
-    'categories' => $categories,
-    'title' => 'Добавление новой гифки'
-]);
+if (isset($_SESSION['user'])) {
+    $layout_content = include_template('layout.php', [
+        'username' => $_SESSION['user']['name'],
+        'content' => $page_content,
+        'categories' => $categories,
+        'title' => 'Добавление новой гифки'
+    ]);
+}
+else {
+    http_response_code(403);
+}
 
 print($layout_content);

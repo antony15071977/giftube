@@ -24,10 +24,12 @@
         </div>
 
         <!-- Для зарегистрированных пользователей -->
-        <div class="gif__controls">
-            <a class="button gif__control" href="/gif/like?id=11&amp;rem=1">Мне нравится</a>
-            <a class="button gif__control" href="/gif/fav?id=11&amp;rem=1">В избранное</a>
-        </div>
+        <?php if (isset($_SESSION['user'])): ?>
+            <div class="gif__controls">
+                <a class="button gif__control" href="/gif/like?id=11&amp;rem=1">Мне нравится</a>
+                <a class="button gif__control" href="/gif/fav?id=11&amp;rem=1">В избранное</a>
+            </div>
+        <?php endif; ?>
         <!-- end Для зарегистрированных пользователей -->
     </div>
 
@@ -46,12 +48,14 @@
     </div>
 
     <!-- Для зарегистрированных пользователей -->
-    <form class="comment-form" action="" method="post">
-        <label class="comment-form__label" for="comment">Добавить комментарий:</label>
-        <textarea class="comment-form__text " name="comment[content]" id="comment" rows="8" cols="80" placeholder="Помните о правилах и этикете. "></textarea>
-        <input type="hidden" name="comment[gif_id]" value="11">
-        <input class="button comment-form__button" type="submit" name="" value="Отправить">
-    </form>
+    <?php if (isset($_SESSION['user'])): ?>
+        <form class="comment-form" action="" method="post">
+            <label class="comment-form__label" for="comment">Добавить комментарий:</label>
+            <textarea class="comment-form__text " name="comment[content]" id="comment" rows="8" cols="80" placeholder="Помните о правилах и этикете. "></textarea>
+            <input type="hidden" name="comment[gif_id]" value="11">
+            <input class="button comment-form__button" type="submit" name="" value="Отправить">
+        </form>
+    <?php endif; ?>
     <!-- end Для зарегистрированных пользователей -->
 </div>
 

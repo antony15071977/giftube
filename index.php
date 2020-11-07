@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 $isMainPage = true;
 
 require_once('functions.php');
@@ -69,11 +71,22 @@ $page_content = include_template('main.php', [
     'isMainPage' => $isMainPage
 ]);
 
-$layout_content = include_template('layout.php', [
-    'content' => $page_content,
-    'categories' => $categories,
-    'title' => 'Главная страница',
-    'isMainPage' => $isMainPage
-]);
+if (isset($_SESSION['user'])) {
+    $layout_content = include_template('layout.php', [
+        'username' => $_SESSION['user']['name'],
+        'content' => $page_content,
+        'categories' => $categories,
+        'title' => 'Главная страница',
+        'isMainPage' => $isMainPage
+    ]);
+}
+else {
+    $layout_content = include_template('layout.php', [
+        'content' => $page_content,
+        'categories' => $categories,
+        'title' => 'Главная страница',
+        'isMainPage' => $isMainPage
+    ]);
+}
 
 print($layout_content);

@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 require_once('functions.php');
 
 $connect = mysqli_connect("localhost", "root", "", "giftube");
@@ -55,10 +57,20 @@ $page_content = include_template('main.php', [
     'title' => $category_name['name']
 ]);
 
-$layout_content = include_template('layout.php', [
-    'content' => $page_content,
-    'categories' => $categories,
-    'title' => 'Все гифки в категории ...'
-]);
+if (isset($_SESSION['user'])) {
+    $layout_content = include_template('layout.php', [
+        'username' => $_SESSION['user']['name'],
+        'content' => $page_content,
+        'categories' => $categories,
+        'title' => 'Все гифки в категории «' . $category_name['name'] . '»'
+    ]);
+}
+else {
+    $layout_content = include_template('layout.php', [
+        'content' => $page_content,
+        'categories' => $categories,
+        'title' => 'Все гифки в категории «' . $category_name['name'] . '»'
+    ]);
+}
 
 print($layout_content);

@@ -32,16 +32,18 @@
                 <h2 class="visually-hidden">Навигация</h2>
                 <div class="navigation__item">
                     <h3 class="navigation__title navigation__title--account">Мой Giftube</h3>
-                    <nav class="navigation__links">
-                        <a href="/signup.php">Регистрация</a>
-                        <a href="/signin.php">Вход для своих</a>
-                    </nav>
-                    <!-- Для зарегистрированных пользователей -->
-                    <nav class="navigation__links">
-                        <a href="/favorites.php">Избранное</a>
-                        <a href="/logout">Выход</a>
-                    </nav>
-                    <!-- end Для зарегистрированных пользователей -->
+                    <?php if (isset($_SESSION['user'])): ?>
+                        <nav class="navigation__links">
+                            <a href="javascript:;"><?= $username; ?></a>
+                            <a href="/favorites.php">Избранное</a>
+                            <a href="/logout.php">Выход</a>
+                        </nav>
+                    <?php else : ?>
+                        <nav class="navigation__links">
+                            <a href="/signup.php">Регистрация</a>
+                            <a href="/signin.php">Вход для своих</a>
+                        </nav>
+                    <?php endif; ?>
                 </div>
                 <div class="navigation__item">
                     <h3 class="navigation__title navigation__title--list">Категории</h3>
