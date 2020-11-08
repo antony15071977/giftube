@@ -27,7 +27,9 @@
         <?php if (isset($_SESSION['user'])): ?>
             <div class="gif__controls">
                 <a class="button gif__control" href="/gif/like?id=11&amp;rem=1">Мне нравится</a>
-                <a class="button gif__control" href="/gif/fav?id=11&amp;rem=1">В избранное</a>
+                <?php $classname = isset($_GET['rem']) ? "gif__control--active" : "";
+                $params = isset($_GET['rem']) ? ("&rem=" . $_GET['rem']) : ""?>
+                <a class="button gif__control <?= $classname; ?>" href="../gif-fav.php?id=<?= $gif['id']; ?>">В избранное</a>
             </div>
         <?php endif; ?>
         <!-- end Для зарегистрированных пользователей -->
@@ -49,10 +51,17 @@
 
     <!-- Для зарегистрированных пользователей -->
     <?php if (isset($_SESSION['user'])): ?>
-        <form class="comment-form" action="" method="post">
+        <form class="comment-form" action="../gif.php" method="post">
             <label class="comment-form__label" for="comment">Добавить комментарий:</label>
-            <textarea class="comment-form__text " name="comment[content]" id="comment" rows="8" cols="80" placeholder="Помните о правилах и этикете. "></textarea>
-            <input type="hidden" name="comment[gif_id]" value="11">
+            <?php $classname = isset($errors['comment']) ? "form__input--error" : ""; ?>
+            <textarea class="comment-form__text <?= $classname; ?>" name="comment" id="comment" rows="8" cols="80" placeholder="Помните о правилах и этикете. "></textarea>
+            <?php if (isset($errors['comment'])) : ?>
+                <div class="error-notice">
+                    <span class="error-notice__icon"></span>
+                    <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
+                </div>
+            <?php endif; ?>
+            <input type="hidden" name="gif_id" value="<?= isset($gif['id']) ? $gif['id'] : ''; ?>">
             <input class="button comment-form__button" type="submit" name="" value="Отправить">
         </form>
     <?php endif; ?>
