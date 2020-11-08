@@ -20,13 +20,13 @@ if(!$connect) {
         $error = mysqli_error($connect);
         print('Ошибка MySQL: ' . $error);
     }
-
+    $user_id = $_SESSION['user']['id'];
     // 2. получить список избранных гифок у пользователя
     $sql_favs = 'SELECT g.id, title, img_path, likes_count, u.name ' .
                 'FROM gifs g ' .
                 'JOIN users u ON g.user_id = u.id ' .
                 'JOIN gifs_fav gf ON gf.gif_id = g.id ' .
-                'AND gf.user_id = 1';
+                'AND gf.user_id = ' . $user_id;
     $res_favs = mysqli_query($connect, $sql_favs);
     if($res_favs) {
         $favs = mysqli_fetch_all($res_favs, MYSQLI_ASSOC);
