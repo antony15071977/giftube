@@ -27,7 +27,7 @@ else {
 
     if (isset($_GET['id'])) {
         $gif_id = $_GET['id'];
-
+	}
     // 2. запрос для получения данных гифки по id
     $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, ' .
                 'likes_count, favs_count, views_count, description ' .
@@ -45,11 +45,44 @@ else {
             http_response_code(404);
             $is404error = true;
         }
-    } else {
+    }
+    else {
         $error = mysqli_error($connect);
         print('Ошибка MySQL: ' . $error);
+    	}
+    	// если гифка добавлена в избранное
+    if (isset($_SESSION['user'])) {
+        $user_id = $_SESSION['user']['id'];
+        $gif_id = $_GET['id'];
+
+        $isLiked = false;
+        $isFav = false;
+
+        $sql_fav = 'SELECT id FROM gifs_fav WHERE user_id = ' . $user_id .
+        ' AND gif_id = ' . $gif_id;
+        $res_fav = mysqli_query($connect, $sql_fav);
+
+        if($res_fav) {
+            $fav = mysqli_fetch_assoc($res_fav);
+            if(!empty($fav)) {
+            $isFav = true;
+
+                // header('Location: /gif.php?id=' . $gif_id . "");
+            }
     }
+     $sql_like = 'SELECT id FROM gifs_like WHERE user_id = ' . $user_id .
+        ' AND gif_id = ' . $gif_id;
+        $res_like = mysqli_query($connect, $sql_like);
+
+        if($res_like) {
+            $like = mysqli_fetch_assoc($res_like);
+            if(!empty($like)) {
+                $isLiked = true;
+            }
         }
+    }
+    // end если гифка добавлена в избранное
+
 
     // 3. add comment
     if (isset($_SESSION['user'])) {
@@ -165,6 +198,16 @@ else {
     ]);
 
     if (isset($_SESSION['user'])) {
+    	$page_content = include_template('gif.php', [
+            'errors' => $errors,
+            'gif' => $gif,
+            'comments' => $comments,
+            'gifs' => $similar_gifs,
+            'isGifPage' => $isGifPage,
+            'isFav' => $isFav,
+            'isLiked' => $isLiked
+        ]);
+        
         $layout_content = include_template('layout.php', [
             'username' => $_SESSION['user']['name'],
             'content' => $page_content,

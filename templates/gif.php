@@ -26,10 +26,12 @@
         <!-- Для зарегистрированных пользователей -->
         <?php if (isset($_SESSION['user'])): ?>
             <div class="gif__controls">
-                <a class="button gif__control" href="/gif/like?id=11&amp;rem=1">Мне нравится</a>
-                <?php $classname = isset($_GET['rem']) ? "gif__control--active" : "";
-                $params = isset($_GET['rem']) ? ("&rem=" . $_GET['rem']) : ""?>
-                <a class="button gif__control <?= $classname; ?>" href="../gif-fav.php?id=<?= $gif['id']; ?>">В избранное</a>
+                <?php $query = ($isLiked == true) ? "&rem=1" : "";
+                $classname = ($isLiked == true) ? "gif__control--active" : ""; ?>
+                <a class="button gif__control <?= $classname; ?>" href="../gif-like.php?id=<?= $gif['id']; ?><?= $query; ?>">Мне нравится</a>
+                <?php $query = ($isFav == true) ? "&rem=1" : "";
+                $classname = ($isFav == true) ? "gif__control--active" : ""; ?>
+                <a class="button gif__control <?= $classname; ?>" href="../gif-fav.php?id=<?= $gif['id']; ?><?= $query; ?>">В избранное</a>
             </div>
         <?php endif; ?>
         <!-- end Для зарегистрированных пользователей -->
