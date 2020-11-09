@@ -15,8 +15,9 @@
         <div class="gif__desctiption">
             <div class="gif__description-data">
                 <span class="gif__username"><?= $gif['name']; ?></span>
+                <span class="gif__views"><?= $gif['favs_count']; ?></span>
                 <span class="gif__views"><?= $gif['views_count']; ?></span>
-                <span class="gif__likes"><?= $gif['likes_count']; ?></span>
+                <span class="gif__likes"><?= $gif['likes_count'] > 0 ? $gif['likes_count'] : ""; ?></span>
             </div>
             <div class="gif__description">
                 <p><?= $gif['description']; ?></p>
@@ -28,7 +29,7 @@
             <div class="gif__controls">
                 <?php $query = ($isLiked == true) ? "&rem=1" : "";
                 $classname = ($isLiked == true) ? "gif__control--active" : ""; ?>
-                <a class="button gif__control <?= $classname; ?>" href="../gif-like.php?id=<?= $gif['id']; ?><?= $query; ?>">Мне нравится</a>
+                <a class="button gif__control <?= $classname; ?>" href="../gif-like.php?id=<?= $gif['id'] ?><?= $query; ?>">Мне нравится</a>
                 <?php $query = ($isFav == true) ? "&rem=1" : "";
                 $classname = ($isFav == true) ? "gif__control--active" : ""; ?>
                 <a class="button gif__control <?= $classname; ?>" href="../gif-fav.php?id=<?= $gif['id']; ?><?= $query; ?>">В избранное</a>

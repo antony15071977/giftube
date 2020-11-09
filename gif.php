@@ -123,6 +123,8 @@ else {
                 $stmt = db_get_prepare_stmt($connect, $sql, [$user_id, $gif_id, $comment]);
                 $res = mysqli_stmt_execute($stmt);
                 if ($res) {
+                	$sql_update_views = "UPDATE gifs SET views_count = views_count + 1 WHERE id = " . $gif_id;
+                    $res_update_views = mysqli_query($connect, $sql_update_views);
                     $content = include_template('gif.php', [
                         'gif' => $gif,
                         'comments' => $comments,

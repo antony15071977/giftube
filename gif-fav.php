@@ -20,6 +20,8 @@ else {
             $stmt = db_get_prepare_stmt($connect, $sql, [$user_id, $gif_id]);
             $res = mysqli_stmt_execute($stmt);
             if ($res) {
+                $sql_update_views = "UPDATE gifs SET favs_count = favs_count + 1 WHERE id = " . $gif_id;
+                $res_update_views = mysqli_query($connect, $sql_update_views);
                 header('Location: /gif.php?id=' . $gif_id);
             }
             else {
@@ -31,6 +33,8 @@ else {
             $sql = 'DELETE FROM gifs_fav WHERE user_id = ' . $user_id . ' AND gif_id = ' . $gif_id;
             $res = mysqli_query($connect, $sql);
             if ($res) {
+                $sql_update_views = "UPDATE gifs SET favs_count = favs_count - 1 WHERE id = " . $gif_id;
+                $res_update_views = mysqli_query($connect, $sql_update_views);
                 header('Location: /gif.php?id=' . $gif_id);
             }
             else {
