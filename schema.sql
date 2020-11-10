@@ -22,6 +22,8 @@ CREATE TABLE gifs (
   views_count   INT
 );
 
+CREATE FULLTEXT INDEX gif_search ON gifs(title, description);
+
 CREATE TABLE users (
   id            INT AUTO_INCREMENT PRIMARY KEY,
   dt_add        TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,

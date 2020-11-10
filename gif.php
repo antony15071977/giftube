@@ -26,18 +26,17 @@ else {
     }
 
     if (isset($_GET['id'])) {
-        $gif_id = $_GET['id'];
+        $gif_id = intval($_GET['id']);
 	}
     // 2. запрос для получения данных гифки по id
-    $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, description FROM gifs g ' .
-                'JOIN categories c ON g.category_id = c.id ' .
-                'JOIN users u ON g.user_id = u.id ' .
-                'WHERE g.id = ' . $gif_id;    
+    $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, ' .
+        'likes_count, favs_count, views_count, description ' .
+        'FROM gifs g ' .
+        'JOIN categories c ON g.category_id = c.id ' .
+        'JOIN users u ON g.user_id = u.id ' .
+        'WHERE g.id = ' . $gif_id;    
     $res_gif = mysqli_query($connect, $sql_gif);
-    // Обновление просмотров гифки по id
-    $sql_update_views = "UPDATE gifs SET views_count = views_count + 1 WHERE id = " . $gif_id;
-    $res_update_views = mysqli_query($connect, $sql_update_views);
-
+    
     if($res_gif) {
         $gif = mysqli_fetch_assoc($res_gif);
         if(!isset($gif)) {
@@ -50,7 +49,10 @@ else {
         $error = mysqli_error($connect);
         print('Ошибка MySQL: ' . $error);
     }
-    	// если гифка добавлена в избранное
+    	// Обновление просмотров гифки по id
+    $sql_update_views = "UPDATE gifs SET views_count = views_count + 1 WHERE id = " . $gif_id;
+    $res_update_views = mysqli_query($connect, $sql_update_views);
+		// если гифка добавлена в избранное
     if (isset($_SESSION['user'])) {
         $user_id = $_SESSION['user']['id'];
         $gif_id = $_GET['id'];
@@ -88,7 +90,7 @@ else {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-            $gif_id = $_POST['gif_id'];
+            $gif_id = intval($_POST['gif_id']);
             $comment = $_POST['comment'];
 
             $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, ' .
@@ -120,16 +122,7 @@ else {
                 $sql = "INSERT INTO comments (dt_add, user_id, gif_id, comment_text) VALUES (NOW(), ?, ?, ?)";
                 $stmt = db_get_prepare_stmt($connect, $sql, [$user_id, $gif_id, $comment]);
                 $res = mysqli_stmt_execute($stmt);
-                if ($res) {
-                	$sql_update_views = "UPDATE gifs SET views_count = views_count + 1 WHERE id = " . $gif_id;
-                    $res_update_views = mysqli_query($connect, $sql_update_views);
-                    $content = include_template('gif.php', [
-                        'gif' => $gif,
-                        'comments' => $comments,
-                        'gifs' => $similar_gifs,
-                        'isGifPage' => $isGifPage
-                    ]);
-                } else {
+                if (!$res) {
                     $error = mysqli_error($connect);
                     print($error);
                 }

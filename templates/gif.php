@@ -54,7 +54,7 @@
 
     <!-- Для зарегистрированных пользователей -->
     <?php if (isset($_SESSION['user'])): ?>
-        <form class="comment-form" action="../gif.php" method="post">
+        <form class="comment-form" action="../gif.php?id=<?= isset($gif['id']) ? $gif['id'] : ''; ?>" method="post">
             <label class="comment-form__label" for="comment">Добавить комментарий:</label>
             <?php $classname = isset($errors['comment']) ? "form__input--error" : ""; ?>
             <textarea class="comment-form__text <?= $classname; ?>" name="comment" id="comment" rows="8" cols="80" placeholder="Помните о правилах и этикете. "></textarea>
