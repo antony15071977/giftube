@@ -22,6 +22,8 @@ else {
             if ($res) {
                 $sql_update_views = "UPDATE gifs SET favs_count = favs_count + 1 WHERE id = " . $gif_id;
                 $res_update_views = mysqli_query($connect, $sql_update_views);
+                $sql_update_views = "UPDATE gifs SET views_count = views_count + 1 WHERE id = " . $gif_id;
+                    $res_update_views = mysqli_query($connect, $sql_update_views);
                 header('Location: /gif.php?id=' . $gif_id);
             }
             else {

@@ -29,14 +29,14 @@ else {
         $gif_id = $_GET['id'];
 	}
     // 2. запрос для получения данных гифки по id
-    $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, ' .
-                'likes_count, favs_count, views_count, description ' .
-                'FROM gifs g ' .
+    $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, description FROM gifs g ' .
                 'JOIN categories c ON g.category_id = c.id ' .
                 'JOIN users u ON g.user_id = u.id ' .
-                'WHERE g.id = ' . $gif_id;
-
+                'WHERE g.id = ' . $gif_id;    
     $res_gif = mysqli_query($connect, $sql_gif);
+    // Обновление просмотров гифки по id
+    $sql_update_views = "UPDATE gifs SET views_count = views_count + 1 WHERE id = " . $gif_id;
+    $res_update_views = mysqli_query($connect, $sql_update_views);
 
     if($res_gif) {
         $gif = mysqli_fetch_assoc($res_gif);
@@ -49,7 +49,7 @@ else {
     else {
         $error = mysqli_error($connect);
         print('Ошибка MySQL: ' . $error);
-    	}
+    }
     	// если гифка добавлена в избранное
     if (isset($_SESSION['user'])) {
         $user_id = $_SESSION['user']['id'];
@@ -66,8 +66,6 @@ else {
             $fav = mysqli_fetch_assoc($res_fav);
             if(!empty($fav)) {
             $isFav = true;
-
-                // header('Location: /gif.php?id=' . $gif_id . "");
             }
     }
      $sql_like = 'SELECT id FROM gifs_like WHERE user_id = ' . $user_id .
@@ -157,7 +155,7 @@ else {
 
     // 5. запрос для списка похожих гифок
     if(!$is404error) {
-        $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count ' .
+        $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count ' .
                     'FROM gifs g ' .
                     'JOIN categories c ON g.category_id = c.id ' .
                     'JOIN users u ON g.user_id = u.id ' .

@@ -22,7 +22,7 @@ if(!$connect) {
     }
     $user_id = $_SESSION['user']['id'];
     // 2. получить список избранных гифок у пользователя
-    $sql_favs = 'SELECT g.id, title, img_path, likes_count, u.name ' .
+    $sql_favs = 'SELECT g.id, title, img_path, likes_count, favs_count, views_count, u.name ' .
                 'FROM gifs g ' .
                 'JOIN users u ON g.user_id = u.id ' .
                 'JOIN gifs_fav gf ON gf.gif_id = g.id ' .

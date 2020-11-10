@@ -26,7 +26,7 @@ if(!$connect) {
     }
 
     // 2. создаем запрос для получения списка топовых гифок
-    $sql_gifs = 'SELECT g.id, name, title, img_path, likes_count ' .
+    $sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count ' .
                 'FROM gifs g ' .
                 'JOIN users u ON g.user_id = u.id ' .
                 'ORDER BY likes_count DESC LIMIT 9';
@@ -45,7 +45,7 @@ if(!$connect) {
 
     if (isset($_GET['tab'])) {
         // 3. создаем запрос для получения списка свежих гифок
-        $sql_gifs = 'SELECT g.id, name, title, img_path, likes_count ' .
+        $sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count ' .
                     'FROM gifs g ' .
                     'JOIN users u ON g.user_id = u.id ' .
                     'ORDER BY g.dt_add DESC LIMIT 9';
