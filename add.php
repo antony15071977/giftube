@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $gif['img_path'],
                 0,
                 0,
-                0
+                1
             ]);
 
             $res = mysqli_stmt_execute($stmt);
