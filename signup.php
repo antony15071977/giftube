@@ -4,6 +4,7 @@ $isFormPage = true;
 
 require_once('config.php');
 require_once('functions.php');
+$Js = '<script src="../js/register.js"></script>';
 
     // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -18,18 +19,19 @@ if($res_cat) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sign_up = $_POST;
 
-	$required = ['email', 'password', 'name'];
+	$required = ['email', 'password', 'name', 'confirm_password'];
 	$errors = [];
 	$dict = [
 		'email' => 'E-mail',
 		'password' => 'Пароль',
 		'name' => 'Имя',
+		'confirm_password' => 'Подтверждение пароля',
 		'avatar' => 'Фото'
 	];
 
 	foreach($required as $key) {
 		if (empty($_POST[$key])) {
-			$errors[$key] = 'Это поле должно быть заполнено';
+			$errors[$key] = 'Это поле должно быть заполнено.';
 		}
 	}
 
@@ -49,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if($res_email) {
 			$emails = mysqli_fetch_all($res_email, MYSQLI_ASSOC);
 			if(!empty($emails)) {
-				$errors['email'] = 'Введённый вами email уже зарегистрирован. Введите другой email.';
+				$errors['email'] = 'Введённый вами email <strong>'.$email. '</strong> уже зарегистрирован. Введите другой email.';
 			}
 		}
 	}
@@ -76,6 +78,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			}
 			else {
 				$errors['avatar'] = 'Файл с таким расширением невозможно загрузить';
+			}
+		}
+	}
+
+	//проверка пароля на длину
+	$password = $sign_up['password'];
+	if (strlen($password) < 6) {
+		$errors['password'] = 'Пароль должен быть более 6 символов';
+	}
+
+	//проверка повтора пароля
+	$confirm_password = $sign_up['confirm_password'];
+	if ($confirm_password !== $password) {
+		$errors['confirm_password'] = 'Пароли должны совпадать.';
+	}
+
+	//проверка логина на длину
+	$name = htmlspecialchars($sign_up['name']);
+	if (strlen($name) < 5) {
+		$errors['name'] = 'Логин должен быть не менее 5 символов.';
+	}
+
+	// проверка на существование пользователя с таким же login
+	if (!empty($name)) {
+		$sql = 'SELECT id FROM users WHERE name = "' . $name . '"';
+		$res_login = mysqli_query($connect, $sql);
+		if($res_login) {
+			$logins = mysqli_fetch_all($res_login, MYSQLI_ASSOC);
+			if(!empty($logins)) {
+				$errors['name'] = 'Введённый вами логин <strong>'.$name. '</strong> уже зарегистрирован. Придумайте другой логин.';
 			}
 		}
 	}
@@ -111,20 +143,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
-else {
+else {	
 	$signup_form = include_template('signup-form.php');
 }
 
 $page_content = include_template('main.php', [
 	'form' => $signup_form,
 	'title' => 'Регистрация',
-	'isFormPage' => $isFormPage
+	'isFormPage' => $isFormPage,
 ]);
 
 $layout_content = include_template('layout.php', [
 	'content' => $page_content,
 	'categories' => $categories,
-	'title' => 'Регистрация пользователя'
+	'title' => 'Регистрация пользователя',
+	'Js' => $Js
 ]);
 
 print($layout_content);

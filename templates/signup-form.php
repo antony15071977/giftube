@@ -1,4 +1,4 @@
-<form class="form" action="../signup.php" method="post" enctype="multipart/form-data">
+<form id="reg_form"class="form" action="../signup.php" method="post" enctype="multipart/form-data">
     <div class="form__column">
         <!-- Сообщение об ошибках -->
         <?php if(isset($errors)) : ?>
@@ -17,45 +17,67 @@
         $value = isset($sign_up['email']) ? $sign_up['email'] : ""; ?>
         <div class="form__row">
             <label class="form__label" for="email">E-mail:</label>
-            <input class="form__input <?= $classname; ?>" type="text" name="email" id="email" value="<?= $value; ?>" placeholder="Ваш e-mail">
+            <input class="form__input <?= $classname; ?>" type="text" name="email" id="email" maxlength="100" value="<?= $value; ?>" placeholder="Ваш e-mail" required="required"><span id="email_valid">&#x2714;</span>            
             <?php if(isset($errors['email'])) : ?>
                 <div class="error-notice">
-                    <span class="error-notice__icon"></span>
+                    <span id="error-mail" class="error-notice__icon error"></span>
+                    <span class="error-notice__tooltip">Измените это поле</span>
+                </div>
+            <?php endif; ?>
+        </div>
+        <span id="valid_email_message"></span>
+        <?php $classname = isset($errors['password']) ? "form__input--error" : "";
+        $value = isset($sign_up['password']) ? $sign_up['password'] : ""; ?>
+        <div class="form__row">
+            <label class="form__label" for="password">Пароль (миним. 6 симв.):</label>
+            <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" minlength="6" value="<?= $value; ?>" placeholder="Задайте пароль" >           
+            <span id="pass_valid">&#x2714;</span>            
+            <?php if(isset($errors['password'])) : ?>
+                <div class="error-notice">
+                    <span id="error-pass" class="error-notice__icon error"></span>
                     <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
                 </div>
             <?php endif; ?>
         </div>
-        <?php $classname = isset($errors['password']) ? "form__input--error" : "";
-        $value = isset($sign_up['password']) ? $sign_up['password'] : ""; ?>
+        <span id="valid_password_message" class="mesage_error"></span>
+        <?php $classname = isset($errors['confirm_password']) ? "form__input--error" : "";
+        $value = isset($sign_up['confirm_password']) ? $sign_up['confirm_password'] : ""; ?>
         <div class="form__row">
-            <label class="form__label" for="password">Пароль:</label>
-            <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" value="<?= $value; ?>" placeholder="Задайте пароль">
-            <?php if(isset($errors['password'])) : ?>
+            <label class="form__label" for="confirm_password">Еще раз пароль:</label>
+            <input class="form__input <?= $classname; ?>" type="password" name="confirm_password" id="confirm_password" minlength="6" value="<?= $value; ?>" placeholder="Повторите пароль">
+            <span id="conf_pass_valid">&#x2714;</span>
+             <?php if(isset($errors['confirm_password'])) : ?>
                 <div class="error-notice">
-                    <span class="error-notice__icon"></span>
-                    <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
+                    <span id="error-confirm" class="error-notice__icon error"></span>
+                    <span class="error-notice__tooltip">Пароли должны совпадать</span>
                 </div>
-            <?php endif; ?>
+            <?php endif; ?>           
+        </div>
+        <span id="valid_confirm_password_message" class="mesage_error"></span>
+        <div>
+            <a href="#" id="s-h-pass">Показать пароль</a>
         </div>
         <?php $classname = isset($errors['name']) ? "form__input--error" : "";
         $value = isset($sign_up['name']) ? $sign_up['name'] : ""; ?>
         <div class="form__row">
-            <label class="form__label" for="nickname">Имя:</label>
-            <input class="form__input <?= $classname; ?>" type="text" name="name" id="nickname" value="<?= $value; ?>" placeholder="Ваш никнейм на сайте">
+            <label class="form__label" for="nickname">Имя (миним. 5 симв.):</label>
+            <input class="form__input <?= $classname; ?>" type="text" name="name" id="nickname"  value="<?= $value; ?>" placeholder="Ваш никнейм на сайте">
+            <span id="name_valid">&#x2714;</span>
             <?php if(isset($errors['name'])) : ?>
                 <div class="error-notice">
-                    <span class="error-notice__icon"></span>
-                    <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
+                    <span id="error-name" class="error-notice__icon  error"></span>
+                    <span class="error-notice__tooltip">Минимум 5 символов</span>
                 </div>
             <?php endif; ?>
         </div>
+        <span id="name_valid_message" class="mesage_error"></span>
         <?php $value = isset($sign_up['avatar_path']) ? $sign_up['avatar_path'] : "Выбрать файл:"; ?>
         <div class="form__row">
-            <label class="form__label" for="avatar">Фото:</label>
+            <label class="form__label" for="avatar">Аватар (опционально):</label>
             <div class="form__input-file">
                 <input class="visually-hidden" type="file" name="avatar" id="preview" value="<?= $value; ?>">
                 <label for="preview">
-                    <span>Выбрать файл</span>
+                    <span>Выбрать изображение</span>
                 </label>
             </div>
         </div>

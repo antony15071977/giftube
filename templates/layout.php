@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <base href="/">
     <title><?= $title; ?> | GifTube</title>
     <link rel="stylesheet" href="../css/normalize.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/custom.css">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <script src="../js/jquery.min.js"></script>
+    <?= $Js = $Js ?? "" ?>
 </head>
 <body>
     <div class="container">

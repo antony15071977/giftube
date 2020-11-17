@@ -911,7 +911,7 @@ body {
 
 .form__input:focus {
   background-color: transparent;
-  border-color: #3b4154;
+  border: 1px solid #3b4154;
 }
 
 .form__input--error,
@@ -1143,3 +1143,47 @@ a.copyright-logo:active {
 
   margin: auto;
 }
+.mesage_error {
+    color: #cc0000;
+}
+.form__controls input[type="submit"]:disabled {
+  background-color: #baf388;
+}
+span#email_valid  {
+  font-size: 35px;
+  color: #53b100;
+  display: none;
+}
+span#pass_valid  {
+  font-size: 35px;
+  color: #53b100;
+  display: none;
+}
+span#conf_pass_valid  {
+  font-size: 35px;
+  color: #53b100;
+  display: none;
+}
+span#name_valid  {
+  font-size: 35px;
+  color: #53b100;
+  display: none;
+}
+#s-h-pass {
+  height: 30px;
+  display: block;
+}
+input {
+  outline: none;
+}
+.success_message {
+  color: #0dcc00;
+}
+
+
+
+
+
+
+
+
