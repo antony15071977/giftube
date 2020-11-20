@@ -30,8 +30,17 @@ CREATE TABLE users (
   name          CHAR(128) NOT NULL,
   email         CHAR(128) NOT NULL,
   password      CHAR(64) NOT NULL,
-  avatar_path   CHAR(128)
+  avatar_path   CHAR(128),
+  email_status  CHAR(1) NOT NULL
 );
+
+CREATE TABLE confirm_users (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  dt_add        TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  token          CHAR(128) NOT NULL,
+  email         CHAR(128) NOT NULL
+);
+
 
 CREATE UNIQUE INDEX email ON users(email);
 

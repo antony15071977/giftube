@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 $isFormPage = true;
 
 require_once('config.php');
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 	}
 
-	$email = $sign_up['email'];
+	$email = htmlspecialchars($sign_up['email']);
 
         //проверка email на корректность
 	if (!empty($email)) {
@@ -120,7 +120,77 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		]);
 	}
 	else {
-            // хэш от пароля
+			//Составляем зашифрованный и уникальный token
+			$token=md5($email.time());
+			 
+			//Добавляем данные в таблицу confirm_users
+			$sql_nonconf_user = 'INSERT INTO confirm_users (dt_add, email, token) ' .
+        'VALUES (NOW(), ?, ?)';
+
+        	$stmt = db_get_prepare_stmt($connect, $sql_nonconf_user, [
+		            $email,
+		            $token
+		        ]);
+
+			$res_sql_nonconf_user = mysqli_stmt_execute($stmt);
+			 
+			if(!$res_sql_nonconf_user){
+			    // Сохраняем в сессию сообщение об ошибке. 
+			    $_SESSION["error_messages"] .= "<p class='mesage_error' >Ошибка запроса на добавления пользователя в БД (confirm)</p>";
+			     
+			    //Возвращаем пользователя на страницу регистрации
+			    header("HTTP/1.1 301 Moved Permanently");
+			    header("Location: /signup.php");
+			   
+			}
+			else{
+			 
+			    //Составляем заголовок письма
+			    $subject = "Подтверждение почты на сайте ".$_SERVER['HTTP_HOST'];
+			 
+			    //Устанавливаем кодировку заголовка письма и кодируем его
+			    $subject = "=?utf-8?B?".base64_encode($subject)."?=";
+			 
+			    //Составляем тело сообщения
+			    $message = 'Здравствуйте! <br/> <br/> Сегодня '.date("d.m.Y", time()).', неким пользователем, использующим этот емейл, была произведена регистрация на сайте <a href="'.$address_site.'">'.$_SERVER['HTTP_HOST'].'</a>. Если это были Вы, то, пожалуйста, подтвердите адрес вашей электронной почты, перейдя по этой ссылке: <a href="'.$address_site.'activation.php?token='.$token.'&email='.$email.'">'.$address_site.'activation/'.$token.'</a> <br/> <br/> В противном случае, если это были не Вы, то, просто игнорируйте это письмо. <br/> <br/> <strong>Внимание!</strong> Ссылка действительна 24 часа. После чего Ваш аккаунт будет удален из базы.';
+			     
+			    //Составляем дополнительные заголовки для почтового сервиса mail.ru
+			   
+			    $headers = "FROM: $email_admin\r\nReply-to: $email_admin\r\nContent-type: text/html; charset=utf-8\r\n";
+			     
+			    //Отправляем сообщение с ссылкой для подтверждения регистрации на указанную почту и проверяем отправлена ли она успешно или нет. 
+			    if(mail($email, $subject, $message, $headers)){
+			        $_SESSION["success_messages"] = "<h4 class='success_message'><strong>Регистрация прошла успешно!!!</strong></h4><p class='success_message'> Теперь необходимо подтвердить введенный адрес электронной почты. Для этого перейдите по ссылке, указанной в сообщении, которое мы вам отправили на почту <a href='mailto:$email'<strong> ".$email." </strong></a></p><br><p><a href='mailto:$email'<strong>Проверить почту ".$email." </strong></a></p>";
+			 
+			        //Отправляем пользователя на страницу регистрации и убираем форму регистрации
+			        header("HTTP/1.1 301 Moved Permanently");
+			        header("Location: /signup.php?hidden_form=1");
+			        
+			 
+			    }else{
+			        $_SESSION["error_messages"] .= "<p class='mesage_error' >Ошибка при отправлении письма с ссылкой подтверждения на почту ".$email." </p>";
+			    }
+		//Удаляем пользователей с таблицы users, которые не подтвердили свою почту в течении суток
+
+		$sql_del_user = 'DELETE FROM `users` WHERE `email_status` = 0 AND `dt_add` < ( NOW() - INTERVAL 1 DAY )';
+		$res_del = mysqli_query($connect, $sql_del_user);
+		if(!$res_del){
+			$error = mysqli_error($connect);
+    		$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
+		}
+
+		//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
+
+		$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
+		$res_del = mysqli_query($connect, $sql_del_user);
+		if(!$res_del){
+			$error = mysqli_error($connect);
+    		$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
+		}
+
+
+		// Завершение запроса добавления пользователя в таблицу users
+			    // хэш от пароля
 		$password = password_hash($sign_up['password'], PASSWORD_DEFAULT);
 
 		$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path) ' .
@@ -133,26 +203,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$sign_up['avatar_path']
 		]);
 
-		$res = mysqli_stmt_execute($stmt);
-
-		if ($res) {
-			$user_id = mysqli_insert_id($connect);
-			header('Location: /signin.php');
-		}
+		$res = mysqli_stmt_execute($stmt);		
+		$user_id = mysqli_insert_id($connect);
+		
+		$page_content = include_template('main.php', [
+			'title' => $title,
+			'isFormPage' => $isFormPage,
+			]);
+		}			
 
 	}
 
 }
-else {	
+else {
+	$title = 'Регистрация';
+
+		if(isset($_SESSION["success_messages"])) {
+            $title = 'Поздравляем!';
+            $Js = '';
+        }
+        if(isset($_SESSION["error_messages"])) {
+            $title = 'Что то пошло не так...';
+            $Js = '';
+        }
+
 	$signup_form = include_template('signup-form.php');
+	
 }
-
 $page_content = include_template('main.php', [
-	'form' => $signup_form,
-	'title' => 'Регистрация',
-	'isFormPage' => $isFormPage,
+		'form' => $signup_form,
+		'title' => $title,
+		'isFormPage' => $isFormPage,
 ]);
-
 $layout_content = include_template('layout.php', [
 	'content' => $page_content,
 	'categories' => $categories,

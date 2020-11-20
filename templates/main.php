@@ -23,7 +23,7 @@
     <?php else : ?>
 
         <?php $classname = ($isFormPage) ? "content__header--left-pad" : ""; ?>
-
+        
         <header class="content__header <?= $classname; ?>">
             <h2 class="content__header-text"><?= $title; ?></h2>
             <a class="button button--transparent content__header-button" href="/">Назад</a>

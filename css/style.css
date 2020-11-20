@@ -1179,7 +1179,9 @@ input {
 .success_message {
   color: #0dcc00;
 }
-
+.block_for_messages {
+  color: green;
+}
 
 
 
