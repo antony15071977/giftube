@@ -1,11 +1,10 @@
 <?php
 
-session_start();
-
 $isFormPage = true;
 
 require_once('config.php');
 require_once('functions.php');
+require_once('statistic/statistic.php');
 
     // запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -121,6 +120,7 @@ if (isset($_SESSION['user'])) {
 		'username' => $_SESSION['user']['name'],
 		'content' => $page_content,
 		'categories' => $categories,
+		'num_online' => $num_online,
 		'title' => 'Вход на сайт'
 	]);
 }
@@ -128,6 +128,7 @@ else {
 	$layout_content = include_template('layout.php', [
 		'content' => $page_content,
 		'categories' => $categories,
+		'num_online' => $num_online,
 		'title' => 'Вход на сайт'
 	]);
 }

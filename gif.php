@@ -6,6 +6,7 @@ $isGifPage = true;
 
 require_once('config.php');
 require_once('functions.php');
+require_once('statistic/statistic.php');
 
     // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -166,6 +167,7 @@ if ($is404error) {
     $layout_content = include_template('layout.php', [
         'content' => $page_content,
         'categories' => $categories,
+        'num_online' => $num_online,
         'title' => '404 Страница не найдена'
     ]);
 
@@ -195,6 +197,7 @@ else {
             'username' => $_SESSION['user']['name'],
             'content' => $page_content,
             'categories' => $categories,
+            'num_online' => $num_online,
             'title' => $gif['title']
         ]);
     }
@@ -202,6 +205,7 @@ else {
         $layout_content = include_template('layout.php', [
             'content' => $page_content,
             'categories' => $categories,
+            'num_online' => $num_online,
             'title' => $gif['title']
         ]);
     }

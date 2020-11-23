@@ -1,11 +1,10 @@
 <?php
 
-session_start();
-
 $isMainPage = true;
 
 require_once('config.php');
 require_once('functions.php');
+require_once('statistic/statistic.php'); 
 
 $res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs');
 $items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
@@ -86,6 +85,7 @@ if (isset($_SESSION['user'])) {
 		'content' => $page_content,
 		'categories' => $categories,
 		'title' => 'Главная страница',
+		'num_online' => $num_online,
 		'isMainPage' => $isMainPage
 	]);
 }
@@ -94,6 +94,7 @@ else {
 		'content' => $page_content,
 		'categories' => $categories,
 		'title' => 'Главная страница',
+		'num_online' => $num_online,
 		'isMainPage' => $isMainPage
 	]);
 }

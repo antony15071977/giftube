@@ -63,3 +63,9 @@ CREATE TABLE comments (
   gif_id        INT NOT NULL,
   comment_text  TEXT NOT NULL
 );
+
+CREATE TABLE session ( 
+  id_session tinytext NOT NULL, 
+  putdate datetime NOT NULL default '0000-00-00 00:00:00', 
+  user tinytext NOT NULL 
+);

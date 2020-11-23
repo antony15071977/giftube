@@ -1,9 +1,8 @@
 <?php
 
-session_start();
-
 require_once('config.php');
 require_once('functions.php');
+require_once('statistic/statistic.php');
 
 if (isset($_GET['id'])) {
 	$category_id = intval($_GET['id']);
@@ -70,6 +69,7 @@ if (isset($_SESSION['user'])) {
 		'username' => $_SESSION['user']['name'],
 		'content' => $page_content,
 		'categories' => $categories,
+		'num_online' => $num_online,
 		'title' => 'Все гифки в категории «' . $category_name['name'] . '»'
 	]);
 }
@@ -77,6 +77,7 @@ else {
 	$layout_content = include_template('layout.php', [
 		'content' => $page_content,
 		'categories' => $categories,
+		'num_online' => $num_online,
 		'title' => 'Все гифки в категории «' . $category_name['name'] . '»'
 	]);
 }

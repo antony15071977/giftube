@@ -5,6 +5,7 @@ session_start();
 require_once('config.php');
 require_once('functions.php');
 
+
 if (isset($_SESSION['user'])) {
     $user_id = intval($_SESSION['user']['id']);
     $gif_id = intval($_GET['id']);

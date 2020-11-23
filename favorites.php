@@ -4,6 +4,7 @@ session_start();
 
 require_once('config.php');
 require_once('functions.php');
+require_once('statistic/statistic.php');
 
 $user_id = intval($_SESSION['user']['id']);
 
@@ -59,11 +60,12 @@ if (isset($_SESSION['user'])) {
         'username' => $_SESSION['user']['name'],
         'content' => $page_content,
         'categories' => $categories,
+        'num_online' => $num_online,
         'title' => 'Моё избранное'
     ]);
 }
 else {
-    http_response_code(403);
+    header('Location: /');
 }
 
 print($layout_content);

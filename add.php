@@ -6,6 +6,7 @@ $isFormPage = true;
 
 require_once('config.php');
 require_once('functions.php');
+require_once('statistic/statistic.php');
 
     // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -124,11 +125,12 @@ if (isset($_SESSION['user'])) {
 		'username' => $_SESSION['user']['name'],
 		'content' => $page_content,
 		'categories' => $categories,
+		'num_online' => $num_online,
 		'title' => 'Добавление новой гифки'
 	]);
 }
 else {
-	http_response_code(403);
+	header('Location: /');
 }
 
 print($layout_content);

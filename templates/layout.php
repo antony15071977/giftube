@@ -5,7 +5,7 @@
     <base href="/">
     <title><?= $title; ?> | GifTube</title>
     <link rel="stylesheet" href="../css/normalize.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/custom.css">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
     <script src="../js/jquery.min.js"></script>
@@ -63,7 +63,8 @@
             <div class="main-footer__col">Если у вас вдруг возникли вопросы, свяжитесь с нами по почте: <a href="mailto:info@giftube.com">info@giftube.com</a>.</div>
 
             <div class="main-footer__col">Сохранение смешных гифок разрешено только для личного использования.</div>
-
+            <div class="main-footer__col">
+             Пользователей онлайн: <?= $num_online ?></div>
             <div class="main-footer__col main-footer__col--short">
                 <a class="copyright-logo" href="/"><img src="img/htmlacademy.svg" alt="" width="27" height="34"></a>
             </div>

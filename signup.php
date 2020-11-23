@@ -4,6 +4,7 @@ $isFormPage = true;
 
 require_once('config.php');
 require_once('functions.php');
+require_once('statistic/statistic.php');
 $Js = '<script src="../js/register.js"></script>';
 
     // 1. запрос для получения списка категорий;
@@ -239,6 +240,7 @@ $layout_content = include_template('layout.php', [
 	'content' => $page_content,
 	'categories' => $categories,
 	'title' => 'Регистрация пользователя',
+	'num_online' => $num_online,
 	'Js' => $Js
 ]);
 
