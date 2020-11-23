@@ -37,26 +37,32 @@
         $value = isset($sign_in['email']) ? $sign_in['email'] : ""; ?>
         <div class="form__row">
             <label class="form__label" for="email">E-mail:</label>
-            <input class="form__input <?= $classname; ?>" type="text" name="email" id="email" value="<?= $value; ?>" placeholder="Укажите e-mail">
+            <input class="form__input <?= $classname; ?>" type="text" name="email" maxlength="100" id="email" required="required" value="<?= $value; ?>" placeholder="Укажите e-mail"><span id="email_valid">&#x2714;</span>
             <?php if(isset($errors['email'])) : ?>
                 <div class="error-notice">
-                    <span class="error-notice__icon"></span>
+                    <span id="error-mail" class="error-notice__icon error"></span>
                     <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
                 </div>
             <?php endif; ?>
         </div>
+        <span id="valid_email_message"></span>
 
         <?php $classname = isset($errors['password']) ? "form__input--error" : "";
         $value = isset($sign_in['password']) ? $sign_in['password'] : ""; ?>
         <div class="form__row">
             <label class="form__label" for="password">Пароль:</label>
-            <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" value="<?= $value; ?>" placeholder="Введите пароль">
+            <input class="form__input <?= $classname; ?>" type="password" name="password" minlength="6" required="required" id="password" value="<?= $value; ?>" placeholder="Введите пароль">
+            <span id="pass_valid">&#x2714;</span>
             <?php if(isset($errors['password'])) : ?>
                 <div class="error-notice">
-                    <span class="error-notice__icon"></span>
+                    <span id="error-pass" class="error-notice__icon error"></span>
                     <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
                 </div>
             <?php endif; ?>
+        </div>
+        <span id="valid_password_message" class="mesage_error"></span>
+        <div>
+            <a href="#" id="s-h-pass">Показать пароль</a>
         </div>
     </div>
 

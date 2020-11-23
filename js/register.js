@@ -112,6 +112,7 @@ $(document).ready(function() {
             $('#valid_password_message').text('');
             password.css("border", "1px solid green");
             pass_valid.css("display", "block");
+            password.focus(keyupPassword());
         }
         //== Это ситуация, когда страница регистрации загружена впервые
         $('#valid_password_message').text('');

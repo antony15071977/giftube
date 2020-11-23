@@ -58,7 +58,7 @@
                 $value = isset($sign_up['password']) ? $sign_up['password'] : ""; ?>
                 <div class="form__row">
                     <label class="form__label" for="password">Пароль (миним. 6 симв.):</label>
-                    <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" minlength="6" value="<?= $value; ?>" placeholder="Задайте пароль" >           
+                    <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" minlength="6" required="required" value="<?= $value; ?>" placeholder="Задайте пароль" >           
                     <span id="pass_valid">&#x2714;</span>            
                     <?php if(isset($errors['password'])) : ?>
                         <div class="error-notice">
@@ -72,7 +72,7 @@
                 $value = isset($sign_up['confirm_password']) ? $sign_up['confirm_password'] : ""; ?>
                 <div class="form__row">
                     <label class="form__label" for="confirm_password">Еще раз пароль:</label>
-                    <input class="form__input <?= $classname; ?>" type="password" name="confirm_password" id="confirm_password" minlength="6" value="<?= $value; ?>" placeholder="Повторите пароль">
+                    <input class="form__input <?= $classname; ?>" type="password" name="confirm_password" id="confirm_password" minlength="6" required="required" value="<?= $value; ?>" placeholder="Повторите пароль">
                     <span id="conf_pass_valid">&#x2714;</span>
                      <?php if(isset($errors['confirm_password'])) : ?>
                         <div class="error-notice">
@@ -89,7 +89,7 @@
                 $value = isset($sign_up['name']) ? $sign_up['name'] : ""; ?>
                 <div class="form__row">
                     <label class="form__label" for="nickname">Имя (миним. 5 симв.):</label>
-                    <input class="form__input <?= $classname; ?>" type="text" name="name" id="nickname"  value="<?= $value; ?>" placeholder="Ваш никнейм на сайте">
+                    <input class="form__input <?= $classname; ?>" type="text" name="name" id="nickname" minlength="5" required="required" value="<?= $value; ?>" placeholder="Ваш никнейм на сайте">
                     <span id="name_valid">&#x2714;</span>
                     <?php if(isset($errors['name'])) : ?>
                         <div class="error-notice">

@@ -33,11 +33,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 	}
 
+	$email = htmlspecialchars($sign_in['email']);
+
         //проверка email на корректность
-	if (!empty($sign_in['email'])) {
-		if (!filter_var($sign_in['email'], FILTER_VALIDATE_EMAIL)) {
+	if (!empty($email)) {
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$errors['email'] = 'Email должен быть корректным';
 		}
+	}
+
+	//проверка пароля на длину
+	$password = $sign_in['password'];
+	if (strlen($password) < 6) {
+		$errors['password'] = 'Пароль должен быть более 6 символов';
 	}
 
 	//Удаляем пользователей с таблицы users, которые не подтвердили свою почту в течении суток
@@ -126,6 +134,7 @@ if (isset($_SESSION['user'])) {
 		'num_visitors_views' => $row[0]['views'],
 		'hosts_stat_month' => $hosts_stat_month,
 		'views_stat_month' => $views_stat_month,
+		'Js' => $Js,
 		'title' => 'Вход на сайт'
 	]);
 }
@@ -138,6 +147,7 @@ else {
 		'num_visitors_views' => $row[0]['views'],
 		'hosts_stat_month' => $hosts_stat_month,
 		'views_stat_month' => $views_stat_month,
+		'Js' => $Js,
 		'title' => 'Вход на сайт'
 	]);
 }
