@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 $isFormPage = true;
 
 require_once('config.php');
@@ -239,6 +239,10 @@ $page_content = include_template('main.php', [
 $layout_content = include_template('layout.php', [
 	'content' => $page_content,
 	'categories' => $categories,
+	'num_visitors_hosts' => $row[0]['hosts'],
+	'num_visitors_views' => $row[0]['views'],
+	'hosts_stat_month' => $hosts_stat_month,
+		'views_stat_month' => $views_stat_month,
 	'title' => 'Регистрация пользователя',
 	'num_online' => $num_online,
 	'Js' => $Js

@@ -86,6 +86,10 @@ if (isset($_SESSION['user'])) {
 		'categories' => $categories,
 		'title' => 'Главная страница',
 		'num_online' => $num_online,
+		'num_visitors_hosts' => $row[0]['hosts'],
+		'num_visitors_views' => $row[0]['views'],
+		'hosts_stat_month' => $hosts_stat_month,
+		'views_stat_month' => $views_stat_month,
 		'isMainPage' => $isMainPage
 	]);
 }
@@ -95,6 +99,11 @@ else {
 		'categories' => $categories,
 		'title' => 'Главная страница',
 		'num_online' => $num_online,
+		'num_visitors_hosts' => $row[0]['hosts'],
+		'num_visitors_views' => $row[0]['views'],
+		'hosts_stat_month' => $hosts_stat_month,
+		'views_stat_month' => $views_stat_month,
+
 		'isMainPage' => $isMainPage
 	]);
 }

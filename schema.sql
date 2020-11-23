@@ -69,3 +69,15 @@ CREATE TABLE session (
   putdate datetime NOT NULL default '0000-00-00 00:00:00', 
   user tinytext NOT NULL 
 );
+
+CREATE TABLE ips ( 
+  ip_id        INT AUTO_INCREMENT PRIMARY KEY,
+  ip_address   CHAR(50) NOT NULL 
+);
+
+CREATE TABLE visits ( 
+  visit_id        INT AUTO_INCREMENT PRIMARY KEY,
+  date date NOT NULL,
+  hosts  CHAR(12) NOT NULL,
+  views  CHAR(12) NOT NULL
+);

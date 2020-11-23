@@ -70,6 +70,10 @@ if (isset($_SESSION['user'])) {
 		'content' => $page_content,
 		'categories' => $categories,
 		'num_online' => $num_online,
+		'num_visitors_hosts' => $row[0]['hosts'],
+		'num_visitors_views' => $row[0]['views'],
+		'hosts_stat_month' => $hosts_stat_month,
+		'views_stat_month' => $views_stat_month,
 		'title' => 'Все гифки в категории «' . $category_name['name'] . '»'
 	]);
 }
@@ -78,6 +82,10 @@ else {
 		'content' => $page_content,
 		'categories' => $categories,
 		'num_online' => $num_online,
+		'num_visitors_hosts' => $row[0]['hosts'],
+		'num_visitors_views' => $row[0]['views'],
+		'hosts_stat_month' => $hosts_stat_month,
+		'views_stat_month' => $views_stat_month,
 		'title' => 'Все гифки в категории «' . $category_name['name'] . '»'
 	]);
 }

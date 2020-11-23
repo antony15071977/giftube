@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 require_once('config.php');
 require_once('functions.php');
 require_once('statistic/statistic.php');
@@ -102,6 +100,10 @@ $info_form = include_template('activation.php', [
 $layout_content = include_template('layout.php', [
 	'content' => $info_form,
 	'categories' => $categories,
+	'num_visitors_hosts' => $row[0]['hosts'],
+	'num_visitors_views' => $row[0]['views'],
+	'hosts_stat_month' => $hosts_stat_month,
+	'views_stat_month' => $views_stat_month,
 	'title' => 'Активация пользователя'
 ]);
 

@@ -5,6 +5,7 @@ $isFormPage = true;
 require_once('config.php');
 require_once('functions.php');
 require_once('statistic/statistic.php');
+$Js = '<script src="../js/auth.js"></script>';
 
     // запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -121,6 +122,10 @@ if (isset($_SESSION['user'])) {
 		'content' => $page_content,
 		'categories' => $categories,
 		'num_online' => $num_online,
+		'num_visitors_hosts' => $row[0]['hosts'],
+		'num_visitors_views' => $row[0]['views'],
+		'hosts_stat_month' => $hosts_stat_month,
+		'views_stat_month' => $views_stat_month,
 		'title' => 'Вход на сайт'
 	]);
 }
@@ -129,6 +134,10 @@ else {
 		'content' => $page_content,
 		'categories' => $categories,
 		'num_online' => $num_online,
+		'num_visitors_hosts' => $row[0]['hosts'],
+		'num_visitors_views' => $row[0]['views'],
+		'hosts_stat_month' => $hosts_stat_month,
+		'views_stat_month' => $views_stat_month,
 		'title' => 'Вход на сайт'
 	]);
 }

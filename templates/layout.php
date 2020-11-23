@@ -64,7 +64,12 @@
 
             <div class="main-footer__col">Сохранение смешных гифок разрешено только для личного использования.</div>
             <div class="main-footer__col">
-             Пользователей онлайн: <?= $num_online ?></div>
+             <p>Пользователей онлайн: <?= $num_online ?></p>
+                <p>Уникальных посетителей за сутки: <?= $num_visitors_hosts; ?></p>
+                <p>Просмотров за сутки: <?= $num_visitors_views; ?></p>
+                <p>Уникальных посетителей за месяц: <?= $hosts_stat_month; ?></p>
+                <p>Просмотров сайта за месяц: <?= $views_stat_month; ?></p>
+             </div>
             <div class="main-footer__col main-footer__col--short">
                 <a class="copyright-logo" href="/"><img src="img/htmlacademy.svg" alt="" width="27" height="34"></a>
             </div>
