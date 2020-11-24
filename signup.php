@@ -191,17 +191,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 		// Завершение запроса добавления пользователя в таблицу users
-			    // хэш от пароля
-		$password = password_hash($sign_up['password'], PASSWORD_DEFAULT);
+		$secret_key = uniqid();
+		 // хэш от пароля + secretkey
+		$password = md5($sign_up['password'].":".$secret_key);
 
-		$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path) ' .
-		'VALUES (NOW(), ?, ?, ?, ?)';
+		$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey) ' .
+		'VALUES (NOW(), ?, ?, ?, ?, ?)';
 
 		$stmt = db_get_prepare_stmt($connect, $sql, [
 			$sign_up['name'],
 			$sign_up['email'],
 			$password,
-			$sign_up['avatar_path']
+			$sign_up['avatar_path'],
+			$secret_key
 		]);
 
 		$res = mysqli_stmt_execute($stmt);		

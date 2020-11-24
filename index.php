@@ -4,6 +4,7 @@ $isMainPage = true;
 
 require_once('config.php');
 require_once('functions.php');
+require_once('check_cookie.php');
 require_once('statistic/statistic.php'); 
 
 $res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs');

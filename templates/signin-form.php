@@ -64,6 +64,9 @@
         <div>
             <a href="#" id="s-h-pass">Показать пароль</a>
         </div>
+        <label class="form__label">
+            <input type="checkbox" name="remember" checked="checked" /> Запомнить меня
+        </label>
     </div>
 
     <div class="form__controls">

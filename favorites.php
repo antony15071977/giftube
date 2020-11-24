@@ -2,6 +2,7 @@
 
 require_once('config.php');
 require_once('functions.php');
+require_once('check_cookie.php');
 require_once('statistic/statistic.php');
 
 $user_id = intval($_SESSION['user']['id']);

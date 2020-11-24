@@ -80,7 +80,7 @@ $res_token = mysqli_query($connect, $sql_token);
       		}
       	}
 		else {
-      		$info = '<p><strong>Ошибка!</strong> Такой пользователь не зарегистрирован.</p>';
+      		$info = '<p><strong>Ошибка!</strong> Такой пользователь не зарегистрирован либо уже активирован.</p>';
     	}
 	}
 	else { 

@@ -31,6 +31,7 @@ CREATE TABLE users (
   email         CHAR(128) NOT NULL,
   password      CHAR(64) NOT NULL,
   avatar_path   CHAR(128),
+  secretkey     CHAR(128),
   email_status  CHAR(1) NOT NULL
 );
 

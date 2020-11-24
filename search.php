@@ -2,6 +2,8 @@
 session_start();
 require_once('config.php');
 require_once('functions.php');
+require_once('check_cookie.php');
+require_once('statistic/statistic.php');
 
     // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
