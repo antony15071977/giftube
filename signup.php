@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 	//проверка пароля на длину
-	$password = $sign_up['password'];
+	$password = htmlspecialchars($sign_up['password'], ENT_QUOTES);
 	if (strlen($password) < 6) {
 		$errors['password'] = 'Пароль должен быть более 6 символов';
 	}
@@ -140,11 +140,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			    $_SESSION["error_messages"] .= "<p class='mesage_error' >Ошибка запроса на добавления пользователя в БД (confirm)</p>";
 			     
 			    //Возвращаем пользователя на страницу регистрации
-			    header("HTTP/1.1 301 Moved Permanently");
 			    header("Location: /signup.php");
 			   
 			}
-			else{
+			else {
 			 
 			    //Составляем заголовок письма
 			    $subject = "Подтверждение почты на сайте ".$_SERVER['HTTP_HOST'];
@@ -192,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		// Завершение запроса добавления пользователя в таблицу users
 		$secret_key = uniqid();
-		 // хэш от пароля + secretkey
+		 // пароль = хэш от пароля + secretkey
 		$password = md5($sign_up['password'].":".$secret_key);
 
 		$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey) ' .

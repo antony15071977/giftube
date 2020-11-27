@@ -16,99 +16,102 @@ if($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: ' . $error);
 }
+
+if (!isset($_SESSION['user'])) {
+	
     //  send form
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	$sign_in = $_POST;
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		$sign_in = $_POST;
 
-	$required = ['email', 'password'];
-	$errors = [];
-	$dict = [
-		'email' => 'E-mail',
-		'password' => 'Пароль'
-	];
+		$required = ['email', 'password'];
+		$errors = [];
+		$dict = [
+			'email' => 'E-mail',
+			'password' => 'Пароль'
+		];
 
-	foreach($required as $key) {
-		if (empty($_POST[$key])) {
-			$errors[$key] = 'Это поле должно быть заполнено';
+		foreach($required as $key) {
+			if (empty($_POST[$key])) {
+				$errors[$key] = 'Это поле должно быть заполнено';
+			}
 		}
-	}
 
-	$email = htmlspecialchars($sign_in['email']);
+		$email = htmlspecialchars($sign_in['email']);
 
         //проверка email на корректность
-	if (!empty($email)) {
-		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			$errors['email'] = 'Email должен быть корректным';
+		if (!empty($email)) {
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				$errors['email'] = 'Email должен быть корректным';
+			}
 		}
-	}
 
 	//проверка пароля на длину
-	$password = $sign_in['password'];
-	if (strlen($password) < 6) {
-		$errors['password'] = 'Пароль должен быть более 6 символов';
-	}
+		$password = $sign_in['password'];
+		if (strlen($password) < 6) {
+			$errors['password'] = 'Пароль должен быть более 6 символов';
+		}
 
 	//Удаляем пользователей с таблицы users, которые не подтвердили свою почту в течении суток
 
-	$sql_del_user = 'DELETE FROM `users` WHERE `email_status` = 0 AND `dt_add` < ( NOW() - INTERVAL 1 DAY )';
-	$res_del = mysqli_query($connect, $sql_del_user);
-	if(!$res_del){
-		$error = mysqli_error($connect);
-    	$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
-	}
+		$sql_del_user = 'DELETE FROM `users` WHERE `email_status` = 0 AND `dt_add` < ( NOW() - INTERVAL 1 DAY )';
+		$res_del = mysqli_query($connect, $sql_del_user);
+		if(!$res_del){
+			$error = mysqli_error($connect);
+			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
+		}
 
 	//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
 
-	$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
-	$res_del = mysqli_query($connect, $sql_del_user);
-	if(!$res_del){
-		$error = mysqli_error($connect);
-    	$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
-	}
+		$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
+		$res_del = mysqli_query($connect, $sql_del_user);
+		if(!$res_del){
+			$error = mysqli_error($connect);
+			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
+		}
 
         // проверка на существование пользователя с таким же email
-	$email = htmlspecialchars($sign_in['email']);
-	$sql = 'SELECT * FROM users WHERE email = "' . $email . '"';
-	$res_pass = mysqli_query($connect, $sql);
-	if($res_pass) {
-		$user = $res_pass ? mysqli_fetch_all($res_pass, MYSQLI_ASSOC) : null;
+		$email = htmlspecialchars($sign_in['email']);
+		$sql = 'SELECT * FROM users WHERE email = "' . $email . '"';
+		$res_pass = mysqli_query($connect, $sql);
+		if($res_pass) {
+			$user = $res_pass ? mysqli_fetch_all($res_pass, MYSQLI_ASSOC) : null;
 
-		if($user) {
-			$user_password = md5($sign_in['password'].":".$user[0]['secretkey']);
-			if ($user_password == $user[0]['password']) {
-				$email_status = $user[0]['email_status'];
+			if($user) {
+				$user_password = md5($sign_in['password'].":".$user[0]['secretkey']);
+				if ($user_password == $user[0]['password']) {
+					$email_status = $user[0]['email_status'];
                 //Если email не подтверждён
-                    if($email_status == 0){
- 
+					if($email_status == 0){
+
                     // Сохраняем в сессию сообщение об ошибке. 
-                    $_SESSION["error_messages"] = "<p class='mesage_error' >Вы зарегистрированы, но Ваш почтовый адрес не подтверждён. Для подтверждения почты перейдите по ссылке из письма, которое получили после регистрации.</p>
-                        <p><strong>Внимание!</strong> Ссылка для подтверждения почты, действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p>";
- 
-             
+						$_SESSION["error_messages"] = "<p class='mesage_error' >Вы зарегистрированы, но Ваш почтовый адрес не подтверждён. Для подтверждения почты перейдите по ссылке из письма, которое получили после регистрации.</p>
+						<p><strong>Внимание!</strong> Ссылка для подтверждения почты, действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p>";
+
+
                     //Возвращаем пользователя на страницу авторизации
-                    header("Location: /signin.php");
-                    }
-                    else {
+						header("Location: /signin.php");
+					}
+					else {
                     //место для добавления данных в сессию
                     // Если введенные данные совпадают с данными из базы, то сохраняем логин и пароль в массив сессий.
-                    $_SESSION['user'] = $user[0];
+						$_SESSION['user'] = $user[0];
                     	// Обработка галочки "запомнить меня"
-                    	if (isset($_POST["remember"])) {
+						if (isset($_POST["remember"])) {
                     		//Создаём токен
-						    $cookie_token = md5($user[0]['secretkey'].":".$_SERVER["REMOTE_ADDR"].":".$user[0]['dt_add']);
+							$cookie_token = md5($user[0]['secretkey'].":".$_SERVER["REMOTE_ADDR"].":".$user[0]['dt_add']);
 						    //Добавляем созданный токен в базу данных
-						    $update_cookie_token = "UPDATE users SET cookie_token='".$cookie_token."' WHERE email = '".$email."'";
+							$update_cookie_token = "UPDATE users SET cookie_token='".$cookie_token."' WHERE email = '".$email."'";
 							$res_update_cookie_token = mysqli_query($connect, $update_cookie_token);
-						    						 
-								    if(!$res_update_cookie_token){
+
+							if(!$res_update_cookie_token){
 								        // Сохраняем в сессию сообщение об ошибке. 
-								        $_SESSION["error_messages"] = "<p class='mesage_error' >Ошибка функционала 'запомнить меня'</p>";
-								         
+								$_SESSION["error_messages"] = "<p class='mesage_error' >Ошибка функционала 'запомнить меня'</p>";
+
 								        //Возвращаем пользователя на страницу регистрации
-								        header("HTTP/1.1 301 Moved Permanently");
-								        header("Location: /signin.php");
-								        
-								    }
+								header("HTTP/1.1 301 Moved Permanently");
+								header("Location: /signin.php");
+
+							}
 						    /* 
 						        Устанавливаем куку.
 						        Параметры функции setcookie():
@@ -116,81 +119,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						        2 параметр - Значение куки
 						        3 параметр - Время жизни куки. Мы указали 30 дней
 						    */
-						 
+
 						    //Устанавливаем куку с токеном
-						    setcookie("cookie_token", $cookie_token, time() + (1000 * 60 * 60 * 24 * 30));
-                    	}
-                    	else {
-                    	//Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
-						    if(isset($_COOKIE["cookie_token"])){
-						 
-						        //Очищаем поле cookie_token из базы данных
-						        $update_cookie_token = "UPDATE users SET cookie_token='' WHERE email = '".$email."'";
-								$res_update_cookie_token = mysqli_query($connect, $update_cookie_token);
-						 
-						        //Удаляем куку cookie_token
-						        setcookie("cookie_token", "", time() - 3600);
+						        setcookie("cookie_token", $cookie_token, time() + (1000 * 60 * 60 * 24 * 30));
 						    }
-                    	}
- 
+						    else {
+                    	//Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
+						    	if(isset($_COOKIE["cookie_token"])){
+
+						        //Очищаем поле cookie_token из базы данных
+						    		$update_cookie_token = "UPDATE users SET cookie_token='' WHERE email = '".$email."'";
+						    		$res_update_cookie_token = mysqli_query($connect, $update_cookie_token);
+
+						        //Удаляем куку cookie_token
+						    		setcookie("cookie_token", "", time() - 3600);
+						    	}
+						    }
+
                     //Возвращаем пользователя на главную страницу
-                    header("Location: /");
-                    }
+						    header("Location: /");
+						}
 
+					}
+					else {
+						$errors['password'] = 'Вы ввели неверный пароль';
+					}
+				}
+				else {
+					$errors['email'] = 'Пользователя с таким емeйлом не найдено.';
+				}
+
+				if (count($errors)) {
+					$signin_form = include_template('signin-form.php', [
+						'sign_in' => $sign_in,
+						'errors' => $errors,
+						'dict' => $dict
+					]);
+				}
 			}
-			else {
-				$errors['password'] = 'Вы ввели неверный пароль';
-			}
-		}
-		else {
-			$errors['email'] = 'Пользователя с таким емeйлом не найдено.';
-		}
-	
-		if (count($errors)) {
-			$signin_form = include_template('signin-form.php', [
-				'sign_in' => $sign_in,
-				'errors' => $errors,
-				'dict' => $dict
-			]);
-		}
 	}
+	else {
+		$signin_form = include_template('signin-form.php');
+	}
+
+	$page_content = include_template('main.php', [
+			'form' => $signin_form,
+			'title' => 'Вход для своих',
+			'isFormPage' => $isFormPage
+	]);
+	$layout_content = include_template('layout.php', [
+			'username' => $_SESSION['user']['name'],
+			'content' => $page_content,
+			'categories' => $categories,
+			'num_online' => $num_online,
+			'num_visitors_hosts' => $row[0]['hosts'],
+			'num_visitors_views' => $row[0]['views'],
+			'hosts_stat_month' => $hosts_stat_month,
+			'views_stat_month' => $views_stat_month,
+			'Js' => $Js,
+			'title' => 'Вход на сайт'
+	]);
+	print($layout_content);
 }
 else {
-	$signin_form = include_template('signin-form.php');
+	header("Location: /");
 }
 
-$page_content = include_template('main.php', [
-	'form' => $signin_form,
-	'title' => 'Вход для своих',
-	'isFormPage' => $isFormPage
-]);
 
-if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', [
-		'username' => $_SESSION['user']['name'],
-		'content' => $page_content,
-		'categories' => $categories,
-		'num_online' => $num_online,
-		'num_visitors_hosts' => $row[0]['hosts'],
-		'num_visitors_views' => $row[0]['views'],
-		'hosts_stat_month' => $hosts_stat_month,
-		'views_stat_month' => $views_stat_month,
-		'Js' => $Js,
-		'title' => 'Вход на сайт'
-	]);
-}
-else {
-	$layout_content = include_template('layout.php', [
-		'content' => $page_content,
-		'categories' => $categories,
-		'num_online' => $num_online,
-		'num_visitors_hosts' => $row[0]['hosts'],
-		'num_visitors_views' => $row[0]['views'],
-		'hosts_stat_month' => $hosts_stat_month,
-		'views_stat_month' => $views_stat_month,
-		'Js' => $Js,
-		'title' => 'Вход на сайт'
-	]);
-}
-
-print($layout_content);
