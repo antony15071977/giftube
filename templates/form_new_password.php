@@ -26,10 +26,10 @@
           <!-- end Сообщение об ошибках -->
 
           <?php $classname = isset($errors['password']) ? "form__input--error" : "";
-          $value = isset($sign_up['password']) ? $sign_up['password'] : ""; ?>
+          $value = isset($password) ? $password : ""; ?>
           <div class="form__row">
-            <label class="form__label" for="password">Пароль (миним. 6 симв.):</label>
-            <input class="form__input <?= $classname; ?>" type="password" name="password" id="password"  value="<?= $value; ?>" placeholder="Задайте пароль" >           
+            <label class="form__label" for="password">Пароль (миним. 6 симв.) (Набор из букв и цифр (латиница)):</label>
+            <input class="form__input <?= $classname; ?>" type="password" name="password" id="password"  value="<?= $value; ?>" placeholder="Задайте пароль" pattern="^[a-zA-Z0-9]+$" minlength="6" required="required">           
             <span id="pass_valid">&#x2714;</span>            
             <?php if(isset($errors['password'])) : ?>
               <div class="error-notice">
@@ -40,10 +40,10 @@
           </div>
           <span id="valid_password_message" class="mesage_error"></span>
           <?php $classname = isset($errors['confirm_password']) ? "form__input--error" : "";
-          $value = isset($sign_up['confirm_password']) ? $sign_up['confirm_password'] : ""; ?>
+          $value = isset($confirm_password) ? $confirm_password : ""; ?>
           <div class="form__row">
             <label class="form__label" for="confirm_password">Еще раз пароль:</label>
-            <input class="form__input <?= $classname; ?>" type="password" name="confirm_password" id="confirm_password"  value="<?= $value; ?>" placeholder="Повторите пароль">
+            <input class="form__input <?= $classname; ?>" type="password" name="confirm_password" id="confirm_password"  value="<?= $value; ?>" placeholder="Повторите пароль" pattern="^[a-zA-Z0-9]+$" minlength="6" required="required">
             <span id="conf_pass_valid">&#x2714;</span>
             <?php if(isset($errors['confirm_password'])) : ?>
               <div class="error-notice">
