@@ -10,7 +10,7 @@
       ?>
       <h2 class="content__header-text">Установка нового пароля</h2>
 
-      <form id="reg_form"class="form" action="../update_password.php" method="post" enctype="multipart/form-data">
+      <form id="reg_form"class="form" action="/restore/update_password.php" method="post" enctype="multipart/form-data">
         <div class="form__column">
           <!-- Сообщение об ошибках -->
           <?php if(isset($errors)) : ?>

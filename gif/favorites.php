@@ -1,8 +1,8 @@
 <?php
-require_once('config.php');
-require_once('functions.php');
-require_once('check_cookie.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../config/check_cookie.php');
+require_once('../statistic/statistic.php');
 $user_id = intval($_SESSION['user']['id']);
 $res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs_fav WHERE user_id = '.$user_id);
 $items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];

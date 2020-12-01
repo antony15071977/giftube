@@ -17,7 +17,7 @@
 
                 <?php endif; ?>
             </nav>
-            <a class="button button--transparent button--transparent-thick content__header-button" href="/add.php">Загрузить свою</a>
+            <a class="button button--transparent button--transparent-thick content__header-button" href="/gif/add.php">Загрузить свою</a>
         </header>
 
     <?php else : ?>

@@ -1,6 +1,6 @@
 <?php
-require_once('config.php');
-require_once('functions.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
 if (isset($_SESSION['user'])) {
     $user_id = intval($_SESSION['user']['id']);
     $gif_id = intval($_GET['id']);
@@ -18,7 +18,7 @@ if (isset($_SESSION['user'])) {
             $error = mysqli_error($connect);
             print('Ошибка MySQL: '.$error);
         }
-        header('Location: /gif.php?id='.$gif_id);
+        header('Location: /gif/gif.php?id='.$gif_id);
     } else {
         mysqli_query($connect, "START TRANSACTION");
         $sql = 'DELETE FROM gifs_fav WHERE user_id = '.$user_id.
@@ -29,7 +29,7 @@ if (isset($_SESSION['user'])) {
         $res_update_favs = mysqli_query($connect, $sql_update_favs);
         if ($sql_update_favs && $res_update_favs) {
             mysqli_query($connect, "COMMIT");
-            header('Location: /gif.php?id='.$gif_id);
+            header('Location: /gif/gif.php?id='.$gif_id);
         } else {
             mysqli_query($connect, "ROLLBACK");
             $error = mysqli_error($connect);

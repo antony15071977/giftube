@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once('config/config.php');
 if(isset($_COOKIE["cookie_token"])){
 	//Очищаем поле cookie_token из базы данных
 	$update_cookie_token = "UPDATE users SET cookie_token='' WHERE email = '".$email."'";
@@ -8,4 +8,4 @@ if(isset($_COOKIE["cookie_token"])){
 	setcookie("cookie_token", "", time() - 3600);
 }
 unset($_SESSION['user']);
-header("Location: /");
+header("Location: /index/");

@@ -1,7 +1,7 @@
 <?php
-require_once('config.php');
-require_once('functions.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../statistic/statistic.php');
 if (isset($_GET['id'])) {
 	$category_id = intval($_GET['id']);
 }

@@ -1,8 +1,8 @@
 <?php
 $isFormPage = true;
-require_once('config.php');
-require_once('functions.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../statistic/statistic.php');
 $Js = '<script src="../js/auth.js"></script>';
 // запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -42,27 +42,23 @@ if (!isset($_SESSION['user'])) {
 		$res_del = mysqli_query($connect, $sql_del_user);
 		if (!$res_del) {
 			$error = mysqli_error($connect);
-			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.
-			'</p>';
+			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
 		}
 		//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
 		$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
 		$res_del = mysqli_query($connect, $sql_del_user);
 		if (!$res_del) {
 			$error = mysqli_error($connect);
-			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.
-			'</p>';
+			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
 		}
 		// проверка на существование пользователя с таким же email
 		$email = htmlspecialchars($sign_in['email']);
-		$sql = 'SELECT * FROM users WHERE email = "'.$email.
-		'"';
+		$sql = 'SELECT * FROM users WHERE email = "'.$email.'"';
 		$res_pass = mysqli_query($connect, $sql);
 		if ($res_pass) {
 			$user = $res_pass ? mysqli_fetch_all($res_pass, MYSQLI_ASSOC) : null;
 			if ($user) {
-				$user_password = md5($sign_in['password'].
-					":".$user[0]['secretkey']);
+				$user_password = md5($sign_in['password'].":".$user[0]['secretkey']);
 				if ($user_password == $user[0]['password']) {
 					$email_status = $user[0]['email_status'];
 					//Если email не подтверждён
@@ -70,7 +66,7 @@ if (!isset($_SESSION['user'])) {
 						// Сохраняем в сессию сообщение об ошибке. 
 						$_SESSION["error_messages"] = "<p class='mesage_error'>Вы зарегистрированы, но Ваш почтовый адрес не подтверждён. Для подтверждения почты перейдите по ссылке из письма, которое получили после регистрации.</p> <p> <strong> Внимание! </strong> Ссылка для подтверждения почты, действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p> ";
 						//Возвращаем пользователя на страницу авторизации
-						header("Location: /signin.php");
+						header("Location: /signin/signin.php");
 					} else {
 						//место для добавления данных в сессию
 						// Если введенные данные совпадают с данными из базы, то сохраняем логин и пароль в массив сессий.
@@ -82,15 +78,13 @@ if (!isset($_SESSION['user'])) {
 								":".$_SERVER["REMOTE_ADDR"].
 								":".$user[0]['dt_add']);
 							//Добавляем созданный токен в базу данных
-							$update_cookie_token = "UPDATE users SET cookie_token='".$cookie_token.
-							"' WHERE email = '".$email.
-							"'";
+							$update_cookie_token = "UPDATE users SET cookie_token='".$cookie_token."' WHERE email = '".$email."'";
 							$res_update_cookie_token = mysqli_query($connect, $update_cookie_token);
 							if (!$res_update_cookie_token) {
 								// Сохраняем в сессию сообщение об ошибке. 
 								$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка функционала 'запомнить меня'</p>";
 								//Возвращаем пользователя на страницу регистрации
-								header("Location: /signin.php");
+								header("Location: /signin/signin.php");
 							}
 							/* 
 							    Устанавливаем куку.
@@ -105,8 +99,7 @@ if (!isset($_SESSION['user'])) {
 							//Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
 							if (isset($_COOKIE["cookie_token"])) {
 								//Очищаем поле cookie_token из базы данных
-								$update_cookie_token = "UPDATE users SET cookie_token='' WHERE email = '".$email.
-								"'";
+								$update_cookie_token = "UPDATE users SET cookie_token='' WHERE email = '".$email."'";
 								$res_update_cookie_token = mysqli_query($connect, $update_cookie_token);
 								//Удаляем куку cookie_token
 								setcookie("cookie_token", "", time() - 3600);

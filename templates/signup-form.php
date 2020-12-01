@@ -26,7 +26,7 @@
 
         if(!isset($_GET["hidden_form"])){
         ?>
-        <form id="reg_form"class="form" action="../signup.php" method="post" enctype="multipart/form-data">
+        <form id="reg_form"class="form" action="/signup/signup.php" method="post" enctype="multipart/form-data">
             <div class="form__column">
                 <!-- Сообщение об ошибках -->
                 <?php if(isset($errors)) : ?>

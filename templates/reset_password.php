@@ -25,7 +25,7 @@
 
         if(!isset($_GET["hidden_form"])){
 ?>
-<form class="form" action="../reset_password.php" method="post">
+<form class="form" action="/restore/reset_password.php" method="post">
     <div class="form__column">
 
         <!-- Сообщение об ошибках -->

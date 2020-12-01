@@ -18,7 +18,7 @@
         }
     ?>
 </div>
-<form class="form" action="../signin.php" method="post">
+<form class="form" action="/signin/signin.php" method="post">
     <div class="form__column">
 
         <!-- Сообщение об ошибках -->
@@ -68,7 +68,7 @@
         <div>
             <a href="#" id="s-h-pass">Показать пароль</a>
         </div>
-        <a class="form__label" href="reset_password.php">Забыли пароль?</a>
+        <a class="form__label" href="/restore/reset_password.php">Забыли пароль?</a>
         <br>
         <br>
         <label class="form__label">

@@ -1,9 +1,9 @@
 <?php
 $isMainPage = true;
-require_once('config.php');
-require_once('functions.php');
-require_once('check_cookie.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../config/check_cookie.php');
+require_once('../statistic/statistic.php');
 $res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs');
 $items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
 $current_page = isset($_GET['page']) ? $_GET['page'] : 1;

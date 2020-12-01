@@ -1,7 +1,7 @@
 <?php
-require_once('config.php');
-require_once('functions.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../statistic/statistic.php');
 // запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
 $res_cat = mysqli_query($connect, $sql_cat);
@@ -24,8 +24,7 @@ if (isset($_GET['email']) && !empty($_GET['email'])) {
 	$info_form = include_template('set_new_password.php', ['title' => 'Ошибка']);
 }
 if (isset($_GET['token']) && isset($_GET['email'])) {
-	$sql = 'SELECT * FROM users WHERE email = "'.$email.
-	'"';
+	$sql = 'SELECT * FROM users WHERE email = "'.$email.'"';
 	$res_pass = mysqli_query($connect, $sql);
 	if ($res_pass) {
 		$user = $res_pass ? mysqli_fetch_all($res_pass, MYSQLI_ASSOC) : null;

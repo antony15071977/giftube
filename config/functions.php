@@ -7,7 +7,7 @@
  * @return string Итоговый HTML
  */
 function include_template($name, array $data = []) {
-    $name = 'templates/' . $name;
+    $name = '../templates/' . $name;
     $result = '';
     if (!is_readable($name)) {
         return $result;

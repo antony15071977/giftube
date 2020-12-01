@@ -15,10 +15,10 @@
     <div class="container">
         <header class="main-header">
             <h1 class="visually-hidden">Giftube</h1>
-            <a class="logo" href="/index.php">
+            <a class="logo" href="/">
                 <img class="logo__img" src="../img/logotype.svg" alt="Giftube" width="160" height="38">
             </a>
-            <form class="search" action="/search.php" method="get">
+            <form class="search" action="/search/search.php" method="get">
                 <div class="search__control">
                     <input class="search__text" type="text" name="q" value="<?= $search; ?>" placeholder="Поиск гифки…">
 
@@ -37,13 +37,13 @@
                     <?php if (isset($_SESSION['user'])): ?>
                         <nav class="navigation__links">
                             <a href="javascript:;"><?= $username; ?></a>
-                            <a href="/favorites.php">Избранное</a>
+                            <a href="/gif/favorites.php">Избранное</a>
                             <a href="/logout.php">Выход</a>
                         </nav>
                     <?php else : ?>
                         <nav class="navigation__links">
-                            <a href="/signup.php">Регистрация</a>
-                            <a href="/signin.php">Вход для своих</a>
+                            <a href="/signup/signup.php">Регистрация</a>
+                            <a href="/signin/signin.php">Вход для своих</a>
                         </nav>
                     <?php endif; ?>
                 </div>
@@ -51,7 +51,7 @@
                     <h3 class="navigation__title navigation__title--list">Категории</h3>
                     <nav class="navigation__links">
                         <?php foreach ($categories as $category): ?>
-                           <a href="/category.php?id=<?= $category['id']; ?>"><?= $category['name']; ?></a>
+                           <a href="/gif/category.php?id=<?= $category['id']; ?>"><?= $category['name']; ?></a>
                         <?php endforeach; ?>
                     </nav>
                 </div>

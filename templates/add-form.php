@@ -1,4 +1,4 @@
-<form class="form" action="../add.php" method="post" enctype="multipart/form-data">
+<form class="form" action="/gif/add.php" method="post" enctype="multipart/form-data">
     <div class="form__columns">
         <div class="form__column form__column--short">
             <div class="form__row">

@@ -1,8 +1,8 @@
 <?php
 $isFormPage = true;
-require_once('config.php');
-require_once('functions.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../statistic/statistic.php');
 $Js = '<script src="../js/auth.js"></script>';
 // запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -35,21 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$res_del = mysqli_query($connect, $sql_del_user);
 	if (!$res_del) {
 		$error = mysqli_error($connect);
-		$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong>Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.
-		'</p>';
+		$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong>Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
 	}
 	//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
 	$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
 	$res_del = mysqli_query($connect, $sql_del_user);
 	if (!$res_del) {
 		$error = mysqli_error($connect);
-		$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.
-		'</p>';
+		$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
 	}
 	// проверка на существование пользователя с таким же email
 	$email = htmlspecialchars($sign_in['email']);
-	$sql = 'SELECT * FROM users WHERE email = "'.$email.
-	'"';
+	$sql = 'SELECT * FROM users WHERE email = "'.$email.'"';
 	$res_pass = mysqli_query($connect, $sql);
 	if ($res_pass) {
 		$user = $res_pass ? mysqli_fetch_all($res_pass, MYSQLI_ASSOC) : null;
@@ -60,13 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				// Сохраняем в сессию сообщение об ошибке. 
 				$_SESSION["error_messages"] = "<p class='mesage_error'>
 				Вы не можете восстановить свой пароль, потому что указанный адрес электронной почты($email) не подтверждён.Вы зарегистрированы, но Ваш почтовый адрес не подтверждён.Для подтверждения почты перейдите по ссылке из письма, которое получили после регистрации. </p> <p> <strong>Внимание! </strong>Ссылка для подтверждения почты, действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p>";
-				header("Location: /reset_password.php?hidden_form=1");
+				header("Location: /restore/reset_password.php?hidden_form=1");
 			} else {
 				//место для добавления логики восстановления
 				$token = $user[0]['secretkey'];
 				//Составляем ссылку на страницу установки нового пароля.
 				$link_reset_password = $address_site.
-				"set_new_password.php?email=$email&token=$token";
+				"restore/set_new_password.php?email=$email&token=$token";
 				//Составляем заголовок письма
 				$subject = "Восстановление пароля от сайта ".$_SERVER['HTTP_HOST'];
 				//Устанавливаем кодировку заголовка письма и кодируем его
@@ -87,8 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$Js = "";
 					$signin_form = include_template('set_new_password.php', ['title' => 'Проверьте ваш емейл']);
 				} else {
-					$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка при отправлении письма на почту ".$email.
-					" с cсылкой на страницу установки нового пароля.</p>";
+					$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка при отправлении письма на почту ".$email." с cсылкой на страницу установки нового пароля.</p>";
 					$Js = "";
 					$signin_form = include_template('set_new_password.php', ['title' => 'Ошибка']);
 				}

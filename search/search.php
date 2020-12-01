@@ -1,8 +1,8 @@
 <?php
-require_once('config.php');
-require_once('functions.php');
-require_once('check_cookie.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../config/check_cookie.php');
+require_once('../statistic/statistic.php');
 // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
 $res_cat = mysqli_query($connect, $sql_cat);
@@ -52,8 +52,8 @@ if (!$items_count) {
 	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => 'Результаты поиска', 'pagination' => $pagination]);
 }
 if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search]);
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
 } else {
-	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search]);
+	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
 }
 print($layout_content);

@@ -1,7 +1,7 @@
 <?php
-require_once('config.php');
-require_once('functions.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../statistic/statistic.php');
 // запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
 $res_cat = mysqli_query($connect, $sql_cat);
@@ -27,7 +27,7 @@ if (isset($_POST["set_new_password"]) && !empty($_POST["set_new_password"])) {
 		// Сохраняем в сессию сообщение об ошибке. 
 		$_SESSION["error_messages"] = "<p class='mesage_error'><strong>Ошибка!</strong> Отсутствует проверочный код. Проверьте правильно ли вы скопировали ссылку.</p>";
 		//Возвращаем пользователя на страницу установки нового пароля
-		header("Location: /reset_password.php?hidden_form=1");
+		header("Location: /restore/reset_password.php?hidden_form=1");
 	}
 	//Проверяем, если существует переменная email в глобальном массиве POST
 	if (isset($_POST['email']) && !empty($_POST['email'])) {
@@ -36,7 +36,7 @@ if (isset($_POST["set_new_password"]) && !empty($_POST["set_new_password"])) {
 		// Сохраняем в сессию сообщение об ошибке. 
 		$_SESSION["error_messages"] = "<p class='mesage_error'><strong>Ошибка!</strong> Отсутствует адрес электронной почты. Проверьте правильно ли вы скопировали ссылку, по которой перешли для восстановления пароля</p>";
 		//Возвращаем пользователя на страницу установки нового пароля
-		header("Location: /reset_password.php?hidden_form=1");
+		header("Location: /restore/reset_password.php?hidden_form=1");
 	}
 	if (!empty($_POST["password"])) {
 		//Обрезаем пробелы с начала и с конца строки
@@ -80,22 +80,17 @@ if (isset($_POST["set_new_password"]) && !empty($_POST["set_new_password"])) {
 				// создаем новый секретный ключ
 				$secret_key = uniqid();
 				//Шифруем новый пароль
-				$password = md5($_POST['password'].
-					":".$secret_key);
-				$sql_upd = 'UPDATE users SET password = "'.$password.
-				'",  secretkey = "'.$secret_key.
-				'"  WHERE secretkey = "'.$token.
-				'"';
+				$password = md5($_POST['password'].":".$secret_key);
+				$sql_upd = 'UPDATE users SET password = "'.$password.'", secretkey = "'.$secret_key.'"  WHERE secretkey = "'.$token.'"';
 				$res_upd = mysqli_query($connect, $sql_upd);
 				if (!$res_upd) {
 					$error = mysqli_error($connect);
-					$_SESSION["error_messages"] == '<p><strong>Ошибка!</strong> Сбой при обновлении пароля. Код ошибки: '.$error.
-					'</p>';
+					$_SESSION["error_messages"] == '<p><strong>Ошибка!</strong> Сбой при обновлении пароля. Код ошибки: '.$error.'</p>';
 					//Возвращаем пользователя на страницу установки нового пароля
-					header("Location: /reset_password.php?hidden_form=1");
+					header("Location: /restore/reset_password.php?hidden_form=1");
 				}
 				$_SESSION["success_messages"] = '<p><strong>Пароль успешно изменён!</strong><br>Теперь Вы можете войти в свой аккаунт.</p>';
-				header("Location: /signin.php?email=$email");
+				header("Location: /signin/signin.php?email=$email");
 			} else {
 				$info_form = include_template('set_new_password.php', ['title' => 'Ошибка: пользователь не найден']);
 			}

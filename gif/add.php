@@ -1,9 +1,9 @@
 <?php
 $isFormPage = true;
-require_once('config.php');
-require_once('functions.php');
-require_once('check_cookie.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../config/check_cookie.php');
+require_once('../statistic/statistic.php');
 // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
 $res_cat = mysqli_query($connect, $sql_cat);
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$file = uniqid().
 			'.'.$extension;
 			//Папка назначения
-			$dest = 'uploads/';
+			$dest = '../uploads/';
 			if ($extension !== 'gif') {
 				$errors['gif-img'] = 'Загрузите гифку в формате GIF';
 			}
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$res = mysqli_stmt_execute($stmt);
 		if ($res) {
 			$gif_id = mysqli_insert_id($connect);
-			header('Location: /gif.php?id='.$gif_id);
+			header('Location: /gif/gif.php?id='.$gif_id);
 		}
 	}
 } else {

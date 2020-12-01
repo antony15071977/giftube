@@ -1,8 +1,8 @@
 <?php
 $isFormPage = true;
-require_once('config.php');
-require_once('functions.php');
-require_once('statistic/statistic.php');
+require_once('../config/config.php');
+require_once('../config/functions.php');
+require_once('../statistic/statistic.php');
 $Js = '<script src="../js/register.js"></script>';
 // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -34,14 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 	// проверка на существование пользователя с таким же email
 	if (!empty($email)) {
-		$sql = 'SELECT id FROM users WHERE email = "'.$email.
-		'"';
+		$sql = 'SELECT id FROM users WHERE email = "'.$email.'"';
 		$res_email = mysqli_query($connect, $sql);
 		if ($res_email) {
 			$emails = mysqli_fetch_all($res_email, MYSQLI_ASSOC);
 			if (!empty($emails)) {
-				$errors['email'] = 'Введённый вами email <strong>'.$email.
-				'</strong> уже зарегистрирован. Введите другой email.';
+				$errors['email'] = 'Введённый вами email <strong>'.$email.'</strong> уже зарегистрирован. Введите другой email.';
 			}
 		}
 	}
@@ -58,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$file = uniqid().
 			'.'.$extension;
 			//Папка назначения
-			$dest = 'uploads/avatar/';
+			$dest = '../uploads/avatar/';
 			if (($file_type == "image/gif") || ($file_type == "image/jpeg") || ($file_type == "image/png") || ($file_type == "image/pjepg")) {
 				move_uploaded_file($tmp_name, $dest.$file);
 				$sign_up['avatar_path'] = $dest.$file;
@@ -84,8 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 	// проверка на существование пользователя с таким же login
 	if (!empty($name)) {
-		$sql = 'SELECT id FROM users WHERE name = "'.$name.
-		'"';
+		$sql = 'SELECT id FROM users WHERE name = "'.$name.'"';
 		$res_login = mysqli_query($connect, $sql);
 		if ($res_login) {
 			$logins = mysqli_fetch_all($res_login, MYSQLI_ASSOC);
@@ -115,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$res_sql_nonconf_user = mysqli_stmt_execute($stmt);
 		if (!$res_sql_nonconf_user) {
 			// Сохраняем в сессию сообщение об ошибке. 
-			$_SESSION["error_messages"] = "<p class='mesage_error' >Ошибка запроса на добавление пользователя в БД (confirm), попробуйте еще раз.</p>";
+			$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка запроса на добавление пользователя в БД (confirm), попробуйте еще раз.</p>";
 			$title = 'Что то пошло не так...';
 			$signup_form = include_template('signup-form.php');
 		} else {
@@ -125,24 +122,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$subject = "=?utf-8?B?".base64_encode($subject).
 			"?=";
 			//Составляем тело сообщения
-			$message = 'Здравствуйте! <br/> <br/> Сегодня '.date("d.m.Y", time()).
+			$message = 'Здравствуйте!<br/><br/>Сегодня '.date("d.m.Y", time()).
 			', неким пользователем, использующим этот емейл, была произведена регистрация на сайте <a href="'.$address_site.
 			'">'.$_SERVER['HTTP_HOST'].
-			'</a>. Если это были Вы, то, пожалуйста, подтвердите адрес вашей электронной почты, перейдя по этой ссылке: <a href="'.$address_site.
-			'activation.php?token='.$token.
-			'&email='.$email.
-			'">'.$address_site.
-			'activation/'.$token.
-			'</a> <br/> <br/> В противном случае, если это были не Вы, то, просто игнорируйте это письмо. <br/> <br/> <strong>Внимание!</strong> Ссылка действительна 24 часа. После чего Ваш аккаунт будет удален из базы.';
+			'</a>. Если это были Вы, то, пожалуйста, подтвердите адрес вашей электронной почты, перейдя по этой ссылке: <a href="'.$address_site.'activation/activation.php?token='.$token.'&email='.$email.'">'.$address_site.'activation/'.$token.'</a><br/><br/> В противном случае, если это были не Вы, то, просто игнорируйте это письмо.<br/><br/><strong>Внимание!</strong> Ссылка действительна 24 часа. После чего Ваш аккаунт будет удален из базы.';
 			//Составляем дополнительные заголовки для почтового сервиса mail.ru
 			$headers = "FROM: $email_admin\r\nReply-to: $email_admin\r\nContent-type: text/html; charset=utf-8\r\n";
 			//Отправляем сообщение с ссылкой для подтверждения регистрации на указанную почту и проверяем отправлена ли она успешно или нет. 
 			if (mail($email, $subject, $message, $headers)) {
 				$_SESSION["success_messages"] = "<h4 class='success_message'><strong>Регистрация прошла успешно!!!</strong></h4><p class='success_message'> Теперь необходимо подтвердить введенный адрес электронной почты. Для этого перейдите по ссылке, указанной в сообщении, которое мы вам отправили на почту <strong>$email</strong></p>";
 			} else {
-				$_SESSION["error_messages"] = "<p class='mesage_error' >Ошибка при отправлении письма с ссылкой подтверждения на почту ".$email.". Попробуйте еще раз. </p>";
+				$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка при отправлении письма с ссылкой подтверждения на почту".$email.". Попробуйте еще раз.</p>";
 				mysqli_query($connect, "ROLLBACK");
-				header("Location: /signup.php?hidden_form=1");
+				header("Location: /signup/signup.php?hidden_form=1");
 				exit();
 			}
 			//Удаляем пользователей с таблицы users, которые не подтвердили свою почту в течении суток
@@ -150,8 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$res_del = mysqli_query($connect, $sql_del_user);
 			if (!$res_del) {
 				$error = mysqli_error($connect);
-				$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.
-				'</p>';
+				$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
 			}
 			//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
 			$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
@@ -183,9 +174,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					'isFormPage' => $isFormPage, 
 				]);
 				//Отправляем пользователя на страницу регистрации и убираем форму регистрации
-				header("Location: /signup.php?hidden_form=1");
+				header("Location: /signup/signup.php?hidden_form=1");
 			} else {
-				$_SESSION["error_messages"] = "<p class='mesage_error' >Ошибка при занесении нового пользователя в БД. Попробуйте еще раз. </p>";
+				$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка при занесении нового пользователя в БД. Попробуйте еще раз. </p>";
 				$_SESSION["success_messages"] = "";
 				mysqli_query($connect, "ROLLBACK");
 				$title = 'Что то пошло не так...';

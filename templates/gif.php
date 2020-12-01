@@ -29,10 +29,10 @@
             <div class="gif__controls">
                 <?php $query = ($isLiked == true) ? "&rem=1" : "";
                 $classname = ($isLiked == true) ? "gif__control--active" : ""; ?>
-                <a class="button gif__control <?= $classname; ?>" href="../gif-like.php?id=<?= $gif['id'] ?><?= $query; ?>">Мне нравится</a>
+                <a class="button gif__control <?= $classname; ?>" href="/gif/gif-like.php?id=<?= $gif['id'] ?><?= $query; ?>">Мне нравится</a>
                 <?php $query = ($isFav == true) ? "&rem=1" : "";
                 $classname = ($isFav == true) ? "gif__control--active" : ""; ?>
-                <a class="button gif__control <?= $classname; ?>" href="../gif-fav.php?id=<?= $gif['id']; ?><?= $query; ?>">В избранное</a>
+                <a class="button gif__control <?= $classname; ?>" href="/gif/gif-fav.php?id=<?= $gif['id']; ?><?= $query; ?>">В избранное</a>
             </div>
         <?php endif; ?>
         <!-- end Для зарегистрированных пользователей -->
@@ -54,7 +54,7 @@
 
     <!-- Для зарегистрированных пользователей -->
     <?php if (isset($_SESSION['user'])): ?>
-        <form class="comment-form" action="../gif.php?id=<?= isset($gif['id']) ? $gif['id'] : ''; ?>" method="post">
+        <form class="comment-form" action="/gif/gif.php?id=<?= isset($gif['id']) ? $gif['id'] : ''; ?>" method="post">
             <label class="comment-form__label" for="comment">Добавить комментарий:</label>
             <?php $classname = isset($errors['comment']) ? "form__input--error" : ""; ?>
             <textarea class="comment-form__text <?= $classname; ?>" name="comment" id="comment" rows="8" cols="80" placeholder="Помните о правилах и этикете. "></textarea>
