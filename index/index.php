@@ -53,9 +53,8 @@ if (isset($_GET['tab'])) {
 		print('Ошибка MySQL: '.$error);
 	}
 }
-$param = isset($_GET['tab']) && $_GET['tab'] == 'new' ? ('tab='.$_GET['tab'].
-	'&') : '';
-$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'pages' => $pages, 'current_page' => $current_page]);
+$param = isset($_GET['tab']) && $_GET['tab'] == 'new' ? ('?tab='.$_GET['tab'].'&') : '';
+$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'current_page' => $current_page]);
 $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => 'Смешные гифки', 'isMainPage' => $isMainPage]);
 if (isset($_SESSION['user'])) {
 	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'title' => 'Главная страница', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isMainPage' => $isMainPage]);

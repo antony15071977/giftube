@@ -44,9 +44,8 @@ if ($res_gifs) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
-$param = isset($_GET['id']) ? ('id='.$_GET['id'].
-	'&') : '';
-$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'pages' => $pages, 'current_page' => $current_page]);
+$param = isset($_GET['id']) ? ('?id='.$_GET['id'].'&') : '';
+$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'current_page' => $current_page]);
 $page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'pagination' => $pagination]);
 if (isset($_SESSION['user'])) {
 	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['name'].
