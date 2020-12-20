@@ -8,7 +8,7 @@ if (isset($_GET['id'])) {
 $res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs WHERE category_id = '.$category_id);
 $items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
 $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-$page_items = 3;
+$page_items = 9;
 $offset = ($current_page - 1) * $page_items;
 $pages_count = ceil($items_count / $page_items);
 $pages = range(1, $pages_count);
@@ -44,15 +44,30 @@ if ($res_gifs) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
-$param = isset($_GET['id']) ? ('?id='.$_GET['id'].'&') : '';
-$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'current_page' => $current_page]);
-$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'pagination' => $pagination]);
+$Js = "<script src='../js/pagination.js'></script>";
+$url = "/gif/category.php";
+$param = isset($_GET['id']) ? ('&id='.$_GET['id'].'&') : '';
+$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
+if ($_GET['mode'] == 'w_js') {
+    $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => $category_name['name']]);
+    $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Все гифки в категории «'.$category_name['name'].
+		'»', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
+    print($layout_content);
+    exit();
+}
+if (isset($_GET['id']) && isset($_GET['page'])) {
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'pagination' => $pagination]);
+	print($page_content);
+	exit();
+} else {
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'pagination' => $pagination]);
+}
 if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['name'].
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['name'].
 		'»'
 	]);
 } else {
-	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['name'].
+	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['name'].
 		'»'
 	]);
 }

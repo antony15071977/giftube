@@ -3,7 +3,6 @@ $isFormPage = true;
 require_once('../config/config.php');
 require_once('../config/functions.php');
 require_once('../statistic/statistic.php');
-$Js = '<script src="../js/register.js"></script>';
 // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
 $res_cat = mysqli_query($connect, $sql_cat);
@@ -93,11 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 	}
 	if (count($errors)) {
-		$signup_form = include_template('signup-form.php', [
+		$signup_form = include_template('signup-popup.php', [
 			'sign_up' => $sign_up, 
 			'errors' => $errors, 
 			'dict' => $dict
 		]);
+		print($signup_form);
+		exit();
 	} else {
 		//Составляем зашифрованный и уникальный token
 		$token = md5($email.time());
@@ -112,9 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$res_sql_nonconf_user = mysqli_stmt_execute($stmt);
 		if (!$res_sql_nonconf_user) {
 			// Сохраняем в сессию сообщение об ошибке. 
-			$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка запроса на добавление пользователя в БД (confirm), попробуйте еще раз.</p>";
 			$title = 'Что то пошло не так...';
-			$signup_form = include_template('signup-form.php');
+			print("<p class='mesage_error'>Ошибка запроса на добавление пользователя в БД (confirm), попробуйте еще раз.</p>");
+			exit();
 		} else {
 			//Составляем заголовок письма
 			$subject = "Подтверждение почты на сайте ".$_SERVER['HTTP_HOST'];
@@ -129,12 +130,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			//Составляем дополнительные заголовки для почтового сервиса mail.ru
 			$headers = "FROM: $email_admin\r\nReply-to: $email_admin\r\nContent-type: text/html; charset=utf-8\r\n";
 			//Отправляем сообщение с ссылкой для подтверждения регистрации на указанную почту и проверяем отправлена ли она успешно или нет. 
-			if (mail($email, $subject, $message, $headers)) {
-				$_SESSION["success_messages"] = "<h4 class='success_message'><strong>Регистрация прошла успешно!!!</strong></h4><p class='success_message'> Теперь необходимо подтвердить введенный адрес электронной почты. Для этого перейдите по ссылке, указанной в сообщении, которое мы вам отправили на почту <strong>$email</strong></p>";
-			} else {
-				$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка при отправлении письма с ссылкой подтверждения на почту".$email.". Попробуйте еще раз.</p>";
+			if (!mail($email, $subject, $message, $headers)) {
 				mysqli_query($connect, "ROLLBACK");
-				header("Location: /signup/signup.php?hidden_form=1");
+				print("<p class='mesage_error'>Ошибка при отправлении письма с ссылкой подтверждения на почту".$email.". Попробуйте еще раз.</p>");
 				exit();
 			}
 			//Удаляем пользователей с таблицы users, которые не подтвердили свою почту в течении суток
@@ -142,14 +140,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$res_del = mysqli_query($connect, $sql_del_user);
 			if (!$res_del) {
 				$error = mysqli_error($connect);
-				$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
+				print("<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>");
 			}
 			//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
 			$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
 			$res_del = mysqli_query($connect, $sql_del_user);
 			if (!$res_del) {
 				$error = mysqli_error($connect);
-				$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
+				print('<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>');
 			}
 			// Завершение запроса добавления пользователя в таблицу users
 			$secret_key = uniqid();
@@ -169,32 +167,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			if ($res&&$res_sql_nonconf_user) {
 				mysqli_query($connect, "COMMIT");
 				$user_id = mysqli_insert_id($connect);
-				$page_content = include_template('main.php', [
-					'title' => $title, 
-					'isFormPage' => $isFormPage, 
-				]);
-				//Отправляем пользователя на страницу регистрации и убираем форму регистрации
-				header("Location: /signup/signup.php?hidden_form=1");
+				print("<h4 class='success_message'><strong>Регистрация прошла успешно!!!</strong></h4><p class='success_message'> Теперь необходимо подтвердить введенный адрес электронной почты. Для этого перейдите по ссылке, указанной в сообщении, которое мы вам отправили на почту <strong>$email</strong></p>");
+				exit();
 			} else {
-				$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка при занесении нового пользователя в БД. Попробуйте еще раз. </p>";
-				$_SESSION["success_messages"] = "";
 				mysqli_query($connect, "ROLLBACK");
-				$title = 'Что то пошло не так...';
-				$signup_form = include_template('signup-form.php');
+				
+				
+				print("<h4 class='mesage_error'><strong>Что то пошло не так...</strong></h4>
+					<p class='mesage_error'>Ошибка при занесении нового пользователя в БД. Попробуйте еще раз. </p>");
+				exit();				
 			}
 		}
 	}
 } else {
 	$title = 'Регистрация';
-	if(isset($_SESSION["success_messages"]) && !empty($_SESSION["success_messages"])) {
-		$title = 'Поздравляем!';
-		$Js = '';
-	}
-	if (isset($_SESSION["error_messages"]) && !empty($_SESSION["error_messages"])) {
-		$title = 'Что то пошло не так...';
-		$Js = '';
-	}
-	$signup_form = include_template('signup-form.php');
+	$signup_form = include_template('signup-popup.php');
 }
 $page_content = include_template('main.php', [
 	'form' => $signup_form, 

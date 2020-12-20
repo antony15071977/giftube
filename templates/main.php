@@ -7,13 +7,14 @@
             <nav class="filter">
                 <?php if(isset($_GET['tab'])) : ?>
 
-                    <a class="filter__item " href="/">Топовые гифки</a>
-                    <a class="filter__item filter__item--active" href="/?tab=new">Свежачок</a>
+                    <a class="filter__item " href="javascript:void(0);" onclick="getData('/index/index.php', {top : 'top'})">Топовые гифки</a>
+                    <a class="filter__item filter__item--active" href="javascript:void(0);" onclick="getData('/index/index.php', {tab : 'new'})">Свежачок</a>
 
                 <?php else :?>
 
-                    <a class="filter__item filter__item--active" href="/">Топовые гифки</a>
-                    <a class="filter__item " href="/?tab=new">Свежачок</a>
+                    <a class="filter__item filter__item--active" href="javascript:void(0);" onclick="getData('/index/index.php', {top : 'top'})">Топовые гифки</a>
+                    <a class="filter__item" href="javascript:void(0);" onclick="getData('/index/index.php', {tab : 'new'})">Свежачок</a>
+
 
                 <?php endif; ?>
             </nav>
@@ -25,6 +26,9 @@
         <?php $classname = ($isFormPage) ? "content__header--left-pad" : ""; ?>
         
         <header class="content__header <?= $classname; ?>">
+        <div class="loading-overlay" style="display: none;">
+            <div class="overlay-content">Loading...</div>
+        </div>
             <h2 class="content__header-text"><?= $title; ?></h2>
             <a class="button button--transparent content__header-button" href="/">Назад</a>
         </header>
@@ -42,6 +46,9 @@
 
     <?php else : ?>
 
+        <div class="loading-overlay" style="display: none;">
+            <div class="overlay-content">Loading...</div>
+        </div>
         <ul class="gif-list">
             <?php foreach ($gifs as $gif): ?>
                 <?= include_template('gif-item.php', ['gif' => $gif]); ?>

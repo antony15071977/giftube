@@ -8,4 +8,14 @@ if(isset($_COOKIE["cookie_token"])){
 	setcookie("cookie_token", "", time() - 3600);
 }
 unset($_SESSION['user']);
-header("Location: /index/");
+$current_url = $_GET['current_url'] ?? "";
+if (isset($_GET['current_url'])) {
+	echo "<script type='text/javascript'>
+            jQuery(document).ready(function($) {
+                var url = '$current_url';
+                $(location).attr('href', url);
+            });
+        </script>";
+} else {
+	header("Location: /");
+}

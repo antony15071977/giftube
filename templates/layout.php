@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="../css/custom.css">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
     <script src="../js/jquery.min.js"></script>
+    <script src="../js/custom.js"></script>
     <?= $Js = $Js ?? "" ?>
 </head>
-<body>
+<body class="home">
     <div class="container">
         <header class="main-header">
             <h1 class="visually-hidden">Giftube</h1>
@@ -37,13 +38,16 @@
                     <?php if (isset($_SESSION['user'])): ?>
                         <nav class="navigation__links">
                             <a href="javascript:;"><?= $username; ?></a>
-                            <a href="/gif/favorites.php">Избранное</a>
-                            <a href="/logout.php">Выход</a>
+                            <a href="/gif/favorites.php" onclick="getData('/gif/favorites.php', {fav : 'fav'}); return false;">Избранное</a>
+                            <a href="/logout.php" onclick="logOut(); return false;">Выход</a>
                         </nav>
                     <?php else : ?>
                         <nav class="navigation__links">
-                            <a href="/signup/signup.php">Регистрация</a>
-                            <a href="/signin/signin.php">Вход для своих</a>
+                           <?php $disabled = isset($signup_errors) ? "disabled" : "open-modal"; ?>
+                            <a href="/signup/signup.php" class="<?= $disabled; ?>" data-modal="#modal1" data-url="/templates/signup-popup.php">Регистрация</a>
+
+                            <?php $disabled = isset($signin_errors) ? "disabled" : "open-modal"; ?>
+                            <a href="/signin/signin.php" class="<?= $disabled; ?>" data-modal="#modal1" data-url="/templates/signin-popup.php">Вход для своих</a>
                         </nav>
                     <?php endif; ?>
                 </div>
@@ -74,6 +78,14 @@
                 <a class="copyright-logo" href="/"><img src="img/htmlacademy.svg" alt="" width="27" height="34"></a>
             </div>
         </footer>
+        
+        <div class="modal" id="modal1">
+            <a class="close-modal" data-modal="#modal1" href="#">X</a>
+            <div class="modal__content">
+            </div>
+        </div>
+
     </div>
+<script src="../js/popup.js"></script>
 </body>
 </html>

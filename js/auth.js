@@ -10,6 +10,7 @@ $(document).ready(function() {
         $('#valid_email_message').html('<span class="mesage_error">Незарегистрированный емейл</span>');
         mail.css("border", "1px solid red");
         mail_valid.css("display", "none");
+        mail.focus();
         mail.focus(keyupMail());
     } else {
         //== Проверка пароля если страница регистрации была загружена после ошибки НЕ в емейле 
@@ -21,6 +22,7 @@ $(document).ready(function() {
         }
         //== Это ситуация, когда страница регистрации загружена впервые
         $('#valid_email_message').text('');
+        mail.focus();
         mail.focus(keyupMail());
     }
 
@@ -102,6 +104,7 @@ $(document).ready(function() {
         $('#valid_password_message').text('Исправьте это поле');
         password.css("border", "1px solid red");
         pass_valid.css("display", "none");
+        password.focus();
         password.focus(keyupPassword());
     } else {
         //== Проверка пароля если страница регистрации была загружена после ошибки НЕ в пароле 

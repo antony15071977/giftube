@@ -86,5 +86,5 @@ if ($res_token) {
 	$info = '<p><strong>Ошибка!</strong> Сбой при выборе пользователя из БД. Код ошибки: '.$error.'</p>';
 }
 $info_form = include_template('activation.php', ['info' => $info, 'title' => 'Активация']);
-$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Активация пользователя']);
+$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Активация пользователя']);
 print($layout_content);

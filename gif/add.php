@@ -13,6 +13,7 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$Js = "<script src='../js/gif.js'></script>";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$gif = $_POST;
 	$required = ['category', 'gif-title', 'gif-description'];
@@ -52,6 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$user_id = $_SESSION['user']['id'];
 	if (count($errors)) {
 		$add_form = include_template('add-form.php', ['gif' => $gif, 'categories' => $categories, 'errors' => $errors, 'dict' => $dict]);
+		$page_content = include_template('main.php', ['form' => $add_form, 'title' => 'Добавить гифку', 'isFormPage' => $isFormPage]);
+		// print($page_content);
+  //       exit();
 	} else {
 		$sql = 'INSERT INTO gifs (dt_add, category_id, user_id, title, description, '.
 		'img_path, likes_count, favs_count, views_count) '.
@@ -70,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($res) {
 			$gif_id = mysqli_insert_id($connect);
 			header('Location: /gif/gif.php?id='.$gif_id);
+			exit();
 		}
 	}
 } else {
@@ -77,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 $page_content = include_template('main.php', ['form' => $add_form, 'title' => 'Добавить гифку', 'isFormPage' => $isFormPage]);
 if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Добавление новой гифки']);
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Добавление новой гифки']);
 } else {
 	header('Location: /');
 }

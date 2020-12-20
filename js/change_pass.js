@@ -24,6 +24,7 @@ $(document).ready(function() {
         $('#valid_password_message').text('Исправьте это поле');
         password.css("border", "1px solid red");
         pass_valid.css("display", "none");
+        password.focus();
         password.focus(keyupPassword());
     } else {
         //== Проверка пароля если страница регистрации была загружена после ошибки НЕ в пароле 
@@ -35,6 +36,7 @@ $(document).ready(function() {
         }
         //== Это ситуация, когда страница регистрации загружена впервые
         $('#valid_password_message').text('');
+        password.focus();
         password.focus(keyupPassword());
     }
 
@@ -87,6 +89,7 @@ $(document).ready(function() {
         $('#valid_confirm_password_message').text('Исправьте это поле');
         confirm_password.css("border", "1px solid red");
         conf_pass_valid.css("display", "none");
+        confirm_password.focus();
         confirm_password.focus(keyupConfPassword());
     } else {
         //== Проверка пароля если страница регистрации была загружена после ошибки НЕ в повторе пароля

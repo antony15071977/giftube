@@ -1,5 +1,8 @@
 <main class="content">
     <div class="content__main-col">
+        <div class="loading-overlay" style="display: none;">
+            <div class="overlay-content">Loading...</div>
+        </div>
         <header class="content__header content__header--left-pad">
             <h2 class="content__header-text"><?= $title; ?></h2>
             <a class="button button--transparent content__header-button" href="/">Назад</a>

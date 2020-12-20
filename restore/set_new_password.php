@@ -34,7 +34,6 @@ if (isset($_GET['token']) && isset($_GET['email'])) {
 			//Проверяем совпадает ли token
 			if ($token_origin == $send_token) {
 				//Место для вывода формы установки нового пароля
-				$Js = '<script type="text/javascript" src="../js/change_pass.js"></script>';
 				$info_form = include_template('form_new_password.php', ['title' => 'Восстановление пароля', 'send_token' => $send_token, 'email' => $email]);
 			} else {
 				$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Неправильный проверочный код.</p>';
@@ -51,5 +50,5 @@ if (isset($_GET['token']) && isset($_GET['email'])) {
 		$info_form = include_template('set_new_password.php', ['title' => 'Ошибка']);
 	}
 }
-$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
+$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
 print($layout_content);

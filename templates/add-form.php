@@ -1,4 +1,4 @@
-<form class="form" action="/gif/add.php" method="post" enctype="multipart/form-data">
+<form class="form" id="add-form" action="javascript:void(0);" method="post" enctype="multipart/form-data">
     <div class="form__columns">
         <div class="form__column form__column--short">
             <div class="form__row">
@@ -80,6 +80,6 @@
     <!-- end Сообщение об ошибках -->
 
     <div class="form__controls">
-        <input class="button form__control" type="submit" name="" value="Добавить">
+        <input class="button form__control" type="submit" name="" id="submit" onClick="addItem()" value="Добавить">
     </div>
 </form>

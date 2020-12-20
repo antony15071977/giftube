@@ -1,4 +1,7 @@
   <div class="content__main-col">
+    <div class="loading-overlay" style="display: none;">
+            <div class="overlay-content">Loading...</div>
+    </div>
     <header class="content__header content__header--left-pad">
       <h2 class="content__header-text"><?= $title; ?></h2>
       <a class="button button--transparent content__header-button" href="/">Назад</a>
@@ -10,7 +13,7 @@
       ?>
       <h2 class="content__header-text">Установка нового пароля</h2>
 
-      <form id="reg_form"class="form" action="/restore/update_password.php" method="post" enctype="multipart/form-data">
+      <form id="reg_form" class="form" action="/restore/update_password.php" method="post" enctype="multipart/form-data">
         <div class="form__column">
           <!-- Сообщение об ошибках -->
           <?php if(isset($errors)) : ?>
@@ -63,10 +66,32 @@
           <input class="button form__control" type="submit" name="set_new_password" value="Изменить пароль">
         </div>
       </form>
-
+      <script type="text/javascript">
+        $(document).ready(function() {
+            $('#reg_form').submit(function(e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation;
+                    data = $('#reg_form').serialize();
+                    $.ajax({
+                        url: '/restore/update_password-ajax.php',
+                        type: 'POST',
+                        data,
+                        cache: false,
+                        beforeSend: function() {
+                            Before();
+                        },
+                        complete: function() {
+                            Complete();
+                        },
+                        success: function(dataResult){
+                          $(".content").append(dataResult);
+                        }
+              });
+            });
+        });
+      </script>
+      <script src="../js/change_pass.js"></script>
       <?php
-      
-
     }
     else { 
         //Иначе, если пользователь уже авторизирован, то выводим этот блок

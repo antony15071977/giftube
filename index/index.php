@@ -53,12 +53,32 @@ if (isset($_GET['tab'])) {
 		print('Ошибка MySQL: '.$error);
 	}
 }
-$param = isset($_GET['tab']) && $_GET['tab'] == 'new' ? ('?tab='.$_GET['tab'].'&') : '';
-$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'current_page' => $current_page]);
-$page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => 'Смешные гифки', 'isMainPage' => $isMainPage]);
-if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'title' => 'Главная страница', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isMainPage' => $isMainPage]);
+$param = isset($_GET['tab']) && $_GET['tab'] == 'new' ? ('&tab='.$_GET['tab'].'&') : '';
+$url = "/index/index.php";
+$Js = "<script src='../js/pagination.js'></script>";
+$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
+// Вариант, когда не работает яваскрипт и срабатывает переход по ссылке
+if ($_GET['mode'] == 'w_js') {
+    $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => 'Смешные гифки', 'isMainPage' => $isMainPage]);
+    $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Главная страница', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isMainPage' => $isMainPage]);
+    print($layout_content);
+    exit();
+}
+if ($_GET['update'] == 'true') {
+    $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => 'Смешные гифки', 'isMainPage' => $isMainPage]);
+    print($page_content);
+    exit();
+}
+if (isset($_GET['tab']) && isset($_GET['page']) || isset($_GET['page']) || isset($_GET['tab']) || isset($_GET['top'])) {
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => 'Смешные гифки', 'isMainPage' => $isMainPage]);
+		print($page_content);
+		exit();
 } else {
-	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'title' => 'Главная страница', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isMainPage' => $isMainPage]);
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => 'Смешные гифки', 'isMainPage' => $isMainPage]);
+}
+if (isset($_SESSION['user'])) {
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Главная страница', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isMainPage' => $isMainPage]);
+} else {
+	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Главная страница', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isMainPage' => $isMainPage]);
 }
 print($layout_content);
