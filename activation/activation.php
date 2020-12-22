@@ -1,6 +1,7 @@
 <?php
 require_once('../config/config.php');
 require_once('../config/functions.php');
+require_once('../config/check_cookie.php');
 require_once('../statistic/statistic.php');
 //запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
@@ -14,7 +15,7 @@ if ($res_cat) {
 if (empty($_GET)) {
 	$info = '<p><strong>Ошибка!</strong><br>Сюда нельзя зайти прямо так)</p>';
 	$info_form = include_template('activation.php', ['info' => $info, 'title' => 'Ошибка']);
-	$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Активация пользователя']);
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $info_form, 'categories' => $categories, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Активация пользователя']);
 	print($layout_content);
 	exit();
 }
@@ -24,7 +25,7 @@ if (isset($_GET['token']) && !empty($_GET['token'])) {
 	$info = '<p><strong>Ошибка!</strong><br>Отсутствует проверочный код.</p>';
 }
 if (isset($_GET['email']) && !empty($_GET['email'])) {
-	$email = htmlspecialchars($_GET['email'], ENT_QUOTES);
+	$email = trim(htmlspecialchars($_GET['email']));
 } else {
 	$info = '<p><strong>Ошибка!</strong><br>Отсутствует адрес электронной почты.</p>';
 }
@@ -86,5 +87,5 @@ if ($res_token) {
 	$info = '<p><strong>Ошибка!</strong> Сбой при выборе пользователя из БД. Код ошибки: '.$error.'</p>';
 }
 $info_form = include_template('activation.php', ['info' => $info, 'title' => 'Активация']);
-$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Активация пользователя']);
+$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $info_form, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Активация пользователя']);
 print($layout_content);

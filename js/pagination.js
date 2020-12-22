@@ -7,7 +7,7 @@ function getData($url, data) {
             Before();
         },
         complete: function() {
-            Comlete();
+            Complete();
         },
         success: function(dataResult){
             $('.content').html(dataResult);

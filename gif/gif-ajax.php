@@ -3,7 +3,6 @@ $isGifPage = true;
 require_once('../config/config.php');
 require_once('../config/functions.php');
 require_once('../config/check_cookie.php');
-require_once('../statistic/statistic.php');
 // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
 $res_cat = mysqli_query($connect, $sql_cat);
@@ -14,7 +13,7 @@ if ($res_cat) {
     print('Ошибка MySQL: '.$error);
 }
 if (isset($_GET['id']) || isset($_POST['gif_id'])) {
-    $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
+    $gif_id = intval($_GET['id'] ?? intval($_POST['gif_id']));
 }
 // 2. запрос для получения данных гифки по id
 $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
@@ -40,8 +39,8 @@ $sql_update_views = "UPDATE gifs SET views_count = views_count + 1 WHERE id = ".
 $res_update_views = mysqli_query($connect, $sql_update_views);
 // если гифка добавлена в избранное
 if (isset($_SESSION['user'])) {
-    $user_id = intval($_SESSION['user']['id']);
-    $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
+    $user_id = $_SESSION['user']['id'];
+    $gif_id = $_GET['id'] ?? $_POST['gif_id'];
     $isLiked = false;
     $isFav = false;
     $sql_fav = 'SELECT id FROM gifs_fav WHERE user_id = '.$user_id.
@@ -66,7 +65,7 @@ if (isset($_SESSION['user'])) {
 // end если гифка добавлена в избранное
 // 3. add comment
 if (isset($_SESSION['user'])) {
-    $user_id = intval($_SESSION['user']['id']);
+    $user_id = $_SESSION['user']['id'];
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $gif_id = intval($_POST['gif_id']);
         $comment = $_POST['comment'];
@@ -98,7 +97,6 @@ if (isset($_SESSION['user'])) {
                 $error = mysqli_error($connect);
                 print($error);
             }
-        header('Location: /gif/gif.php?id='.$gif_id);    
         }
     }
 }
@@ -137,13 +135,12 @@ if ($is404error) {
     $page_content = include_template('main.php', ['title' => '404 Страница не найдена', 'is404error' => $is404error]);
     $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'title' => '404 Страница не найдена']);
 } else {
-    $Js = "<script src='../js/pagination.js'></script><script src='../js/gif.js'></script>";
     $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'gif_id' => $gif_id, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
     if (isset($_SESSION['user'])) {
         $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked]);
-        $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
-    } else {
-        $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'Js' => $Js, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            print($page_content);
+            exit();
+        }
     }
 }
-print($layout_content);

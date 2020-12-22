@@ -25,7 +25,7 @@
       echo "<p>Ошибка при добавлении пользователя</p>";
     } 
   } 
-  // Будем считать, что пользователи, которые отсутствовали в течении 20 минут - покинули ресурс - удаляем их id_session из базы данных 
+  // Будем считать, что пользователи, которые отсутствовали в течении 50 минут - покинули ресурс - удаляем их id_session из базы данных 
   $query = "DELETE FROM session 
             WHERE putdate < NOW() -  INTERVAL '50' MINUTE"; 
   mysqli_query($connect, $query);
@@ -48,7 +48,6 @@ $res = mysqli_query($connect, "SELECT `visit_id` FROM `visits` WHERE `date`='$da
 if (!$res) {
   echo "Проблема при подключении к БД";
 }
-
 // Если сегодня еще не было посещений
 if (mysqli_num_rows($res) == 0)
 {
@@ -57,11 +56,9 @@ if (mysqli_num_rows($res) == 0)
 
     // Заносим в базу IP-адрес текущего посетителя
     mysqli_query($connect, "INSERT INTO `ips` SET `ip_address`='$visitor_ip'");
-
     // Заносим в базу дату посещения и устанавливаем кол-во просмотров и уник. посещений в значение 1
     $res_count = mysqli_query($connect, "INSERT INTO `visits` SET `date`='$date', `hosts`=1,`views`=1");
 }
-
 // Если посещения сегодня уже были
 else
 {
@@ -74,7 +71,6 @@ else
         // Добавляем для текущей даты +1 просмотр (хит)
         mysqli_query($connect, "UPDATE `visits` SET `views`=`views`+1 WHERE `date`='$date'");
     }
-
     // Если сегодня такого IP-адреса еще не было (т.е. это уникальный посетитель)
     else
     {

@@ -277,15 +277,15 @@ $(document).ready(function() {
                 name_valid.css("display", "none");
                 $('#name_valid_message').html('<span class="mesage_error">Не менее 5 символов</span>');
             }
-            nickname.blur(function() {
-                if (nickname.val() == '' || nickname.val().length < 5) {
-                    $('#name_valid_message').html('<span class="mesage_error">Минимум 5 символов</span>');
-                } else {
-                    $('#name_valid_message').text('');
-                    checkLogin()
-                }
-            });
+            
+        });
+        nickname.blur(function() {
+            if (nickname.val() == '' || nickname.val().length < 5) {
+                $('#name_valid_message').html('<span class="mesage_error">Минимум 5 символов</span>');
+            } else {
+                $('#name_valid_message').text('');
+                    // checkLogin()
+            }
         });
     }
-
 });

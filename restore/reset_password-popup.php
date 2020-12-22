@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$errors[$key] = 'Это поле должно быть заполнено';
 		}
 	}
-	$email = htmlspecialchars($sign_in['email']);
+	$email = trim(htmlspecialchars($sign_in['email']));
 	//проверка email на корректность
 	if (!empty($email)) {
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
 	}
 	// проверка на существование пользователя с таким же email
-	$email = htmlspecialchars($sign_in['email']);
 	$sql = 'SELECT * FROM users WHERE email = "'.$email.'"';
 	$res_pass = mysqli_query($connect, $sql);
 	if ($res_pass) {

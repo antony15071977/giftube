@@ -4,7 +4,7 @@
     <?php
     // Текущая страница
     $page = $current_page;
-    $cat_id = $_GET['id'];
+    $cat_id = intval(htmlspecialchars($_GET['id']));
     // Переменная, означающая сколько цифр пагинации отображать    
     $inline = 5;
     // $pages_count - сколько всего страниц

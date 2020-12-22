@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$errors[$key] = 'Это поле должно быть заполнено.';
 		}
 	}
-	$email = htmlspecialchars($sign_up['email']);
+	$email = trim(htmlspecialchars($sign_up['email']));
 	//проверка email на корректность
 	if (!empty($email)) {
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 	}
 	//проверка пароля на длину
-	$password = htmlspecialchars($sign_up['password'], ENT_QUOTES);
+	$password = trim(htmlspecialchars($sign_up['password'], ENT_QUOTES));
 	if (strlen($password) < 6) {
 		$errors['password'] = 'Пароль должен быть более 6 символов';
 	}
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$errors['confirm_password'] = 'Пароли должны совпадать.';
 	}
 	//проверка логина на длину
-	$name = htmlspecialchars($sign_up['name']);
+	$name = trim(htmlspecialchars($sign_up['name']));
 	if (strlen($name) < 5) {
 		$errors['name'] = 'Логин должен быть не менее 5 символов.';
 	}
@@ -150,10 +150,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				print('<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>');
 			}
 			// Завершение запроса добавления пользователя в таблицу users
-			$secret_key = uniqid();
+			$secret_key = md5(uniqid()).md5(uniqid());
 			// пароль = хэш от пароля + secretkey
-			$password = md5($sign_up['password'].
-				":".$secret_key);
+			$password = md5($sign_up['password'].":".$secret_key);
 			$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey) '.
 			'VALUES (NOW(), ?, ?, ?, ?, ?)';
 			$stmt = db_get_prepare_stmt($connect, $sql, [

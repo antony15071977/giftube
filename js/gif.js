@@ -1,7 +1,7 @@
-function postData($url, data) {
+function postData() {
     data = $('#comment-form').serialize();
     $.ajax({
-        url: '/gif/gif.php',
+        url: '/gif/gif-ajax.php',
         type: 'POST',
         data,
         cache: false,
@@ -17,12 +17,15 @@ function postData($url, data) {
     });
 }
 function addItem($url, data) {
-    data = $('#add-form').serialize();
+    var formAdd = $('#add-form')[0];
+    var formData = new FormData(formAdd);
     $.ajax({
         url: '/gif/add.php',
         type: 'POST',
-        data,
+        data: formData,
         cache: false,
+        contentType: false,
+        processData: false,
         beforeSend: function() {
             Before();
         },

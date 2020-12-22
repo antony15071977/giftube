@@ -2,8 +2,7 @@
     require_once('../config/config.php');
     require_once('../config/functions.php');
     if(isset($_POST["login"])) {
-        $login =  trim($_POST["login"]);
-        $login = htmlspecialchars($login, ENT_QUOTES);
+        $login = trim(htmlspecialchars($_POST['login']));
         $sql = 'SELECT id FROM users WHERE name = "' . $login . '"';
         $res_login = mysqli_query($connect, $sql);
         if($res_login) {

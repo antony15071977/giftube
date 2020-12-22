@@ -4,7 +4,7 @@ require_once('../config/functions.php');
 require_once('../config/check_cookie.php');
 require_once('../statistic/statistic.php');
 if (isset($_SESSION['user'])) {
-    $user_id = intval($_SESSION['user']['id']);
+    $user_id = intval(trim($_SESSION['user']['id']));
     $res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs_fav WHERE user_id = '.$user_id);
     $items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
     $current_page = isset($_GET['page']) ? $_GET['page'] : 1;

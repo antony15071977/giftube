@@ -1,23 +1,11 @@
 <?php
 require_once('../config/config.php');
 require_once('../config/functions.php');
-require_once('../config/check_cookie.php');
-require_once('../statistic/statistic.php');
-// 1. запрос для получения списка категорий;
-$sql_cat = 'SELECT * FROM categories';
-$res_cat = mysqli_query($connect, $sql_cat);
-if ($res_cat) {
-    $categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
-} else {
-    $error = mysqli_error($connect);
-    print('Ошибка MySQL: '.$error);
-}
 if (isset($_SESSION['user'])) {
     $user_id = intval(trim($_SESSION['user']['id']));
     if (isset($_GET['id'])) {
     $gif_id = intval(trim($_GET['id']));
     }
-    $Js = "<script src='../js/pagination.js'></script><script src='../js/gif.js'></script>";
     // 2. запрос для получения данных гифки по id
     $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
     'likes_count, favs_count, views_count, description '.
@@ -128,8 +116,8 @@ if (isset($_SESSION['user'])) {
             print('Ошибка MySQL: '.$error);
         }
         $page_content = include_template('gif.php', ['errors' => $errors, 'gif_id' => $gif_id, 'gif' => $gif, 'comments' => $comments, 'isFav' => $isFav, 'isLiked' => $isLiked, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
-        $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'Js' => $Js, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
-        print($layout_content);
+        print($page_content);
+        exit();
     } else {
         mysqli_query($connect, "START TRANSACTION");
         $sql = 'DELETE FROM gifs_like WHERE user_id = '.$user_id.
@@ -185,8 +173,8 @@ if (isset($_SESSION['user'])) {
                     print('Ошибка MySQL: '.$error);
                 }
                 $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'gif_id' => $gif_id, 'comments' => $comments, 'isLiked' => $isLiked, 'isFav' => $isFav, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
-                $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'Js' => $Js, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
-                print($layout_content);
+                print($page_content);
+                exit();
             } else {
                 mysqli_query($connect, "ROLLBACK");
                 $error = mysqli_error($connect);

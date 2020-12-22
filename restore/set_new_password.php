@@ -12,13 +12,13 @@ if ($res_cat) {
 	print('Ошибка MySQL: '.$error);
 }
 if (isset($_GET['token']) && !empty($_GET['token'])) {
-	$token = htmlspecialchars($_GET['token']);
+	$token = trim(htmlspecialchars($_GET['token']));
 } else {
 	$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong><br>Отсутствуют проверочные данные. Проверьте правильно ли вы скопировали ссылку.</p>';
 	$info_form = include_template('set_new_password.php', ['title' => 'Ошибка']);
 }
 if (isset($_GET['email']) && !empty($_GET['email'])) {
-	$email = htmlspecialchars($_GET['email']);
+	$email = trim(htmlspecialchars($_GET['email']));
 } else {
 	$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong><br>Отсутствуют проверочные данные. Проверьте правильно ли вы скопировали ссылку.</p>';
 	$info_form = include_template('set_new_password.php', ['title' => 'Ошибка']);

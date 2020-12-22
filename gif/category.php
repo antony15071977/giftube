@@ -3,7 +3,7 @@ require_once('../config/config.php');
 require_once('../config/functions.php');
 require_once('../statistic/statistic.php');
 if (isset($_GET['id'])) {
-	$category_id = intval($_GET['id']);
+	$category_id = intval(trim($_GET['id']));
 }
 $res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs WHERE category_id = '.$category_id);
 $items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];

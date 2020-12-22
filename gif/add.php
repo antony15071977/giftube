@@ -54,11 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (count($errors)) {
 		$add_form = include_template('add-form.php', ['gif' => $gif, 'categories' => $categories, 'errors' => $errors, 'dict' => $dict]);
 		$page_content = include_template('main.php', ['form' => $add_form, 'title' => 'Добавить гифку', 'isFormPage' => $isFormPage]);
-		// print($page_content);
-  //       exit();
 	} else {
-		$sql = 'INSERT INTO gifs (dt_add, category_id, user_id, title, description, '.
-		'img_path, likes_count, favs_count, views_count) '.
+		$sql = 'INSERT INTO gifs (dt_add, category_id, user_id, title, description, img_path, likes_count, favs_count, views_count) '.
 		'VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)';
 		$stmt = db_get_prepare_stmt($connect, $sql, [
 			$gif['category'],

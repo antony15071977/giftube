@@ -21,7 +21,7 @@ if (isset($_POST["password"]) && !empty($_POST["password"])) {
 	}
 	//Проверяем, если существует переменная token в глобальном массиве POST
 	if (isset($_POST['token']) && !empty($_POST['token'])) {
-		$token = $_POST['token'];
+		$token = trim(htmlspecialchars($_POST['token']));
 	} else {
 		// Сохраняем в сессию сообщение об ошибке. 
 		echo "<p class='mesage_error'><strong>Ошибка!</strong> Отсутствует проверочный код. Проверьте правильно ли вы скопировали ссылку.</p>";
@@ -30,7 +30,7 @@ if (isset($_POST["password"]) && !empty($_POST["password"])) {
 	}
 	//Проверяем, если существует переменная email в глобальном массиве POST
 	if (isset($_POST['email']) && !empty($_POST['email'])) {
-		$email = htmlspecialchars($_POST['email']);
+		$email = trim(htmlspecialchars($_POST['email']));
 	} else {
 		// Сохраняем в сессию сообщение об ошибке. 
 		echo "<p class='mesage_error'><strong>Ошибка!</strong> Отсутствует адрес электронной почты. Проверьте правильно ли вы скопировали ссылку, по которой перешли для восстановления пароля</p>";
@@ -39,8 +39,7 @@ if (isset($_POST["password"]) && !empty($_POST["password"])) {
 	}
 	if (!empty($_POST["password"])) {
 		//Обрезаем пробелы с начала и с конца строки
-		$password = trim($_POST["password"]);
-		$password = htmlspecialchars($password, ENT_QUOTES);
+		$password = trim(htmlspecialchars($_POST["password"]));
 		//проверка пароля на длину
 		if (strlen($password) < 6) {
 			$errors['password'] = 'Пароль должен быть более 6 символов';
@@ -52,7 +51,7 @@ if (isset($_POST["password"]) && !empty($_POST["password"])) {
 		if (!empty($_POST["confirm_password"])) {
 			//Обрезаем пробелы с начала и с конца строки
 			$confirm_password = trim($_POST["confirm_password"]);
-			$confirm_password = htmlspecialchars($confirm_password, ENT_QUOTES);
+			$confirm_password = trim(htmlspecialchars($_POST["confirm_password"]));
 			//проверка повтора пароля
 			if ($confirm_password !== $password || strlen($confirm_password) < 6) {
 				$errors['confirm_password'] = 'Пароли должны совпадать и быть не менее 6 символов.';

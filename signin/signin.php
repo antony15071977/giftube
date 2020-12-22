@@ -25,7 +25,7 @@ if (!isset($_SESSION['user'])) {
 				$errors[$key] = 'Это поле должно быть заполнено';
 			}
 		}
-		$email = htmlspecialchars($sign_in['email']);
+		$email = trim(htmlspecialchars($sign_in['email']));
 		//проверка email на корректность
 		if (!empty($email)) {
 			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -33,7 +33,7 @@ if (!isset($_SESSION['user'])) {
 			}
 		}
 		//проверка пароля на длину
-		$password = $sign_in['password'];
+		$password = trim(htmlspecialchars($sign_in['password']));
 		if (strlen($password) < 6) {
 			$errors['password'] = 'Пароль должен быть более 6 символов';
 		}
@@ -52,7 +52,6 @@ if (!isset($_SESSION['user'])) {
 			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
 		}
 		// проверка на существование пользователя с таким же email
-		$email = htmlspecialchars($sign_in['email']);
 		$sql = 'SELECT * FROM users WHERE email = "'.$email.'"';
 		$res_pass = mysqli_query($connect, $sql);
 		if ($res_pass) {
@@ -74,7 +73,7 @@ if (!isset($_SESSION['user'])) {
 						// Обработка галочки "запомнить меня"
 						if (isset($_POST["remember"])) {
 							//Создаём токен
-							$cookie_token = md5($user[0]['secretkey'].":".$_SERVER["REMOTE_ADDR"].":".$user[0]['dt_add']);
+							$cookie_token = md5($user[0]['secretkey'].":".$_SERVER["REMOTE_ADDR"]).md5($user[0]['dt_add']);
 							//Добавляем созданный токен в базу данных
 							$update_cookie_token = "UPDATE users SET cookie_token='".$cookie_token."' WHERE email = '".$email."'";
 							$res_update_cookie_token = mysqli_query($connect, $update_cookie_token);

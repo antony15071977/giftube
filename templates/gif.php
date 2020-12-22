@@ -31,16 +31,18 @@
         <?php if (isset($_SESSION['user'])): ?>
             <div class="gif__controls">
                 <?php $query_like = ($isLiked == true) ? ", rem : '1'" : "";
+                $query_like_url = ($isLiked == true) ? '&rem=1' : '';
                 $classname_like = ($isLiked == true) ? "gif__control--active" : "";
                 $name_like = ($isLiked == true) ? "Уже нравится" : "Поставить лайк";
                 ?>
-                <a class="button gif__control <?= $classname_like; ?>" href="javascript:void(0);" onclick="getData('/gif/gif-like.php', {id : '<?= $gif_id; ?>'<?= $query_like; ?>})"><?= $name_like; ?></a>
+                <a class="button gif__control <?= $classname_like; ?>" href="/gif/gif-like.php?id=<?= $gif['id'] ?><?= $query_like_url; ?>" onclick="getData('/gif/gif-like-ajax.php', {id : '<?= $gif_id; ?>'<?= $query_like; ?>}); return false;"><?= $name_like; ?></a>
 
                 <?php $query_fav = ($isFav == true) ? ", rem : '1'" : "";
+                $query_fav_url = ($isFav == true) ? '&rem=1' : '';
                 $classname_fav = ($isFav == true) ? "gif__control--active" : "";
                 $name_fav = ($isFav == true) ? "Уже в избранном" : "В избранное";
                 ?>
-                <a class="button gif__control <?= $classname_fav; ?>" href="javascript:void(0);" onclick="getData('/gif/gif-fav.php', {id : '<?= $gif_id; ?>'<?= $query_fav; ?>})"><?= $name_fav; ?></a>
+                <a class="button gif__control <?= $classname_fav; ?>" href="/gif/gif-fav.php?id=<?= $gif['id']; ?><?= $query_fav_url; ?>" onclick="getData('/gif/gif-fav-ajax.php', {id : '<?= $gif_id; ?>'<?= $query_fav; ?>}); return false;"><?= $name_fav; ?></a>
             </div>
         <?php endif; ?>
         <!-- end Для зарегистрированных пользователей -->
@@ -62,7 +64,7 @@
 
     <!-- Для зарегистрированных пользователей -->
     <?php if (isset($_SESSION['user'])): ?>
-        <form class="comment-form" id="comment-form" action="javascript:void(0);" method="post">
+        <form class="comment-form" id="comment-form" action="/gif/gif.php?id=<?= isset($gif['id']) ? $gif['id'] : ''; ?>" method="post">
             <label class="comment-form__label" for="comment">Добавить комментарий:</label>
             <?php $classname = isset($errors['comment']) ? "form__input--error" : ""; ?>
             <textarea class="comment-form__text <?= $classname; ?>" onkeyup="checkParams()" name="comment" id="comment" rows="8" required="required" cols="80" maxlength="180" mштlength="3" placeholder="Помните о правилах и этикете. Минимум 3, максимум 180 символов."></textarea>
@@ -73,7 +75,7 @@
                 </div>
             <?php endif; ?>
             <input type="hidden" name="gif_id" value="<?= isset($gif['id']) ? $gif['id'] : ''; ?>">
-            <input class="button comment-form__button gif__control--active" id="submit" type="submit" name="" onClick="postData()" disabled="disabled" value="Отправить">
+            <input class="button comment-form__button gif__control--active" id="submit" type="submit" name="" onClick="postData(); return false;" disabled="disabled" value="Отправить">
         </form>
     <?php endif; ?>
     <!-- end Для зарегистрированных пользователей -->

@@ -16,12 +16,9 @@ if ($res_cat) {
 $gifs = [];
 $search = isset($_GET['q']) ? $_GET['q'] : '';
 //переменная для получения логического списка гифок
-$search = $search.'*';
+//$search = $search.'*';
 if ($search) {
-	$res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs WHERE MATCH(title, description) AGAINST('.
-		'"'.$search.
-		'"'.
-		'IN BOOLEAN MODE)');
+	$res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs WHERE MATCH(title, description) AGAINST('.'"'.$search.'"'.'IN BOOLEAN MODE)');
 	$items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
 	$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 	//сколько позиций на странице

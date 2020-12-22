@@ -2,8 +2,7 @@
     require_once('../config/config.php');
     require_once('../config/functions.php');
     if(isset($_POST["email"])) {
-        $email =  trim($_POST["email"]);
-        $email = htmlspecialchars($email, ENT_QUOTES);
+        $email = trim(htmlspecialchars($_POST['email']));
         //Проверяем, нет ли уже такого адреса в БД.
         $sql = 'SELECT id FROM users WHERE email = "' . $email . '"';
         $res_email = mysqli_query($connect, $sql);
