@@ -15,14 +15,14 @@ if ($res_cat) {
 // 2. запрос для получения списка гифок
 $gifs = [];
 $search = isset($_GET['q']) ? $_GET['q'] : '';
+$search = trim(htmlspecialchars($search));
 //переменная для получения логического списка гифок
-//$search = $search.'*';
 if ($search) {
 	$res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs WHERE MATCH(title, description) AGAINST('.'"'.$search.'"'.'IN BOOLEAN MODE)');
 	$items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
 	$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 	//сколько позиций на странице
-	$page_items = 3;
+	$page_items = 10;
 	$offset = ($current_page - 1) * $page_items;
 	$pages_count = ceil($items_count / $page_items);
 	$pages = range(1, $pages_count);
@@ -40,17 +40,17 @@ if ($search) {
 		$gifs = mysqli_fetch_all($res, MYSQLI_ASSOC);
 	}
 }
-$param = isset($_GET['q']) ? ('q='.$_GET['q'].
-	'&') : '';
-$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'pages' => $pages, 'current_page' => $current_page]);
+$param = isset($_GET['q']) ? ('&q='.$_GET['q'].'') : '';
+$url = "/search/search.php";
+$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
 if (!$items_count) {
 	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => 'Ничего не найдено']);
 } else {
 	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => 'Результаты поиска', 'pagination' => $pagination]);
 }
 if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'Js' => $Js, 'views_stat_month' => $views_stat_month]);
 } else {
-	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
+	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
 }
 print($layout_content);

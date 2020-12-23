@@ -36,3 +36,22 @@ function reStore() {
         }
     });
 }
+$(document).ready(function(){
+    $('#search_box').on('keyup', function() {
+        if ($('#search_box').val().length > 2) {
+            function load_data(query = '') {
+              $.ajax({
+                url:"/search/fetch.php",
+                method:"POST",
+                data:{query:query},
+                success:function(data)
+                {
+                  $('.content').html(data);
+                }
+              });
+            }
+        var query = $('#search_box').val();
+        load_data(query);
+        }
+    });
+});

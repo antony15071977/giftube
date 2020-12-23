@@ -47,7 +47,7 @@ if ($res_gifs) {
 $Js = "<script src='../js/pagination.js'></script>";
 $url = "/gif/category.php";
 $param = isset($_GET['id']) ? ('&id='.$_GET['id'].'&') : '';
-$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
+$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'cat_id' => $category_id, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
 if ($_GET['mode'] == 'w_js') {
     $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => $category_name['name']]);
     $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Все гифки в категории «'.$category_name['name'].

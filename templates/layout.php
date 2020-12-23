@@ -20,11 +20,12 @@
                 <img class="logo__img" src="../img/logotype.svg" alt="Giftube" width="160" height="38">
             </a>
             <form class="search" action="/search/search.php" method="get">
-                <div class="search__control">
-                    <input class="search__text" type="text" name="q" value="<?= $search; ?>" placeholder="Поиск гифки…">
-
-                    <div class="search__submit">
-                        <input class="button" type="submit" name="" value="Найти">
+                <div class="search">
+                    <div class="search__control">
+                        <input type="text" name="q" id="search_box" class="search__text" placeholder="Type your search query here" />
+                        <div class="search__submit">
+                            <input class="button" type="submit" name="" value="Найти">
+                        </div>
                     </div>
                 </div>
             </form>
