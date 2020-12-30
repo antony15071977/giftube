@@ -36,11 +36,7 @@ if (isset($_GET['tab'])) {
 	}
 } else {
 	// 2. создаем запрос для получения списка топовых гифок
-	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count '.
-	'FROM gifs g '.
-	'JOIN users u ON g.user_id = u.id '.
-	'ORDER BY likes_count DESC LIMIT '.$page_items.
-	' OFFSET '.$offset;
+	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count '.'FROM gifs g '.'JOIN users u ON g.user_id = u.id '.'ORDER BY likes_count DESC LIMIT '.$page_items.' OFFSET '.$offset;
 	//отправляем запрос и получаем результат
 	$res_gifs = mysqli_query($connect, $sql_gifs);
 	//запрос выполнен успешно

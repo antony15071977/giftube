@@ -26,11 +26,7 @@ if (isset($_SESSION['user'])) {
         print('Ошибка MySQL: '.$error);
     } 
     // 4. all comments
-    $sql_comments = 'SELECT c.dt_add, avatar_path, name, comment_text '.
-    'FROM comments c '.
-    'JOIN gifs g ON g.id = c.gif_id '.
-    'JOIN users u ON c.user_id = u.id '.
-    'WHERE g.id = '.$gif_id;
+    $sql_comments = 'SELECT c.dt_add, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC  LIMIT 3';
     $res_comments = mysqli_query($connect, $sql_comments);
     if ($res_comments) {
         $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
@@ -104,7 +100,7 @@ if (isset($_SESSION['user'])) {
             $error = mysqli_error($connect);
             print('Ошибка MySQL: '.$error);
         }
-        $page_content = include_template('gif.php', ['errors' => $errors, 'gif_id' => $gif_id, 'gif' => $gif, 'comments' => $comments, 'isFav' => $isFav, 'isLiked' => $isLiked, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+        $page_content = include_template('gif-controls.php', ['errors' => $errors, 'gif_id' => $gif_id, 'gif' => $gif, 'comments' => $comments, 'isFav' => $isFav, 'isLiked' => $isLiked, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
         print($page_content);
         exit();
     } else {
@@ -146,7 +142,7 @@ if (isset($_SESSION['user'])) {
                 $error = mysqli_error($connect);
                 print('Ошибка MySQL: '.$error);
             }
-            $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'gif_id' => $gif_id, 'comments' => $comments, 'isLiked' => $isLiked, 'isFav' => $isFav, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+            $page_content = include_template('gif-controls.php', ['errors' => $errors, 'gif' => $gif, 'gif_id' => $gif_id, 'comments' => $comments, 'isLiked' => $isLiked, 'isFav' => $isFav, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
         print($page_content);
         exit();
         } else {

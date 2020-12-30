@@ -3,17 +3,32 @@ $isGifPage = true;
 require_once('../config/config.php');
 require_once('../config/functions.php');
 require_once('../config/check_cookie.php');
-// 1. запрос для получения списка категорий;
-$sql_cat = 'SELECT * FROM categories';
-$res_cat = mysqli_query($connect, $sql_cat);
-if ($res_cat) {
-    $categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
-} else {
-    $error = mysqli_error($connect);
-    print('Ошибка MySQL: '.$error);
-}
 if (isset($_GET['id']) || isset($_POST['gif_id'])) {
     $gif_id = intval($_GET['id'] ?? intval($_POST['gif_id']));
+}
+if ($_POST['content'] == 'hide') {
+    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC  LIMIT 3';
+    $res_comments = mysqli_query($connect, $sql_comments);
+    if ($res_comments) {
+        $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
+    } else {
+        $error = mysqli_error($connect);
+        print('Ошибка MySQL: '.$error);
+    }
+    $page_content = include_template('gif-comments.php', ['errors' => $errors, 'comments' => $comments, 'gif_id' => $gif_id]);
+    print($page_content);
+    exit();
+}
+if ($_POST['comments'] == 'count') {
+    $res_count_comm = mysqli_query($connect, 'SELECT count(*) AS cnt FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id);
+    $count_comm = mysqli_fetch_assoc($res_count_comm)['cnt'];
+    if (!$res_count_comm) {
+        $count_comm = 0;
+    }
+    echo json_encode(array(
+            'count_comm' => $count_comm
+    ));
+    exit();
 }
 // 2. запрос для получения данных гифки по id
 $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
@@ -66,9 +81,9 @@ if (isset($_SESSION['user'])) {
 // 3. add comment
 if (isset($_SESSION['user'])) {
     $user_id = $_SESSION['user']['id'];
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['comment'] != '') {
         $gif_id = intval($_POST['gif_id']);
-        $comment = $_POST['comment'];
+        $comment = stripslashes($_POST['comment']);
         $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
         'likes_count, favs_count, views_count, description '.
         'FROM gifs g '.
@@ -97,15 +112,67 @@ if (isset($_SESSION['user'])) {
                 $error = mysqli_error($connect);
                 print($error);
             }
+            $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC  LIMIT 3';
+            $res_comments = mysqli_query($connect, $sql_comments);
+            if ($res_comments) {
+                $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
+            } else {
+                $error = mysqli_error($connect);
+                print('Ошибка MySQL: '.$error);
+            }
+            if (isset($_SESSION['user'])) {
+                $page_content = include_template('gif-comments.php', ['errors' => $errors, 'comments' => $comments, 'gif_id' => $gif_id]);
+                    print($page_content);
+                    exit();
+            }
         }
     }
 }
 // 4. all comments
-$sql_comments = 'SELECT c.dt_add, avatar_path, name, comment_text '.
-'FROM comments c '.
-'JOIN gifs g ON g.id = c.gif_id '.
-'JOIN users u ON c.user_id = u.id '.
-'WHERE g.id = '.$gif_id;
+$sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC  LIMIT 3';
+$res_count_comm = mysqli_query($connect, 'SELECT count(*) AS cnt FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id);
+$count_comm = mysqli_fetch_assoc($res_count_comm)['cnt'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['count_add'])) {
+    $gif_id = (int)$_POST['gif_id'];
+    $countView = (int)$_POST['count_add'];  // количество записей, получаемых за один раз
+    $startIndex = (int)$_POST['count_show']; // с какой записи начать выборку
+    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id.'  ORDER BY c.dt_add DESC LIMIT '.$startIndex.', '.$countView;
+    $res_comments = mysqli_query($connect, $sql_comments);
+    if ($res_comments) {
+        $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
+    } else {
+        $error = mysqli_error($connect);
+        print('Ошибка MySQL: '.$error);
+    }
+    if(empty($comments)){
+        // если комментов нет
+        echo json_encode(array(
+            'result'    => 'finish'
+    ));
+    } else {
+        $html = "";
+        foreach($comments as $comment){
+            $html .= "
+                <article class='comment'>
+                    <img width='100' height='100' class='comment__picture' src='{$comment['avatar_path']}'>
+                    <div class='comment__data'>
+                            <div class='comment__author'>{$comment['name']}</div>
+                            <div class='comment__author'>[{$comment['dt_add']}]</div>
+                            <p class='comment__text ".
+                            (($comment['name'] == $_SESSION['user']['name']) ? "inlineEdit" : "")
+                        ."' data-id='{$comment['id']}'>{$comment['comment_text']}</p>".
+                            (($comment['name'] == $_SESSION['user']['name']) ? "<span class='comment__author comment__sign'><img class='comment__edit' src='img/pen.png'>Нажмите на свой комментарий, чтобы отредактировать</span>" : "")
+                        ."</div>
+                    </article>
+            ";
+        }
+        echo json_encode(array(
+            'result'    => 'success',
+            'html'      => $html
+        ));
+    }
+    exit();
+}
 $res_comments = mysqli_query($connect, $sql_comments);
 if ($res_comments) {
     $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
@@ -113,34 +180,11 @@ if ($res_comments) {
     $error = mysqli_error($connect);
     print('Ошибка MySQL: '.$error);
 }
-// 5. запрос для списка похожих гифок
-if (!$is404error) {
-    $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count '.
-    'FROM gifs g '.
-    'JOIN categories c ON g.category_id = c.id '.
-    'JOIN users u ON g.user_id = u.id '.
-    'WHERE category_id = '.$gif['category_id'].
-    ' AND g.id NOT IN('.$gif_id.
-    ') '.
-    ' LIMIT 6';
-    $res_similar = mysqli_query($connect, $sql_similar);
-    if ($res_similar) {
-        $similar_gifs = mysqli_fetch_all($res_similar, MYSQLI_ASSOC);
-    } else {
-        $error = mysqli_error($connect);
-        print('Ошибка MySQL: '.$error);
-    }
-}
-if ($is404error) {
-    $page_content = include_template('main.php', ['title' => '404 Страница не найдена', 'is404error' => $is404error]);
-    $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'title' => '404 Страница не найдена']);
-} else {
-    $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'gif_id' => $gif_id, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
-    if (isset($_SESSION['user'])) {
-        $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked]);
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+$page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'gif_id' => $gif_id, 'count_comm' => $count_comm, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+if (isset($_SESSION['user'])) {
+    $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'count_comm' => $count_comm,  'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked]);
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             print($page_content);
             exit();
-        }
     }
 }

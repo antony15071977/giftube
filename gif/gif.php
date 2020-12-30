@@ -103,11 +103,13 @@ if (isset($_SESSION['user'])) {
     }
 }
 // 4. all comments
-$sql_comments = 'SELECT c.dt_add, avatar_path, name, comment_text '.
-'FROM comments c '.
-'JOIN gifs g ON g.id = c.gif_id '.
-'JOIN users u ON c.user_id = u.id '.
-'WHERE g.id = '.$gif_id;
+if ($_GET['comments'] == 'all') {
+    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC';
+} else {
+    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC  LIMIT 3';
+}
+$res_count_comm = mysqli_query($connect, 'SELECT count(*) AS cnt FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id);
+$count_comm = mysqli_fetch_assoc($res_count_comm)['cnt'];
 $res_comments = mysqli_query($connect, $sql_comments);
 if ($res_comments) {
     $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
@@ -117,14 +119,7 @@ if ($res_comments) {
 }
 // 5. запрос для списка похожих гифок
 if (!$is404error) {
-    $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count '.
-    'FROM gifs g '.
-    'JOIN categories c ON g.category_id = c.id '.
-    'JOIN users u ON g.user_id = u.id '.
-    'WHERE category_id = '.$gif['category_id'].
-    ' AND g.id NOT IN('.$gif_id.
-    ') '.
-    ' LIMIT 6';
+    $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'WHERE category_id = '.$gif['category_id'].' AND g.id NOT IN('.$gif_id.') '.' LIMIT 6';
     $res_similar = mysqli_query($connect, $sql_similar);
     if ($res_similar) {
         $similar_gifs = mysqli_fetch_all($res_similar, MYSQLI_ASSOC);
@@ -134,13 +129,13 @@ if (!$is404error) {
     }
 }
 if ($is404error) {
-    $page_content = include_template('main.php', ['title' => '404 Страница не найдена', 'is404error' => $is404error]);
-    $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'title' => '404 Страница не найдена']);
+    $page_content = include_template('main.php', ['username' => $_SESSION['user']['name'], 'title' => '404 Страница не найдена', 'is404error' => $is404error]);
+    $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
 } else {
     $Js = "<script src='../js/pagination.js'></script><script src='../js/gif.js'></script>";
-    $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'gif_id' => $gif_id, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+    $page_content = include_template('gif.php', ['username' => $_SESSION['user']['name'], 'errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'count_comm' => $count_comm,  'gif_id' => $gif_id, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
     if (isset($_SESSION['user'])) {
-        $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked]);
+        $page_content = include_template('gif.php', ['username' => $_SESSION['user']['name'], 'errors' => $errors, 'gif' => $gif, 'count_comm' => $count_comm,  'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked]);
         $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
     } else {
         $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'Js' => $Js, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);

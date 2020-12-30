@@ -22,7 +22,7 @@
             <form class="search" action="/search/search.php" method="get">
                 <div class="search">
                     <div class="search__control">
-                        <input type="text" name="q" id="search_box" class="search__text" placeholder="Type your search query here" />
+                        <input type="text" name="q" id="search_box" class="search__text" placeholder="ПОИСК" />
                         <div class="search__submit">
                             <input class="button" type="submit" name="" value="Найти">
                         </div>

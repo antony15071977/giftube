@@ -35,39 +35,53 @@
                 $classname_like = ($isLiked == true) ? "gif__control--active" : "";
                 $name_like = ($isLiked == true) ? "Уже нравится" : "Поставить лайк";
                 ?>
-                <a class="button gif__control <?= $classname_like; ?>" href="/gif/gif-like.php?id=<?= $gif['id'] ?><?= $query_like_url; ?>" onclick="getData('/gif/gif-like-ajax.php', {id : '<?= $gif_id; ?>'<?= $query_like; ?>}); return false;"><?= $name_like; ?></a>
+                <a class="button gif__control <?= $classname_like; ?>" href="/gif/gif-like.php?id=<?= $gif['id'] ?><?= $query_like_url; ?>" onclick="goFavLike('/gif/gif-like-ajax.php', {id : '<?= $gif_id; ?>'<?= $query_like; ?>}); return false;"><?= $name_like; ?></a>
 
                 <?php $query_fav = ($isFav == true) ? ", rem : '1'" : "";
                 $query_fav_url = ($isFav == true) ? '&rem=1' : '';
                 $classname_fav = ($isFav == true) ? "gif__control--active" : "";
                 $name_fav = ($isFav == true) ? "Уже в избранном" : "В избранное";
                 ?>
-                <a class="button gif__control <?= $classname_fav; ?>" href="/gif/gif-fav.php?id=<?= $gif['id']; ?><?= $query_fav_url; ?>" onclick="getData('/gif/gif-fav-ajax.php', {id : '<?= $gif_id; ?>'<?= $query_fav; ?>}); return false;"><?= $name_fav; ?></a>
+                <a class="button gif__control <?= $classname_fav; ?>" href="/gif/gif-fav.php?id=<?= $gif['id']; ?><?= $query_fav_url; ?>" onclick="goFavLike('/gif/gif-fav-ajax.php', {id : '<?= $gif_id; ?>'<?= $query_fav; ?>}); return false;"><?= $name_fav; ?></a>
             </div>
         <?php endif; ?>
         <!-- end Для зарегистрированных пользователей -->
     </div>
 
-    <div class="comment-list">
-        <h3 class="comment-list__title">Комментарии:</h3>
+    <h3 class="comment-list__title">Комментарии (<span id="comment-list__count"><?= $count_comm; ?></span>):</h3>
+        <div class="comment-list">
 
-        <?php foreach($comments as $comment) : ?>
-            <article class="comment">
-                <img class="comment__picture" src="<?= $comment['avatar_path']; ?>" alt="" width="100" height="100">
-                <div class="comment__data">
-                    <div class="comment__author"><?= $comment['name']; ?></div>
-                    <p class="comment__text"><?= $comment['comment_text']; ?></p>
-                </div>
-            </article>
-        <?php endforeach; ?>
-    </div>
+    <?php if ($comments != NULL): ?>
+            
+                <?php foreach($comments as $comment) : ?>
+                <?php  $inlineEdit = (isset($_SESSION['user']) && $comment['name'] == $username) ? 'inlineEdit' :  ''; ?>
+                <article class="comment">
+                    <img class="comment__picture" src="<?= $comment['avatar_path']; ?>" alt="" width="100" height="100">
+                    <div class="comment__data">
+                        <div class="comment__author"><?= $comment['name']; ?>
+                        </div>
+                        <div class="comment__author">[<?= $comment['dt_add']; ?>]</div>
+                        <p class="comment__text <?= $inlineEdit; ?>" data-id="<?= $comment['id']; ?>"><?= $comment['comment_text']; ?></p>
+                        <?php if (isset($_SESSION['user']) && $comment['name'] == $username): ?>
+
+                            <span class="comment__author comment__sign"><img class="comment__edit" src="img/pen.png">Нажмите на свой комментарий, чтобы отредактировать</span>
+
+                        <?php endif; ?>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        
+     <?php endif; ?>
+    
+        </div>
+        <a class="button gif__control" href="/gif/gif.php?comments=all&id=<?= $gif['id']; ?>" id="show_more" count_show="3" count_add="5" gif_id="<?= $gif['id']; ?>" style="display: none;">Еще комментарии</a>
 
     <!-- Для зарегистрированных пользователей -->
     <?php if (isset($_SESSION['user'])): ?>
         <form class="comment-form" id="comment-form" action="/gif/gif.php?id=<?= isset($gif['id']) ? $gif['id'] : ''; ?>" method="post">
             <label class="comment-form__label" for="comment">Добавить комментарий:</label>
             <?php $classname = isset($errors['comment']) ? "form__input--error" : ""; ?>
-            <textarea class="comment-form__text <?= $classname; ?>" onkeyup="checkParams()" name="comment" id="comment" rows="8" required="required" cols="80" maxlength="180" mштlength="3" placeholder="Помните о правилах и этикете. Минимум 3, максимум 180 символов."></textarea>
+            <textarea class="comment-form__text <?= $classname; ?>" onkeyup="checkParams()" name="comment" id="comment" rows="8" required="required" cols="80" maxlength="180" minlength="3" placeholder="Помните о правилах и этикете. Минимум 3, максимум 180 символов."></textarea>
             <?php if (isset($errors['comment'])) : ?>
                 <div class="error-notice">
                     <span class="error-notice__icon"></span>

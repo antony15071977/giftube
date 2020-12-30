@@ -115,7 +115,7 @@ if (isset($_SESSION['user'])) {
             $error = mysqli_error($connect);
             print('Ошибка MySQL: '.$error);
         }
-        $page_content = include_template('gif.php', ['errors' => $errors, 'gif_id' => $gif_id, 'gif' => $gif, 'comments' => $comments, 'isFav' => $isFav, 'isLiked' => $isLiked, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+        $page_content = include_template('gif-controls.php', ['errors' => $errors, 'gif_id' => $gif_id, 'gif' => $gif, 'comments' => $comments, 'isFav' => $isFav, 'isLiked' => $isLiked, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
         print($page_content);
         exit();
     } else {
@@ -172,7 +172,7 @@ if (isset($_SESSION['user'])) {
                     $error = mysqli_error($connect);
                     print('Ошибка MySQL: '.$error);
                 }
-                $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'gif_id' => $gif_id, 'comments' => $comments, 'isLiked' => $isLiked, 'isFav' => $isFav, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+                $page_content = include_template('gif-controls.php', ['errors' => $errors, 'gif' => $gif, 'gif_id' => $gif_id, 'comments' => $comments, 'isLiked' => $isLiked, 'isFav' => $isFav, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
                 print($page_content);
                 exit();
             } else {
