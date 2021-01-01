@@ -187,14 +187,20 @@ $(document).ready(function() {
             success: function(data) {
                 $('#response').html(data.html);
                 $("#response").slideDown('slow');
+                if (data.result == "success") {
                     setTimeout(function() {
                         $("#response").slideUp("slow", function() {});
                         $("#response").remove();
                     }, 2000);
+                }
                if (data.result == "error") {
-                NewText = OrigText;
-                return false;
-               } 
+                    setTimeout(function() {
+                        $("#response").slideUp("slow", function() {});
+                        NewText = OrigText;
+                        $("#response").prev('.comment__text').html(NewText);
+                        $("#response").remove();
+                    }, 2000);
+                } 
             }
         });
         $(this).parent('.comment__text').removeClass('selected').addClass('inlineEdit');

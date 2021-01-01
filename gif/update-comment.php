@@ -17,7 +17,11 @@ if (isset($_SESSION['user']) && $_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['
             'html'      => $html
             )); 
         } else {
-            echo ("Ошибка редактирования");
+            $html = "Ошибка редактирования";
+            echo json_encode(array(
+            'result'    => 'error',
+            'html'      => $html
+            ));
         }
     } else {
         $html = "У вас нет прав";
@@ -27,7 +31,11 @@ if (isset($_SESSION['user']) && $_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['
             ));
     }
 } else {
-    echo ("Ошибка редактирования");
+    $html = "Ошибка редактирования";
+    echo json_encode(array(
+            'result'    => 'error',
+            'html'      => $html
+            ));
 }
 
 
