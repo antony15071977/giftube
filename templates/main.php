@@ -7,13 +7,13 @@
             <nav class="filter">
                 <?php if(isset($_GET['tab'])) : ?>
 
-                    <a class="filter__item " href="javascript:void(0);" onclick="getData('/index/index.php', {top : 'top'})">Топовые гифки</a>
-                    <a class="filter__item filter__item--active" href="javascript:void(0);" onclick="getData('/index/index.php', {tab : 'new'})">Свежачок</a>
+                    <a class="filter__item " href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'})">Топовые гифки</a>
+                    <a class="filter__item filter__item--active" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'})">Свежачок</a>
 
                 <?php else :?>
 
-                    <a class="filter__item filter__item--active" href="javascript:void(0);" onclick="getData('/index/index.php', {top : 'top'})">Топовые гифки</a>
-                    <a class="filter__item" href="javascript:void(0);" onclick="getData('/index/index.php', {tab : 'new'})">Свежачок</a>
+                    <a class="filter__item filter__item--active" href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'})">Топовые гифки</a>
+                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'})">Свежачок</a>
 
 
                 <?php endif; ?>
