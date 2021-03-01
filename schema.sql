@@ -31,7 +31,7 @@ CREATE TABLE users (
   email         CHAR(128) NOT NULL,
   password      CHAR(64) NOT NULL,
   avatar_path   CHAR(128),
-  email_status  CHAR(1) NOT NULL,
+  email_status  CHAR(1) NOT NULL default '0',
   secretkey     CHAR(128),
   cookie_token  CHAR(128)
 );
@@ -69,7 +69,7 @@ CREATE TABLE comments (
 
 CREATE TABLE session ( 
   id_session tinytext NOT NULL, 
-  putdate datetime NOT NULL default '0000-00-00 00:00:00', 
+  putdate TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, 
   user tinytext NOT NULL 
 );
 

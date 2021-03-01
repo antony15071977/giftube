@@ -85,17 +85,36 @@
                 <div class="form__row">
                     <label class="form__label" for="avatar">Аватар (опционально):</label>
                     <div class="form__input-file">
+                        
                         <input class="visually-hidden" type="file" name="avatar" id="preview" value="<?= $value; ?>">
                         <label for="preview">
                             <span>Выбрать изображение</span>
                         </label>
-                    </div>
+                        <div id="image" class="upload-file-container"></div>
                 </div>
             </div>
             <div class="form__controls">
                 <input class="button form__control" type="submit" name="" value="Отправить">
             </div>
         </form>
+        <script>function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#image').css('background', 'transparent url('+e.target.result +') center top / cover no-repeat');
+                    $('#image').css('width', '80px');
+                    $('#image').css('height', '80px');
+                     $('#image').css('margin', '0px auto 20px');
+                     $('#image').css('position', 'absolute');
+                     $('#image').css('top', '0');
+                     $('#image').css('right', '0');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $("#preview").change(function(){
+            readURL(this);
+        });</script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#reg_form').submit(function(e){
