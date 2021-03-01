@@ -22,7 +22,9 @@
     //Проверяем, если пользователь не авторизован, то выводим форму восстановления, 
     //иначе выводим сообщение о том, что он уже авторизован
     if (!isset($_SESSION['user'])) {
-
+         $a = rand(1,10);
+        $b = rand(1,10);
+        $_SESSION['captcha'] = $a + $b;
         if(!isset($_GET["hidden_form"])){
 ?>
 <form class="form" action="/restore/reset_password.php" method="post">
@@ -57,7 +59,12 @@
         
         
     </div>
-
+    <div class="form__row">
+        <label for="captcha" class="form__label">Проверочный код*</label>
+            <div class="verify-block"><?= $a; ?> + <?= $b; ?> = <span class="edit-field">
+             <input class="form-control" autocomplete="off" name="captcha" id="captcha" type="text"></span>
+                    </div>
+    </div>
     <div class="form__controls">
         <input class="button form__control" type="submit" name="" value="Восстановить">
     </div>

@@ -13,13 +13,19 @@ if ($res_cat) {
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sign_in = $_POST;
-	$required = ['email'];
+	$required = ['email', 'captcha'];
 	$errors = [];
-	$dict = ['email' => 'E-mail'];
+	$dict = ['email' => 'E-mail', 'captcha' => 'Результат сложения'];
 	foreach($required as $key) {
 		if (empty($_POST[$key])) {
 			$errors[$key] = 'Это поле должно быть заполнено';
 		}
+	}
+	if($_POST['captcha'] != $_SESSION['captcha']){
+		$errors['captcha'] = 'Введите правильный результат сложения';
+		$signin_form = include_template('reset_password-popup.php', ['sign_in' => $sign_in, 'errors' => $errors, 'dict' => $dict]);
+			print($signin_form);
+			exit();
 	}
 	$email = trim(htmlspecialchars($sign_in['email']));
 	//проверка email на корректность

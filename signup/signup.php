@@ -17,13 +17,16 @@ if ($res_cat) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sign_up = $_POST;
 	$title = 'Регистрация';
-	$required = ['email', 'password', 'name', 'confirm_password'];
+	$required = ['email', 'password', 'name', 'confirm_password', 'captcha'];
 	$errors = [];
-	$dict = ['email' => 'E-mail', 'password' => 'Пароль', 'name' => 'Имя', 'confirm_password' => 'Подтверждение пароля', 'avatar' => 'Фото'];
+	$dict = ['email' => 'E-mail', 'password' => 'Пароль', 'name' => 'Имя', 'confirm_password' => 'Подтверждение пароля', 'avatar' => 'Фото', 'captcha' => 'Результат сложения'];
 	foreach($required as $key) {
 		if (empty($_POST[$key])) {
 			$errors[$key] = 'Это поле должно быть заполнено.';
 		}
+	}
+	if($_POST['captcha'] != $_SESSION['captcha']){
+		$errors['captcha'] = 'Введите правильный результат сложения';
 	}
 	$email = trim(htmlspecialchars($sign_up['email']));
 	//проверка email на корректность

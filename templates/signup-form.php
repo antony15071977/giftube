@@ -23,7 +23,9 @@
     //Проверяем, если пользователь не авторизован, то выводим форму регистрации, 
     //иначе выводим сообщение о том, что он уже зарегистрирован
     if (!isset($_SESSION['user'])) {
-
+        $a = rand(1,10);
+        $b = rand(1,10);
+       $_SESSION['captcha'] = $a + $b;
         if(!isset($_GET["hidden_form"])){
         ?>
         <form id="reg_form"class="form" action="/signup/signup.php" method="post" enctype="multipart/form-data">
@@ -110,6 +112,12 @@
                         <div id="image" class="upload-file-container"></div>
                     </div>
                 </div>
+            </div>
+            <div class="form__row">
+               <label for="captcha" class="form__label">Проверочный код*</label>
+                   <div class="verify-block"><?= $a; ?> + <?= $b; ?> = <span class="edit-field">
+                    <input class="form-control" autocomplete="off" name="captcha" id="captcha" type="text"></span>
+                    </div>
             </div>
             <div class="form__controls">
                 <input class="button form__control" type="submit" name="" value="Отправить">
