@@ -31,18 +31,9 @@ CREATE TABLE users (
   email         CHAR(128) NOT NULL,
   password      CHAR(64) NOT NULL,
   avatar_path   CHAR(128),
-  email_status  CHAR(1) NOT NULL default '0',
   secretkey     CHAR(128),
   cookie_token  CHAR(128)
 );
-
-CREATE TABLE confirm_users (
-  id            INT AUTO_INCREMENT PRIMARY KEY,
-  dt_add        TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  token          CHAR(128) NOT NULL,
-  email         CHAR(128) NOT NULL
-);
-
 
 CREATE UNIQUE INDEX email ON users(email);
 CREATE UNIQUE INDEX name ON users(name);

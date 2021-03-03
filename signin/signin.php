@@ -36,21 +36,7 @@ if (!isset($_SESSION['user'])) {
 		$password = trim(htmlspecialchars($sign_in['password']));
 		if (strlen($password) < 6) {
 			$errors['password'] = 'Пароль должен быть более 6 символов';
-		}
-		//Удаляем пользователей с таблицы users, которые не подтвердили свою почту в течении суток
-		$sql_del_user = 'DELETE FROM `users` WHERE `email_status` = 0 AND `dt_add` < ( NOW() - INTERVAL 1 DAY )';
-		$res_del = mysqli_query($connect, $sql_del_user);
-		if (!$res_del) {
-			$error = mysqli_error($connect);
-			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
-		}
-		//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
-		$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
-		$res_del = mysqli_query($connect, $sql_del_user);
-		if (!$res_del) {
-			$error = mysqli_error($connect);
-			$info = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
-		}
+		}		
 		// проверка на существование пользователя с таким же email
 		$sql = 'SELECT * FROM users WHERE email = "'.$email.'"';
 		$res_pass = mysqli_query($connect, $sql);
@@ -59,15 +45,7 @@ if (!isset($_SESSION['user'])) {
 			if ($user) {
 				$user_password = md5($sign_in['password'].":".$user[0]['secretkey']);
 				if ($user_password == $user[0]['password']) {
-					$email_status = $user[0]['email_status'];
-					//Если email не подтверждён
-					if ($email_status == 0) {
-						// Сохраняем в сессию сообщение об ошибке. 
-						$_SESSION["error_messages"] = "<p class='mesage_error'>Вы зарегистрированы, но Ваш почтовый адрес не подтверждён. Для подтверждения почты перейдите по ссылке из письма, которое получили после регистрации.</p> <p> <strong> Внимание! </strong> Ссылка для подтверждения почты, действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p> ";
-						//Возвращаем пользователя на страницу авторизации
-						header("Location: /signin/signin.php");
-					} else {
-						//место для добавления данных в сессию
+					//место для добавления данных в сессию
 						// Если введенные данные совпадают с данными из базы, то сохраняем логин и пароль в массив сессий.
 						$_SESSION['user'] = $user[0];
 						// Обработка галочки "запомнить меня"
@@ -104,7 +82,7 @@ if (!isset($_SESSION['user'])) {
 						}
 						//Возвращаем пользователя на главную страницу
 						header("Location: /");
-					}
+					
 				} else {
 					$errors['password'] = 'Вы ввели неверный пароль';
 				}

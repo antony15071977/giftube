@@ -2,8 +2,12 @@
     //Проверяем, если пользователь не авторизован, то выводим форму регистрации, 
     //иначе выводим сообщение о том, что он уже зарегистрирован
     if (!isset($_SESSION['user'])) {
+        session_start();
         $a = rand(1,10);
         $b = rand(1,10);
+        if (isset($_SESSION['captcha'])) {
+            unset($_SESSION['captcha']);
+        }
        $_SESSION['captcha'] = $a + $b;
         if(!isset($_GET["hidden_form"])){
         unset($_SESSION["error_messages"]);
@@ -38,42 +42,11 @@
                     <?php endif; ?>
                 </div>
                 <span id="valid_email_message"></span>
-                <?php $classname = isset($errors['password']) ? "form__input--error" : "";
-                $value_password = isset($sign_up['password']) ? $sign_up['password'] : ""; ?>
-                <div class="form__row">
-                    <label class="form__label" for="password">Пароль (миним. 6 симв.) (Набор из букв и цифр (латиница)):</label>
-                    <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" minlength="6" required="required" value="<?= $value_password; ?>" placeholder="Задайте пароль" pattern="^[a-zA-Z0-9]+$" >           
-                    <span id="pass_valid">&#x2714;</span>            
-                    <?php if(isset($errors['password'])) : ?>
-                        <div class="error-notice">
-                            <span id="error-pass" class="error-notice__icon error"></span>
-                            <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <span id="valid_password_message" class="mesage_error"></span>
-                <?php $classname = isset($errors['confirm_password']) ? "form__input--error" : "";
-                $value_confpassword = isset($sign_up['confirm_password']) ? $sign_up['confirm_password'] : ""; ?>
-                <div class="form__row">
-                    <label class="form__label" for="confirm_password">Еще раз пароль:</label>
-                    <input class="form__input <?= $classname; ?>" type="password" name="confirm_password" id="confirm_password" minlength="6" required="required" value="<?= $value_confpassword; ?>" placeholder="Повторите пароль" pattern="^[a-zA-Z0-9]+$">
-                    <span id="conf_pass_valid">&#x2714;</span>
-                     <?php if(isset($errors['confirm_password'])) : ?>
-                        <div class="error-notice">
-                            <span id="error-confirm" class="error-notice__icon error"></span>
-                            <span class="error-notice__tooltip">Пароли должны совпадать</span>
-                        </div>
-                    <?php endif; ?>           
-                </div>
-                <span id="valid_confirm_password_message" class="mesage_error"></span>
-                <div>
-                    <a href="#" id="s-h-pass">Показать пароль</a>
-                </div>
                 <?php $classname = isset($errors['name']) ? "form__input--error" : "";
                 $value_name = isset($sign_up['name']) ? $sign_up['name'] : ""; ?>
                 <div class="form__row">
-                    <label class="form__label" for="nickname">Имя (миним. 5 симв.):</label>
-                    <input class="form__input <?= $classname; ?>" type="text" name="name" id="nickname" minlength="5" required="required" value="<?= $value_name; ?>" placeholder="Ваш никнейм на сайте">
+                    <label class="form__label" for="nickname">Имя (миним. 5 симв., опционально):</label>
+                    <input class="form__input <?= $classname; ?>" type="text" name="name" id="nickname" value="<?= $value_name; ?>" placeholder="Ваш никнейм на сайте">
                     <span id="name_valid">&#x2714;</span>
                     <?php if(isset($errors['name'])) : ?>
                         <div class="error-notice">
@@ -101,6 +74,7 @@
                     <input class="form-control" autocomplete="off" name="captcha" id="captcha" type="text"></span>
                     </div>
             </div>
+            <input class="visually-hidden"  name="location" id="location" value="">
             <div class="form__controls">
                 <input class="button form__control" type="submit" name="" value="Отправить">
             </div>
@@ -125,6 +99,8 @@
         });</script>
         <script type="text/javascript">
             $(document).ready(function() {
+                current_url = $(location).attr('href');
+                $('#location').val(current_url);
                 $('#reg_form').submit(function(e){
                     e.preventDefault();
                     e.stopImmediatePropagation;

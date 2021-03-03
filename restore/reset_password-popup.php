@@ -34,35 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$errors['email'] = 'Email должен быть корректным';
 		}
 	}
-	//Удаляем пользователей с таблицы users, которые не подтвердили свою почту в течении суток
-	$sql_del_user = 'DELETE FROM `users` WHERE `email_status` = 0 AND `dt_add` < ( NOW() - INTERVAL 1 DAY )';
-	$res_del = mysqli_query($connect, $sql_del_user);
-	if (!$res_del) {
-		$error = mysqli_error($connect);
-		$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong>Сбой при удалении просроченного аккаунта. Код ошибки: '.$error.'</p>';
-	}
-	//Удаляем пользователей из таблицы confirm_users, которые не подтвердили свою почту в течении сутки
-	$sql_del_user = 'DELETE FROM `confirm_users` WHERE `dt_add` < ( NOW() - INTERVAL 1 DAY )';
-	$res_del = mysqli_query($connect, $sql_del_user);
-	if (!$res_del) {
-		$error = mysqli_error($connect);
-		$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Сбой при удалении просроченного неподтвержденного аккаунта. Код ошибки: '.$error.'</p>';
-	}
 	// проверка на существование пользователя с таким же email
 	$sql = 'SELECT * FROM users WHERE email = "'.$email.'"';
 	$res_pass = mysqli_query($connect, $sql);
 	if ($res_pass) {
 		$user = $res_pass ? mysqli_fetch_all($res_pass, MYSQLI_ASSOC) : null;
 		if ($user) {
-			$email_status = $user[0]['email_status'];
-			//Если email не подтверждён
-			if ($email_status == 0) {
-				// Сохраняем в сессию сообщение об ошибке. 
-				echo "<p class='mesage_error'>
-				Вы не можете восстановить свой пароль, потому что указанный адрес электронной почты($email) не подтверждён. Вы зарегистрированы, но Ваш почтовый адрес не подтверждён. Для подтверждения почты перейдите по ссылке из письма, которое получили после регистрации.</p><p><strong>Внимание! </strong>Ссылка для подтверждения почты действительна 24 часа с момента регистрации. Если Вы не подтвердите Ваш email в течении этого времени, то Ваш аккаунт будет удалён.</p>";
-				exit();
-			} else {
-				//место для добавления логики восстановления
+			//место для добавления логики восстановления
 				$token = $user[0]['secretkey'];
 				//Составляем ссылку на страницу установки нового пароля.
 				$link_reset_password = $address_site.
@@ -88,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					echo "<p class='mesage_error'>Ошибка при отправлении письма на почту ".$email." с cсылкой на страницу установки нового пароля.</p>";
 					exit();
 				}
-			}
 		} else {
 			$errors['email'] = 'Пользователя с таким емeйлом не найдено.';
 		}
