@@ -1,6 +1,7 @@
 <?php
 session_start();
 $connect = mysqli_connect("localhost", "root", "", "giftube");
+$conn = new PDO("mysql:host=localhost; dbname=giftube", "root", "");
 $connectSearch = new PDO("mysql:host=localhost; dbname=giftube", "root", "");
 mysqli_set_charset($connect, "utf8");
 if(!$connect) {

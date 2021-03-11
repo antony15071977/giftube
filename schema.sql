@@ -19,7 +19,19 @@ CREATE TABLE gifs (
   img_path      CHAR(128),
   likes_count   INT,
   favs_count    INT,
-  views_count   INT
+  views_count   INT,
+  votes int(11) NOT NULL default 0,
+  points int(11) NOT NULL default 0,
+  avg_points int(11) NOT NULL default 0
+);
+
+CREATE TABLE IF NOT EXISTS `votes` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `date` int(10) unsigned NOT NULL,
+  `obj_id` int(10) unsigned NOT NULL,
+  `ip` int(10) unsigned NOT NULL,
+  `rating` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
 );
 
 CREATE FULLTEXT INDEX gif_search ON gifs(title, description);

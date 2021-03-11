@@ -5,16 +5,23 @@
         <h2 class="visually-hidden"><?= $title; ?></h2>
         <header class="content__header">
             <nav class="filter">
-                <?php if(isset($_GET['tab'])) : ?>
+                <?php if(isset($_GET['tab']) && $_GET['tab'] == 'new') : ?>
 
                     <a class="filter__item " href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые гифки</a>
                     <a class="filter__item filter__item--active" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'}); return false;">Свежачок</a>
+                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые гифки</a>
+
+                <?php elseif(isset($_GET['tab']) && $_GET['tab'] == 'rating') :?>
+
+                    <a class="filter__item" href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые гифки</a>
+                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'}); return false;">Свежачок</a>
+                    <a class="filter__item filter__item--active" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые гифки</a>
 
                 <?php else :?>
 
                     <a class="filter__item filter__item--active" href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые гифки</a>
                     <a class="filter__item" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'}); return false;">Свежачок</a>
-
+                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые гифки</a>
 
                 <?php endif; ?>
             </nav>

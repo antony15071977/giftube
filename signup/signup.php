@@ -127,7 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$_SESSION["success_messages"] = "<h4 class='success_message'><strong>Регистрация прошла успешно!!!</strong></h4><p class='success_message'> Аккаунт, зарегистрированный на почту <strong>$email</strong> будет залогинен автоматически через 3 секунды, при смене IP адреса или при удалении cookies, которые мы использовали для Вашей автоматической регистрации, Вам понадобится ввести пароль, который мы Вам отправили на адрес электронной почты, указанный Вами при регистрации.</p>";
 			} else {
 				$_SESSION["error_messages"] = "<p class='mesage_error'>Ошибка при отправлении письма с ссылкой подтверждения на почту".$email.". Попробуйте еще раз.</p>";
-				mysqli_query($connect, "ROLLBACK");
 				header("Location: /signup/signup.php?hidden_form=1");
 				exit();
 			}
@@ -146,7 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			]);
 			$res = mysqli_stmt_execute($stmt);
 			if ($res) {
-				mysqli_query($connect, "COMMIT");
 				$user_id = mysqli_insert_id($connect);
 				$page_content = include_template('main.php', [
 					'title' => $title, 

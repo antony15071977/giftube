@@ -3,7 +3,7 @@
 </div>
 <div class="content__main-col">
     <header class="content__header">
-        <h2 class="content__header-text"><?= $gif['title']; ?></h2>
+        <h2 class="content__header-text" itemprop="name"><?= $gif['title']; ?></h2>
         <label for="gifControl">click</label>
     </header>
 
@@ -12,18 +12,57 @@
             <input type="checkbox" name="" id="gifControl" value="1" class="hide">
             <label for="gifControl">Проиграть</label>
             <img src="<?= $gif['img_path']; ?>" alt="" class="gif_img main hide">
-            <img src="uploads/preview_gif58dbdf3251fcf.gif" alt="" class="gif_img preview">
         </div>
-
+        <?php 
+        if ($gif["votes"]==0) $rating = 0;
+        else $rating = round($gif["points"]/$gif["votes"], 2);
+        $clasStar2 = 'star3' ?>
+        <div class="rating" id="el_<?= $gif_id; ?>">
+            <div data-rating="1" class="star <?php 
+            if ($rating>=1) echo $clasStar2;
+            else echo (''); ?>"></div>
+            <div data-rating="2" class="star <?php 
+            if ($rating>=2) echo $clasStar2;
+            else echo (''); ?>"></div>
+           <div data-rating="3" class="star <?php 
+            if ($rating>=3) echo $clasStar2;
+            else echo (''); ?>"></div>
+            <div data-rating="4" class="star <?php 
+            if ($rating>=4) echo $clasStar2;
+            else echo (''); ?>"></div>
+            <div data-rating="5" class="star <?php 
+            if ($rating>=5) echo $clasStar2;
+            else echo (''); ?>"></div>
+            <div id="star_rating">
+            Рейтинг: <?php echo $rating;?>
+            </div>
+            <div id="star_votes">
+            Оценили: <?php echo $gif["votes"];?>
+            </div>
+        </div>
+        <div id="star_message"></div>
         <div class="gif__desctiption">
             <div class="gif__description-data">
-                <span class="gif__username"><?= $gif['name']; ?></span>
+                <span class="gif__username" itemprop="author"><?= $gif['name']; ?></span>
                 <span class="gif__views"><?= $gif['favs_count']; ?></span>
                 <span class="gif__views"><?= $gif['views_count']; ?></span>
                 <span class="gif__likes"><?= $gif['likes_count'] > 0 ? $gif['likes_count'] : ""; ?></span>
             </div>
-            <div class="gif__description">
+            <div itemprop="description" class="gif__description">
                 <p><?= $gif['description']; ?></p>
+            </div>
+            <div style="display: none;" itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating">
+                <span itemprop="itemReviewed" itemscope="" itemtype="https://schema.org/Book">
+                    <span itemprop="name"><?= $gif['title']; ?>        
+                    </span>
+                </span>
+                <meta itemprop="worstRating" content="1">
+                <meta itemprop="bestRating" content="5">
+                <meta itemprop="ratingCount" content="<?= $gif['votes']; ?>">
+                <?php if ($comments != NULL): ?>
+                    <meta itemprop="reviewCount" content="<?= $count_comm; ?>">
+                <?php endif; ?>
+                <span itemprop="ratingValue"><?= $rating; ?></span>
             </div>
         </div>
 

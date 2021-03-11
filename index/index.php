@@ -20,9 +20,9 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
-if (isset($_GET['tab'])) {
+if ($_GET['tab'] == 'new') {
 	// 3. создаем запрос для получения списка свежих гифок
-	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count '.
+	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes '.
 	'FROM gifs g '.
 	'JOIN users u ON g.user_id = u.id '.
 	'ORDER BY g.dt_add DESC LIMIT '.$page_items.
@@ -34,9 +34,10 @@ if (isset($_GET['tab'])) {
 		$error = mysqli_error($connect);
 		print('Ошибка MySQL: '.$error);
 	}
-} else {
-	// 2. создаем запрос для получения списка топовых гифок
-	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count '.'FROM gifs g '.'JOIN users u ON g.user_id = u.id '.'ORDER BY likes_count DESC LIMIT '.$page_items.' OFFSET '.$offset;
+} elseif ($_GET['tab'] == 'rating') {
+	// 2. создаем запрос для получения списка самых рейтинговых по звездам
+	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, avg_points, views_count, points, votes '.'FROM gifs g '.'JOIN users u ON g.user_id = u.id '.'ORDER BY avg_points DESC LIMIT '.$page_items.' OFFSET '.$offset;
+	
 	//отправляем запрос и получаем результат
 	$res_gifs = mysqli_query($connect, $sql_gifs);
 	//запрос выполнен успешно
@@ -49,7 +50,23 @@ if (isset($_GET['tab'])) {
 		print('Ошибка MySQL: '.$error);
 	}
 }
-$param = isset($_GET['tab']) && $_GET['tab'] == 'new' ? ('&tab='.$_GET['tab'].'&') : '';
+else {
+	// 3. создаем запрос для получения списка топовых гифок
+	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes '.'FROM gifs g '.'JOIN users u ON g.user_id = u.id '.'ORDER BY likes_count DESC LIMIT '.$page_items.' OFFSET '.$offset;
+	//отправляем запрос и получаем результат
+	$res_gifs = mysqli_query($connect, $sql_gifs);
+	//запрос выполнен успешно
+	if ($res_gifs) {
+		//получаем гифки в виде двумерного массива
+		$gifs = mysqli_fetch_all($res_gifs, MYSQLI_ASSOC);
+	} else {
+		//получаем текст последней ошибки
+		$error = mysqli_error($connect);
+		print('Ошибка MySQL: '.$error);
+	}
+}
+$param = '';
+$param = isset($_GET['tab']) ? ('&tab='.$_GET['tab'].'&') : '';
 $url = "/index/index.php";
 $Js = "<script src='../js/pagination.js'></script>";
 $pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);

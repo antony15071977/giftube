@@ -6,6 +6,9 @@
             <img src="<?= $gif['img_path']; ?>" alt="" width="260" height="260">
         </a>
     </div>
+    <div class="star_rating">
+        Рейтинг: <?= $gif['avg_points']; ?>
+        </div>
     <div class="gif__desctiption">
         <h3 class="gif__desctiption-title">
             <a href="gif/gif.php?id=<?= $gif['id'];?>"><?= $gif['title']; ?></a>

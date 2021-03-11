@@ -1,12 +1,15 @@
 <?php 
-    //Проверяем, если пользователь не авторизован, то выводим форму восстановления, 
-    //иначе выводим сообщение о том, что он уже авторизован
-    if (!isset($_SESSION['user'])) {
         $a = rand(1,10);
         $b = rand(1,10);
         $_SESSION['captcha'] = $a + $b;
         if(!isset($_GET["hidden_form"])){
-?><h2 class="content__header-text">Восстановление пароля.</h2>
+?>
+<?php if (!isset($_SESSION['user'])) : ?>
+    <h2 class="content__header-text">Восстановление пароля.</h2>
+ <?php else :?>
+    <h2 class="content__header-text">Смена пароля.</h2>
+ <?php endif; ?> 
+
 <p>Введите Ваш емейл:</p>
 <form class="form" action="/restore/reset_password.php" id="restore-popup" method="post">
     <div class="form__column">
@@ -75,15 +78,5 @@
 
 <?php
         }//закрываем условие hidden_form
-
-    }
-    else { 
-        //Иначе, если пользователь уже авторизирован, то выводим этот блок
-?>
-        <div id="authorized">
-            <h2>Вы уже авторизованы</h2>
-        </div>
-
-<?php
-    }
-?>
+   
+?>        

@@ -122,7 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$headers = "FROM: $email_admin\r\nReply-to: $email_admin\r\nContent-type: text/html; charset=utf-8\r\n";
 			//Отправляем сообщение с ссылкой для подтверждения регистрации на указанную почту и проверяем отправлена ли она успешно или нет. 
 			if (!mail($email, $subject, $message, $headers)) {
-				mysqli_query($connect, "ROLLBACK");
 				print("<p class='mesage_error'>Ошибка при отправлении письма с ссылкой подтверждения на почту".$email.". Попробуйте еще раз.</p>");
 				exit();
 			}
@@ -141,7 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			]);
 			$res = mysqli_stmt_execute($stmt);
 			if ($res) {
-				mysqli_query($connect, "COMMIT");
 				$user_id = mysqli_insert_id($connect);
 				print("<h4 class='success_message'><strong>Регистрация прошла успешно!!!</strong></h4><p class='success_message'> Аккаунт, зарегистрированный на почту <strong>$email</strong> будет залогинен автоматически через 3 секунды, при смене IP адреса или при удалении cookies, которые мы использовали для Вашей автоматической регистрации, Вам понадобится ввести пароль, который мы Вам отправили на адрес электронной почты, указанный Вами при регистрации.</p>");
 				
@@ -194,7 +192,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 			
 			} else {
-				mysqli_query($connect, "ROLLBACK");
 				print("<h4 class='mesage_error'><strong>Что то пошло не так...</strong></h4>
 					<p class='mesage_error'>Ошибка при занесении нового пользователя в БД. Попробуйте еще раз. </p>");
 				exit();				

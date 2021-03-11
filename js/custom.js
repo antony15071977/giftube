@@ -36,6 +36,39 @@ function reStore() {
         }
     });
 }
+function changePass() {
+    $('.home').addClass('modal--overflow');
+    $.ajax({
+        url: '/restore/reset_password-popup.php',
+        cache: false,
+        beforeSend: function() {
+            Before();
+        },
+        complete: function() {
+            Complete();
+        },
+        success: function(dataResult) {
+            $('.modal__content').html(dataResult);
+        }
+    });
+    $(".overlay").addClass("open");
+    setTimeout(function() {
+        $('.modal').addClass("open");
+    }, 350);
+    $(document).on('click', function(e) {
+        var target = $(e.target);
+        if ($(target).hasClass("overlay")) {
+            $(target).find(".modal").each(function() {
+                $(this).removeClass("open");
+                $('.home').removeClass('modal--overflow');
+            });
+            setTimeout(function() {
+                $(target).removeClass("open");
+                $('.modal__content').html('');
+            }, 350);
+        }
+    });
+}
 $(document).ready(function(){
     $('#search_box').on('keyup', function() {
         if ($('#search_box').val().length > 2) {

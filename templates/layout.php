@@ -39,6 +39,7 @@
                     <?php if (isset($_SESSION['user'])): ?>
                         <nav class="navigation__links">
                             <a href="javascript:;"><?= $username; ?></a>
+                            <a href="/restore/reset_password.php" onclick="changePass(); return false;">Изменить пароль</a>
                             <a href="/gif/favorites.php" onclick="getData('/gif/favorites.php', {fav : 'fav'}); return false;">Избранное</a>
                             <a href="/logout.php" onclick="logOut(); return false;">Выход</a>
                         </nav>
