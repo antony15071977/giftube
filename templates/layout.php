@@ -57,7 +57,7 @@
                     <h3 class="navigation__title navigation__title--list">Категории</h3>
                     <nav class="navigation__links">
                         <?php foreach ($categories as $category): ?>
-                           <a href="/gif/category.php?id=<?= $category['id']; ?>"><?= $category['name']; ?></a>
+                           <a href="/category/<?= $category['urlCat']; ?>"><?= $category['name']; ?></a>
                         <?php endforeach; ?>
                     </nav>
                 </div>

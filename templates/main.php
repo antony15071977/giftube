@@ -49,7 +49,7 @@
 
         <?php elseif($is404error) : ?>
 
-        <?= include_template('error404.php'); ?>
+        <?= include_template('404.php'); ?>
 
     <?php else : ?>
 

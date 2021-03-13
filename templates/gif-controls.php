@@ -14,3 +14,7 @@
     <a class="button gif__control <?= $classname_fav; ?>" href="/gif/gif-fav.php?id=<?= $gif['id']; ?><?= $query_fav_url; ?>" onclick="goFavLike('/gif/gif-fav-ajax.php', {id : '<?= $gif_id; ?>'<?= $query_fav; ?>}); return false;"><?= $name_fav; ?>
             
     </a>
+    <?php
+        $count_likes = $gif['likes_count'];
+        $count_favs = $gif['favs_count'];
+    ?>

@@ -17,7 +17,7 @@ if (isset($_SESSION['user'])) {
     if ($res_gif) {
         $gif = mysqli_fetch_assoc($res_gif);
         if (!isset($gif)) {
-            header('Location: /error404.php');
+            header('Location: /404.php');
             http_response_code(404);
             $is404error = true;
         }
@@ -36,7 +36,7 @@ if (isset($_SESSION['user'])) {
     }      
     // 5. запрос для списка похожих гифок
         if (!$is404error) {
-            $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count '.
+            $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.
             'FROM gifs g '.
             'JOIN categories c ON g.category_id = c.id '.
             'JOIN users u ON g.user_id = u.id '.
@@ -134,7 +134,7 @@ if (isset($_SESSION['user'])) {
             if ($res_gif) {
                 $gif = mysqli_fetch_assoc($res_gif);
                 if (!isset($gif)) {
-                    header('Location: /error404.php');
+                    header('Location: /404.php');
                     http_response_code(404);
                     $is404error = true;
                 }

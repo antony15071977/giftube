@@ -2,6 +2,21 @@
 require_once('../config/config.php');
 require_once('../config/functions.php');
 require_once('../statistic/statistic.php');
+if (isset($_GET['url'])) {
+    $cat_url = '';
+    $cat_url = trim(htmlentities($_GET['url']));
+    // 2. запрос для получения названия категории
+	$sql_cat_name = 'SELECT * FROM categories WHERE urlCat = "'.$cat_url.'"';
+	$res_cat_name = mysqli_query($connect, $sql_cat_name);
+	if ($res_cat_name) {
+		$category_name = mysqli_fetch_assoc($res_cat_name);
+	} else {
+		$error = mysqli_error($connect);
+		print('Ошибка MySQL: '.$error);
+	}
+	$category_id = $category_name['id'];
+}
+
 if (isset($_GET['id'])) {
 	$category_id = intval(trim($_GET['id']));
 }
@@ -22,7 +37,7 @@ if ($res_cat) {
 	print('Ошибка MySQL: '.$error);
 }
 // 2. запрос для получения названия категории
-$sql_cat_name = 'SELECT name FROM categories WHERE id = '.$category_id;
+$sql_cat_name = 'SELECT name, urlCat FROM categories WHERE id = '.$category_id;
 $res_cat_name = mysqli_query($connect, $sql_cat_name);
 if ($res_cat_name) {
 	$category_name = mysqli_fetch_assoc($res_cat_name);
@@ -31,8 +46,8 @@ if ($res_cat_name) {
 	print('Ошибка MySQL: '.$error);
 }
 // 3. запрос для получения списка гифок по категории
-$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count '.
-'FROM gifs g '.
+$sql_gifs = 'SELECT g.id, category_id, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.
+'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.
 'JOIN users u ON g.user_id = u.id '.
 'WHERE g.category_id = '.$category_id.
 ' ORDER BY g.dt_add DESC LIMIT '.$page_items.
@@ -46,21 +61,21 @@ if ($res_gifs) {
 }
 $Js = "<script src='../js/pagination.js'></script>";
 $url = "/gif/category.php";
-$param = isset($_GET['id']) ? ('&id='.$_GET['id'].'&') : '';
+$param = isset($_GET['id']) || isset($_GET['url']) ? ('&id='.$category_id.'&') : '';
 $pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'cat_id' => $category_id, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
 if ($_GET['mode'] == 'w_js') {
-    $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'title' => $category_name['name']]);
+    $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'url' => $category_name['urlCat'], 'title' => $category_name['name']]);
     $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Все гифки в категории «'.$category_name['name'].
 		'»', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
     print($layout_content);
     exit();
 }
-if (isset($_GET['id']) && isset($_GET['page'])) {
-	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'pagination' => $pagination]);
+if (isset($_GET['id']) && isset($_GET['page']) || isset($_GET['url']) && isset($_GET['page'])) {
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'url' => $category_name['urlCat'], 'pagination' => $pagination]);
 	print($page_content);
 	exit();
 } else {
-	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'pagination' => $pagination]);
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['name'], 'url' => $category_name['urlCat'], 'pagination' => $pagination]);
 }
 if (isset($_SESSION['user'])) {
 	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['name'].

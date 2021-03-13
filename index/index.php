@@ -22,10 +22,7 @@ if ($res_cat) {
 }
 if ($_GET['tab'] == 'new') {
 	// 3. создаем запрос для получения списка свежих гифок
-	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes '.
-	'FROM gifs g '.
-	'JOIN users u ON g.user_id = u.id '.
-	'ORDER BY g.dt_add DESC LIMIT '.$page_items.
+	$sql_gifs = 'SELECT g.id, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'ORDER BY g.dt_add DESC LIMIT '.$page_items.
 	' OFFSET '.$offset;
 	$res_gifs = mysqli_query($connect, $sql_gifs);
 	if ($res_gifs) {
@@ -36,7 +33,7 @@ if ($_GET['tab'] == 'new') {
 	}
 } elseif ($_GET['tab'] == 'rating') {
 	// 2. создаем запрос для получения списка самых рейтинговых по звездам
-	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, avg_points, views_count, points, votes '.'FROM gifs g '.'JOIN users u ON g.user_id = u.id '.'ORDER BY avg_points DESC LIMIT '.$page_items.' OFFSET '.$offset;
+	$sql_gifs = 'SELECT g.id, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'ORDER BY avg_points DESC LIMIT '.$page_items.' OFFSET '.$offset;
 	
 	//отправляем запрос и получаем результат
 	$res_gifs = mysqli_query($connect, $sql_gifs);
@@ -52,7 +49,7 @@ if ($_GET['tab'] == 'new') {
 }
 else {
 	// 3. создаем запрос для получения списка топовых гифок
-	$sql_gifs = 'SELECT g.id, name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes '.'FROM gifs g '.'JOIN users u ON g.user_id = u.id '.'ORDER BY likes_count DESC LIMIT '.$page_items.' OFFSET '.$offset;
+	$sql_gifs = 'SELECT g.id, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'ORDER BY likes_count DESC LIMIT '.$page_items.' OFFSET '.$offset;
 	//отправляем запрос и получаем результат
 	$res_gifs = mysqli_query($connect, $sql_gifs);
 	//запрос выполнен успешно

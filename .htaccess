@@ -3,6 +3,8 @@ DirectoryIndex /index/index.php
 RewriteEngine On 
 RewriteRule ^sitemap.xml$ /sitemap.php
 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/$ /gif/gif.php?category=$1&url=$2 [L]
 
-
-
+RewriteRule ^category/([A-Za-z0-9-]+)/?$ /gif/category.php?url=$1 [L]

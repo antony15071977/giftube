@@ -14,6 +14,31 @@ if ($res_cat) {
     $error = mysqli_error($connect);
     print('Ошибка MySQL: '.$error);
 }
+if (isset($_GET['url'])) {
+    $gif_url = '';
+    $gif_url = trim(htmlentities($_GET['url']));
+    // 1. запрос для получения данных гифки по id
+    $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
+    'likes_count, favs_count, views_count, description, points, avg_points, votes '.
+    'FROM gifs g '.
+    'JOIN categories c ON g.category_id = c.id '.
+    'JOIN users u ON g.user_id = u.id '.
+    'WHERE g.url = "'.$gif_url.'"';
+    $res_gif = mysqli_query($connect, $sql_gif);
+    if ($res_gif) {
+        $gif = mysqli_fetch_assoc($res_gif);
+        $gif_id = $gif['id'];
+        if (!isset($gif)) {
+            header('Location: /404.php');
+            http_response_code(404);
+            $is404error = true;
+        }
+    } else {
+        $error = mysqli_error($connect);
+        print('Ошибка MySQL: '.$error);
+    }
+}
+
 if (isset($_GET['id']) || isset($_POST['gif_id'])) {
     $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
 }
@@ -28,7 +53,7 @@ $res_gif = mysqli_query($connect, $sql_gif);
 if ($res_gif) {
     $gif = mysqli_fetch_assoc($res_gif);
     if (!isset($gif)) {
-        header('Location: /error404.php');
+        header('Location: /404.php');
         http_response_code(404);
         $is404error = true;
     }
@@ -42,7 +67,9 @@ $res_update_views = mysqli_query($connect, $sql_update_views);
 // если гифка добавлена в избранное
 if (isset($_SESSION['user'])) {
     $user_id = intval($_SESSION['user']['id']);
-    $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
+    if (isset($_GET['id']) || isset($_POST['gif_id'])) {
+        $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
+    }
     $isLiked = false;
     $isFav = false;
     $sql_fav = 'SELECT id FROM gifs_fav WHERE user_id = '.$user_id.
@@ -69,7 +96,9 @@ if (isset($_SESSION['user'])) {
 if (isset($_SESSION['user'])) {
     $user_id = intval($_SESSION['user']['id']);
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $gif_id = intval($_POST['gif_id']);
+        if (isset($_GET['id']) || isset($_POST['gif_id'])) {
+            $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
+        }
         $comment = $_POST['comment'];
         $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
         'likes_count, favs_count, views_count, description, points, votes '.
@@ -122,7 +151,7 @@ if ($res_comments) {
 
 // 5. запрос для списка похожих гифок
 if (!$is404error) {
-    $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'WHERE category_id = '.$gif['category_id'].' AND g.id NOT IN('.$gif_id.') '.' LIMIT 6';
+    $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'WHERE category_id = '.$gif['category_id'].' AND g.id NOT IN('.$gif_id.') '.' LIMIT 6';
     $res_similar = mysqli_query($connect, $sql_similar);
     if ($res_similar) {
         $similar_gifs = mysqli_fetch_all($res_similar, MYSQLI_ASSOC);
