@@ -8,6 +8,15 @@ VALUES  ('Видеоигры'),
         ('Фейлы'),
         ('Фильмы и анимация');
 
+UPDATE `giftube`.`categories` SET `url`='games' WHERE  `id`=1;
+UPDATE `giftube`.`categories` SET `url`='animals' WHERE  `id`=2;
+UPDATE `giftube`.`categories` SET `url`='people' WHERE  `id`=3;
+UPDATE `giftube`.`categories` SET `url`='science' WHERE  `id`=4;
+UPDATE `giftube`.`categories` SET `url`='lough' WHERE  `id`=5;
+UPDATE `giftube`.`categories` SET `url`='sport' WHERE  `id`=6;
+UPDATE `giftube`.`categories` SET `url`='fales' WHERE  `id`=7;
+UPDATE `giftube`.`categories` SET `url`='movies' WHERE  `id`=8;
+
 INSERT INTO gifs
 SET dt_add = NOW(),
     category_id = 2,

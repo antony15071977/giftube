@@ -6,7 +6,8 @@ USE giftube;
 
 CREATE TABLE categories (
   id            INT AUTO_INCREMENT PRIMARY KEY,
-  name          CHAR(128) NOT NULL
+  name          CHAR(128) NOT NULL,
+  url VARCHAR(255) NOT NULL,
 );
 
 CREATE TABLE gifs (
@@ -22,6 +23,7 @@ CREATE TABLE gifs (
   views_count   INT,
   votes int(11) NOT NULL default 0,
   points int(11) NOT NULL default 0,
+  url VARCHAR(255) NOT NULL,
   avg_points int(11) NOT NULL default 0
 );
 
