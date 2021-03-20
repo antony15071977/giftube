@@ -7,7 +7,7 @@ USE giftube;
 CREATE TABLE categories (
   id            INT AUTO_INCREMENT PRIMARY KEY,
   name          CHAR(128) NOT NULL,
-  url VARCHAR(255) NOT NULL,
+  urlCat VARCHAR(255) NOT NULL,
 );
 
 CREATE TABLE gifs (
@@ -45,6 +45,7 @@ CREATE TABLE users (
   email         CHAR(128) NOT NULL,
   password      CHAR(64) NOT NULL,
   avatar_path   CHAR(128),
+  status    int NOT NULL default 0,
   secretkey     CHAR(128),
   cookie_token  CHAR(128)
 );
@@ -69,6 +70,7 @@ CREATE TABLE comments (
   dt_add        TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   user_id       INT NOT NULL,
   gif_id        INT NOT NULL,
+  moderation    int NOT NULL default 0,
   comment_text  TEXT NOT NULL
 );
 

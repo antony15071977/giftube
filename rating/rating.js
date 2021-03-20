@@ -1,13 +1,9 @@
 $(document).ready(function(){
-   $(".star").on("mouseover", function(){
-        $(".star").slice(0, $(".star").index(this)+1).addClass("star2");
-    });
-    $(".star").on("mouseout", function(){
-        $(".star").slice(0, $(".star").index(this)+1).removeClass("star2");
-    });
-    $(".star").on("click", function(){
+   $(".star").on("click", function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation;
         jQuery.post("/rating/change_rating.php", {
-            obj_id: $(this).parent().attr("id").substr(3),
+            obj_id: $(this).parent().parent().attr("id").substr(3),
             stars: $(".star").index(this)+1
         }, notice, "json");
     });

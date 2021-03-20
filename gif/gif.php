@@ -91,54 +91,13 @@ if (isset($_SESSION['user'])) {
         }
     }
 }
-// end если гифка добавлена в избранное
-// 3. add comment
-if (isset($_SESSION['user'])) {
-    $user_id = intval($_SESSION['user']['id']);
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if (isset($_GET['id']) || isset($_POST['gif_id'])) {
-            $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
-        }
-        $comment = $_POST['comment'];
-        $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-        'likes_count, favs_count, views_count, description, points, votes '.
-        'FROM gifs g '.
-        'JOIN categories c ON g.category_id = c.id '.
-        'JOIN users u ON g.user_id = u.id '.
-        'WHERE g.id = '.$gif_id;
-        $res_gif = mysqli_query($connect, $sql_gif);
-        if ($res_gif) {
-            $gif = mysqli_fetch_assoc($res_gif);
-        } else {
-            $error = mysqli_error($connect);
-            print('Ошибка MySQL: '.$error);
-        }
-        $required = ['comment'];
-        $errors = [];
-        foreach($required as $key) {
-            if (empty($_POST[$key])) {
-                $errors[$key] = 'Это поле должно быть заполнено';
-            }
-        }
-        if (!count($errors)) {
-            $sql = "INSERT INTO comments (dt_add, user_id, gif_id, comment_text) VALUES (NOW(), ?, ?, ?)";
-            $stmt = db_get_prepare_stmt($connect, $sql, [$user_id, $gif_id, $comment]);
-            $res = mysqli_stmt_execute($stmt);
-            if (!$res) {
-                $error = mysqli_error($connect);
-                print($error);
-            }
-        header('Location: /gif/gif.php?id='.$gif_id);    
-        }
-    }
-}
 // 4. all comments
 if ($_GET['comments'] == 'all') {
-    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC';
+    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.' WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC';
 } else {
-    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' ORDER BY c.dt_add DESC  LIMIT 3';
+    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.' WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC  LIMIT 3';
 }
-$res_count_comm = mysqli_query($connect, 'SELECT count(*) AS cnt FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id);
+$res_count_comm = mysqli_query($connect, 'SELECT count(*) AS cnt FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id  WHERE g.id = "'.$gif_id.'" AND NOT moderation = 0');
 $count_comm = mysqli_fetch_assoc($res_count_comm)['cnt'];
 $res_comments = mysqli_query($connect, $sql_comments);
 if ($res_comments) {
@@ -160,16 +119,83 @@ if (!$is404error) {
         print('Ошибка MySQL: '.$error);
     }
 }
+//add comment
+if (isset($_SESSION['user'])) {
+    $user_id = intval($_SESSION['user']['id']);
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_GET['id']) || isset($_POST['gif_id'])) {
+            $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
+        }
+        $comment = $_POST['comment'];
+        $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
+        'likes_count, favs_count, views_count, description, points, avg_points, votes, g.url, c.urlCat '.
+        'FROM gifs g '.
+        'JOIN categories c ON g.category_id = c.id '.
+        'JOIN users u ON g.user_id = u.id '.
+        'WHERE g.id = '.$gif_id;
+        $res_gif = mysqli_query($connect, $sql_gif);
+        if ($res_gif) {
+            $gif = mysqli_fetch_assoc($res_gif);
+        } else {
+            $error = mysqli_error($connect);
+            print('Ошибка MySQL: '.$error);
+        }
+        $required = ['comment'];
+        $errors = [];
+        $dict = ['comment' => 'Комментарий'];
+        foreach($required as $key) {
+            if (empty($_POST[$key])) {
+                $errors[$key] = 'Это поле должно быть заполнено';
+            }
+        }
+        if (!count($errors)) {
+            $sql = "INSERT INTO comments (dt_add, user_id, gif_id, comment_text) VALUES (NOW(), ?, ?, ?)";
+            $stmt = db_get_prepare_stmt($connect, $sql, [$user_id, $gif_id, $comment]);
+            $res = mysqli_stmt_execute($stmt);
+            if (!$res) {
+                $error = mysqli_error($connect);
+                print($error);
+            }
+            $last_id = mysqli_insert_id($connect);
+            //Составляем заголовок письма
+                    $subject = "Новый комментарий на сайте ".$_SERVER['HTTP_HOST'];
+                    //Устанавливаем кодировку заголовка письма и кодируем его
+                    $subject = "=?utf-8?B?".base64_encode($subject).
+                    "?=";
+                    //Составляем тело сообщения
+            $message = 'Здравствуйте!<br/><br/>Сегодня '.date("d.m.Y", time()).
+            ' пользователем '.$_SESSION['user']['name'].' был оставлен комментарий на сайте <a href="'.$address_site.
+            '">'.$_SERVER['HTTP_HOST'].
+            '</a>.
+            А вот и сам Комменарий: '.$comment.'<br>
+            Чтобы одобрить и опубликовать его, нажмите на ссылку <a href="'.$address_site.'gif/comment-moderation.php?ok='.$last_id.'">"ОДОБРИТЬ"</a>.
+            Чтобы удалить его безвозвратно, нажмите на ссылку <a href="'.$address_site.'gif/comment-moderation.php?del='.$last_id.'">"УДАЛИТЬ"</a>.
+            Чтобы удалить его безвозвратно и занести пользователя в черный список, нажмите на ссылку <a href="'.$address_site.'gif/comment-moderation.php?del='.$last_id.'">"УДАЛИТЬ"</a>.
+            Чтобы отредактировать и потом опубликовать его, нажмите на ссылку <a href="'.$address_site.'gif/comment-moderation.php?comment='.$comment.'&id='.$last_id.'">"РЕДАКТИРОВАТЬ"</a>.
+            ';
+            //Составляем дополнительные заголовки для почтового сервиса mail.ru
+            $headers = "FROM: $email_admin\r\nReply-to: $email_admin\r\nContent-type: text/html; charset=utf-8\r\n";
+            //Отправляем сообщение с ссылкой для подтверждения регистрации на указанную почту и проверяем отправлена ли она успешно или нет. 
+            if (!mail($email_admin, $subject, $message, $headers)) {
+                print("<p class='mesage_error'>Ошибка при отправлении письма с ссылкой подтверждения. Попробуйте еще раз.</p>");
+                exit();
+            }
+            header('Location: '.$address_site.'post-comment/'.$gif['urlCat'].'/'.$gif['url'].'/');
+            exit();    
+        }
+    }
+}
 if ($is404error) {
     $page_content = include_template('main.php', ['username' => $_SESSION['user']['name'], 'title' => '404 Страница не найдена', 'is404error' => $is404error]);
     $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
 } else {
-    $Js = "<script src='../js/pagination.js'></script>
+    $Js = "<link rel='stylesheet' href='../rating/rating.css'>
+        <script src='../js/pagination.js'></script>
         <script src='../js/gif.js'></script>
         <script src='../rating/rating.js'></script>";
-    $page_content = include_template('gif.php', ['username' => $_SESSION['user']['name'], 'errors' => $errors, 'gif' => $gif, 'comments' => $comments, 'count_comm' => $count_comm,  'gif_id' => $gif_id, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+    $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'count_comm' => $count_comm,  'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked, 'dict' => $dict]);
     if (isset($_SESSION['user'])) {
-        $page_content = include_template('gif.php', ['username' => $_SESSION['user']['name'], 'errors' => $errors, 'gif' => $gif, 'count_comm' => $count_comm,  'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked]);
+        $page_content = include_template('gif.php', ['errors' => $errors, 'gif' => $gif, 'count_comm' => $count_comm,  'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked, 'dict' => $dict]);
         $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
     } else {
         $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'Js' => $Js, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);

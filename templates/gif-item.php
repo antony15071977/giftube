@@ -17,7 +17,7 @@
             <span class="gif__username"><?= $gif['name']; ?></span>
             <span class="gif__likes"><?= $gif['favs_count']; ?></span>
             <span class="gif__views"><?= $gif['views_count']; ?></span>
-            <span class="gif__likes"><?= $gif['likes_count'] > 0 ? $gif['likes_count'] : ""; ?></span>
+            <span class="gif__likes"><?= $gif['likes_count']; ?></span>
         </div>
     </div>
 </li>

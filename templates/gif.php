@@ -18,21 +18,23 @@
         else $rating = round($gif["points"]/$gif["votes"], 2);
         $clasStar2 = 'star3' ?>
         <div class="rating" id="el_<?= $gif_id; ?>">
-            <div data-rating="1" class="star <?php 
-            if ($rating>=1) echo $clasStar2;
-            else echo (''); ?>"></div>
-            <div data-rating="2" class="star <?php 
-            if ($rating>=2) echo $clasStar2;
-            else echo (''); ?>"></div>
-           <div data-rating="3" class="star <?php 
-            if ($rating>=3) echo $clasStar2;
-            else echo (''); ?>"></div>
-            <div data-rating="4" class="star <?php 
-            if ($rating>=4) echo $clasStar2;
-            else echo (''); ?>"></div>
-            <div data-rating="5" class="star <?php 
+            <div class="rating_wrapper">
+            <a href="/rating/change_rating_w_js.php?obj_id=<?= $gif_id; ?>&stars=5" data-rating="5" class="star <?php  
             if ($rating>=5) echo $clasStar2;
-            else echo (''); ?>"></div>
+            else echo (''); ?>"></a>
+            <a href="/rating/change_rating_w_js.php?obj_id=<?= $gif_id; ?>&stars=4" data-rating="4" class="star <?php 
+            if ($rating>=4) echo $clasStar2;
+            else echo (''); ?>"></a>
+            <a href="/rating/change_rating_w_js.php?obj_id=<?= $gif_id; ?>&stars=3" data-rating="3" class="star <?php
+            if ($rating>=3) echo $clasStar2;
+            else echo (''); ?>"></a>
+            <a href="/rating/change_rating_w_js.php?obj_id=<?= $gif_id; ?>&stars=2" data-rating="2" class="star <?php 
+            if ($rating>=2) echo $clasStar2;
+            else echo (''); ?>"></a>
+            <a href="/rating/change_rating_w_js.php?obj_id=<?= $gif_id; ?>&stars=1" data-rating="1" class="star <?php 
+            if ($rating>=1) echo $clasStar2;
+            else echo (''); ?>"></a>
+            </div>
             <div id="star_rating">
             Рейтинг: <?php echo $rating;?>
             </div>
@@ -40,13 +42,38 @@
             Оценили: <?php echo $gif["votes"];?>
             </div>
         </div>
-        <div id="star_message"></div>
+        <div id="star_message">
+             <?php
+        if(isset($_GET["vote"]) && $_GET["vote"]=="success"){
+            $com_vote = "<p>Спасибо, Ваш голос учтен!</p>
+            <script type=\"text/javascript\">
+            $(document).ready(function() {
+                setTimeout(function() {
+                    $(\"#star_message\").html('');
+                            }, 4000);
+                });
+            </script>";
+            echo ($com_vote);
+        }
+        if(isset($_GET["vote"]) && $_GET["vote"]=="voted"){
+            $com_vote = "<p>Вы уже голосовали!</p>
+            <script type=\"text/javascript\">
+            $(document).ready(function() {
+                setTimeout(function() {
+                    $(\"#star_message\").html('');
+                            }, 4000);
+                });
+            </script>";
+            echo ($com_vote);
+        }
+        ?>
+        </div>
         <div class="gif__desctiption">
             <div class="gif__description-data">
                 <span class="gif__username" itemprop="author"><?= $gif['name']; ?></span>
                 <span class="favs gif__views"><?= $gif['favs_count']; ?></span>
                 <span class="gif__views"><?= $gif['views_count']; ?></span>
-                <span class="gif__likes"><?= $gif['likes_count'] > 0 ? $gif['likes_count'] : ""; ?></span>
+                <span class="gif__likes"><?= $gif['likes_count']; ?></span>
             </div>
             <div itemprop="description" class="gif__description">
                 <p><?= $gif['description']; ?></p>
@@ -113,14 +140,26 @@
      <?php endif; ?>
     
         </div>
-        <a class="button gif__control" href="/gif/gif.php?comments=all&id=<?= $gif['id']; ?>" id="show_more" count_show="3" count_add="5" gif_id="<?= $gif['id']; ?>" style="display: none;">Еще комментарии</a>
+        <a class="button gif__control" href="/gif/gif.php?comments=all&id=<?= $gif['id']; ?>" id="show_more" count_show="3" count_add="5" gif_id="<?= $gif['id']; ?>" >Еще комментарии</a>
 
     <!-- Для зарегистрированных пользователей -->
     <?php if (isset($_SESSION['user'])): ?>
         <form class="comment-form" id="comment-form" action="/gif/gif.php?id=<?= isset($gif['id']) ? $gif['id'] : ''; ?>" method="post">
             <label class="comment-form__label" for="comment">Добавить комментарий:</label>
+            <!-- Сообщение об ошибках -->
+            <?php if(!empty($errors)) : ?>
+                <div class="form__errors">
+                    <p>Пожалуйста, исправьте следующие ошибки:</p>
+                    <ul>
+                        <?php foreach($errors as $error => $val) : ?>
+                            <li><strong><?= $dict[$error]; ?>:</strong> <?= $val; ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+            <!-- end Сообщение об ошибках -->
             <?php $classname = isset($errors['comment']) ? "form__input--error" : ""; ?>
-            <textarea class="comment-form__text <?= $classname; ?>" onkeyup="checkParams()" name="comment" id="comment" rows="8" required="required" cols="80" maxlength="180" minlength="3" placeholder="Помните о правилах и этикете. Минимум 3, максимум 180 символов."></textarea>
+            <textarea class="comment-form__text <?= $classname; ?>" onkeyup="checkParams()" name="comment" id="comment" rows="8"  cols="80" maxlength="180" minlength="3" placeholder="Помните о правилах и этикете. Минимум 3, максимум 180 символов."></textarea>
             <?php if (isset($errors['comment'])) : ?>
                 <div class="error-notice">
                     <span class="error-notice__icon"></span>
@@ -128,7 +167,23 @@
                 </div>
             <?php endif; ?>
             <input type="hidden" name="gif_id" value="<?= isset($gif['id']) ? $gif['id'] : ''; ?>">
-            <input class="button comment-form__button gif__control--active" id="submit" type="submit" name="" onClick="postData(); return false;" disabled="disabled" value="Отправить">
+            <div id="success-response">
+        <?php
+        if(isset($_GET["comment"]) && $_GET["comment"]=="success"){
+            $comment = "<p>Спасибо за оставленный комментарий, он будет опубликован на сайте в ближайшее время после одобрения модератором.</p>
+            <script type=\"text/javascript\">
+            $(document).ready(function() {
+                setTimeout(function() {
+                    $(\"#success-response\").html('');
+                            }, 4000);
+                });
+            </script>";
+            echo ($comment);
+        }
+        ?>
+            </div>
+            <input class="button comment-form__button" id="submit" type="submit" name="" onClick="postData(); return false;"  value="Отправить">
+
         </form>
     <?php endif; ?>
     <!-- end Для зарегистрированных пользователей -->

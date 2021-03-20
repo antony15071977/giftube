@@ -1,2 +1,3 @@
 User-agent: *
-Sitemap: http://site.com/sitemap.xml
+Disallow: /test/
+Sitemap: /sitemap.xml

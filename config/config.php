@@ -8,7 +8,7 @@ if(!$connect) {
     print('Ошибка подключения: ' . mysqli_connect_error());
 }
 $address_site = "http://giftube/";
-$email_admin = "admin@blabla";
+$email_admin = "i.avraamy2@gmail.com";
 if (defined('dbOn')) {
     $mysqli = new mysqli('localhost', 'root', '', 'giftube');
     if ($mysqli->connect_error) {

@@ -1,4 +1,15 @@
 <?php if ($comments != NULL): ?>
+    <!-- Сообщение об ошибках -->
+        <?php if(isset($errors)) : ?>
+            <div class="form__errors">
+                <p>Пожалуйста, исправьте следующие ошибки:</p>
+                <ul>
+                    <?php foreach($errors as $error => $val) : ?>
+                        <li><strong><?= $dict[$error]; ?>:</strong> <?= $val; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
     
        <?php foreach($comments as $comment) : ?>
             <?php

@@ -35,7 +35,7 @@ function sitemapN($i) { // файлы Sitemap
         exit();
     } else {
         if ($result = $mysqli->query("SELECT url, dt_add, category_id FROM gifs WHERE id>=". $i*1000 ." AND id<". ($i+1)*1000 ."  LIMIT 1000;")) {
-        	$resultCategory = $mysqli->query("SELECT url FROM categories;");
+        	$resultCategory = $mysqli->query("SELECT urlCat FROM categories;");
         	$rowCat = $resultCategory->fetch_assoc();
         	header("Content-Type: application/xml;");
             echo '<?xml version="1.0" encoding="UTF-8"?>
@@ -44,16 +44,16 @@ function sitemapN($i) { // файлы Sitemap
         		echo '
 	        <url>
 	          	<loc>'.$address_site.'</loc>
-	          	<lastmod>'. date('c', strtotime($row['dt_add'])) .'</lastmod>
+	          	<lastmod>'. date("Y-m-d H:i:s") .'</lastmod>
 	          	<priority>1</priority>
 	          	<changefreq>daily</changefreq>
 	        </url>';
 	        	while ($rowCat = $resultCategory->fetch_assoc()) {
-	            	$url = $rowCat['url'];
+	            	$url = $rowCat['urlCat'];
 	            	echo '
 	        <url>
-	          <loc>'.$address_site.$url.'/'.'</loc>
-	          <lastmod>'. date('c', strtotime($row['dt_add'])) .'</lastmod>
+	          <loc>'.$address_site.'category/'.$url.'</loc>
+	          <lastmod>'. date("Y-m-d H:i:s") .'</lastmod>
 	          <priority>0.8</priority>
 	          <changefreq>weekly</changefreq>
 	        </url>';

@@ -4,18 +4,27 @@ function postData() {
         url: '/gif/gif-ajax.php',
         type: 'POST',
         data,
+        dataType: "json",
         cache: false,
-        beforeSend: function() {
-            Before();
-        },
-        complete: function() {
-            Complete();
-        },
-        success: function(dataResult) {
-            $('.comment-list').html(dataResult);
-            $('#comment').val('');
-            checkComments();
-            checkParams();
+        success: function(data) {
+            if (data.result == "success") {
+                $("#success-response").html("<p>Спасибо за оставленный комментарий, он будет опубликован на сайте в ближайшее время после одобрения модератором.</p>");
+                setTimeout(function() {
+                        $("#success-response").html('');
+                            }, 4000);
+                $('#comment').val('');
+                checkComments();
+                checkParams();
+            }
+            if (data.result == "error") {
+                $("#success-response").html(data.error);
+                setTimeout(function() {
+                $("#success-response").html('');
+                            }, 4000);
+                $('#comment').val('');
+                checkComments();
+                checkParams();
+            }
         }
     });
 }
@@ -76,6 +85,8 @@ function checkComments() {
     });
 }
 $(document).ready(function() {
+    $('#submit').attr('disabled', 'disabled');
+    $('#submit').addClass('gif__control--active');
     var count_comments = $('.comment').length ?? '';
     var count_comm = $('#comment-list__count').text() ?? '';
     if (count_comm <= 3) {
@@ -143,14 +154,27 @@ function goFavLike($url, data) {
         url: $url,
         data,
         cache: false,
+        dataType: "json",
         beforeSend: function() {
             Before();
         },
         complete: function() {
             Complete();
         },
-        success: function(dataResult) {
-            $('.gif__controls').html(dataResult);
+        success: function(data) {
+         if (data.result == "success") {
+            $(".gif__controls").html(data.page_content);
+            var count_fav = $('.favs').text();
+            var count_like = $('.gif__likes').text();
+            if (data.count_favs) {
+                var count_fav = $('.favs').text(data.count_favs);
+            }
+            if (data.count_likes) {
+                var count_like = $('.gif__likes').text(data.count_likes);
+            }
+        } else {
+                $(".gif__controls").html(data.page_content);
+            }
         }
     });
 }

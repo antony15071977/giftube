@@ -1,6 +1,8 @@
 <?php
 require_once('../config/config.php');
 require_once('../config/functions.php');
+require_once('../config/check_cookie.php');
+require_once('../statistic/statistic.php');
 if (isset($_SESSION['user'])) {
     $user_id = intval(trim($_SESSION['user']['id']));
     if (isset($_GET['id'])) {
@@ -8,7 +10,7 @@ if (isset($_SESSION['user'])) {
     }
     // 2. запрос для получения данных гифки по id
     $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-    'likes_count, favs_count, views_count, description '.
+    'likes_count, favs_count, views_count, description, points, avg_points, votes '.
     'FROM gifs g '.
     'JOIN categories c ON g.category_id = c.id '.
     'JOIN users u ON g.user_id = u.id '.
@@ -26,11 +28,7 @@ if (isset($_SESSION['user'])) {
         print('Ошибка MySQL: '.$error);
     }
     // 4. all comments
-    $sql_comments = 'SELECT c.dt_add, avatar_path, name, comment_text '.
-    'FROM comments c '.
-    'JOIN gifs g ON g.id = c.gif_id '.
-    'JOIN users u ON c.user_id = u.id '.
-    'WHERE g.id = '.$gif_id;
+    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.' WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC  LIMIT 3';
     $res_comments = mysqli_query($connect, $sql_comments);
     if ($res_comments) {
         $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
@@ -40,14 +38,14 @@ if (isset($_SESSION['user'])) {
     }
     // 5. запрос для списка похожих гифок
     if (!$is404error) {
-        $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count '.
-        'FROM gifs g '.
-        'JOIN categories c ON g.category_id = c.id '.
-        'JOIN users u ON g.user_id = u.id '.
-        'WHERE category_id = '.$gif['category_id'].
-        ' AND g.id NOT IN('.$gif_id.
-        ') '.
-        ' LIMIT 6';
+        $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.
+            'FROM gifs g '.
+            'JOIN categories c ON g.category_id = c.id '.
+            'JOIN users u ON g.user_id = u.id '.
+            'WHERE category_id = '.$gif['category_id'].
+            ' AND g.id NOT IN('.$gif_id.
+            ') '.
+            ' LIMIT 6';
         $res_similar = mysqli_query($connect, $sql_similar);
         if ($res_similar) {
             $similar_gifs = mysqli_fetch_all($res_similar, MYSQLI_ASSOC);
@@ -98,7 +96,7 @@ if (isset($_SESSION['user'])) {
         }
         // 2. запрос для получения данных гифки по id
         $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-        'likes_count, favs_count, views_count, description '.
+        'likes_count, favs_count, views_count, description, description, points, avg_points, votes '.
         'FROM gifs g '.
         'JOIN categories c ON g.category_id = c.id '.
         'JOIN users u ON g.user_id = u.id '.
@@ -115,8 +113,13 @@ if (isset($_SESSION['user'])) {
             $error = mysqli_error($connect);
             print('Ошибка MySQL: '.$error);
         }
+        $count_likes =  $gif['likes_count'];
         $page_content = include_template('gif-controls.php', ['errors' => $errors, 'gif_id' => $gif_id, 'gif' => $gif, 'comments' => $comments, 'isFav' => $isFav, 'isLiked' => $isLiked, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
-        print($page_content);
+        echo json_encode(array(
+            'result'    => 'success',
+            'page_content'      => $page_content,
+            'count_likes'      => $count_likes
+        ));
         exit();
     } else {
         mysqli_query($connect, "START TRANSACTION");
@@ -155,7 +158,7 @@ if (isset($_SESSION['user'])) {
                 }
                 // 2. запрос для получения данных гифки по id
                 $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-                'likes_count, favs_count, views_count, description '.
+                'likes_count, favs_count, views_count, description, points, avg_points, votes '.
                 'FROM gifs g '.
                 'JOIN categories c ON g.category_id = c.id '.
                 'JOIN users u ON g.user_id = u.id '.
@@ -172,8 +175,13 @@ if (isset($_SESSION['user'])) {
                     $error = mysqli_error($connect);
                     print('Ошибка MySQL: '.$error);
                 }
-                $page_content = include_template('gif-controls.php', ['errors' => $errors, 'gif' => $gif, 'gif_id' => $gif_id, 'comments' => $comments, 'isLiked' => $isLiked, 'isFav' => $isFav, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
-                print($page_content);
+                $count_likes =  $gif['likes_count'];
+                $page_content = include_template('gif-controls.php', ['errors' => $errors, 'gif_id' => $gif_id, 'gif' => $gif, 'comments' => $comments, 'isFav' => $isFav, 'isLiked' => $isLiked, 'gifs' => $similar_gifs, 'isGifPage' => $isGifPage]);
+                echo json_encode(array(
+                    'result'    => 'success',
+                    'page_content'      => $page_content,
+                    'count_likes'      => $count_likes
+                ));
                 exit();
             } else {
                 mysqli_query($connect, "ROLLBACK");
