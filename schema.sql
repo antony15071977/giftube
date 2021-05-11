@@ -6,7 +6,7 @@ USE giftube;
 
 CREATE TABLE categories (
   id            INT AUTO_INCREMENT PRIMARY KEY,
-  name          CHAR(128) NOT NULL,
+  nameCat          CHAR(128) NOT NULL,
   urlCat VARCHAR(255) NOT NULL,
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE users (
   email         CHAR(128) NOT NULL,
   password      CHAR(64) NOT NULL,
   avatar_path   CHAR(128),
-  status    int NOT NULL default 0,
+  status    int NOT NULL default 2,
   secretkey     CHAR(128),
   cookie_token  CHAR(128)
 );

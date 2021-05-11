@@ -13,6 +13,10 @@ if(isset($_COOKIE["cookie_token"]) && !empty($_COOKIE["cookie_token"])){
             $cookie_token = md5($user[0]['secretkey'].":".$_SERVER["REMOTE_ADDR"]).md5($user[0]['dt_add']);
             if ($cookie_token == $user[0]['cookie_token']) {
                 $_SESSION['user'] = $user[0];
+                if ($user[0]['status'] == 1) {
+                    echo "<p class='mesage_error'>Вы забанены за нарушение правил использования сайта!</p>";
+                    exit();
+                }
             }
             else {
             $user = null; 

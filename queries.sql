@@ -1,4 +1,4 @@
-INSERT INTO categories (name)
+INSERT INTO categories (nameCat)
 VALUES  ('Видеоигры'),
         ('Животные'),
         ('Люди'),

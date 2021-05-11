@@ -69,7 +69,7 @@ if (!isset($_SESSION['user'])) {
 							    3 параметр - Время жизни куки. Мы указали 30 дней
 							*/
 							//Устанавливаем куку с токеном
-							setcookie("cookie_token", $cookie_token, time() + (1000 * 60 * 60 * 24 * 30));
+							setcookie("cookie_token", $cookie_token, time()+(1000* 60*60*24*30), "/");
 						} else {
 							//Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
 							if (isset($_COOKIE["cookie_token"])) {
@@ -77,7 +77,7 @@ if (!isset($_SESSION['user'])) {
 								$update_cookie_token = "UPDATE users SET cookie_token='' WHERE email = '".$email."'";
 								$res_update_cookie_token = mysqli_query($connect, $update_cookie_token);
 								//Удаляем куку cookie_token
-								setcookie("cookie_token", "", time() - 3600);
+								setcookie("cookie_token", "", time()-3600, "/");
 							}
 						}
 						//Возвращаем пользователя на главную страницу
@@ -88,6 +88,7 @@ if (!isset($_SESSION['user'])) {
 				}
 			} else {
 				$errors['email'] = 'Пользователя с таким емeйлом не найдено.';
+				$errors['password'] = 'К неизвестному емейлу пароль невозможно применить.';
 			}
 			if (count($errors)) {
 				$signin_form = include_template('signin-form.php', ['sign_in' => $sign_in, 'errors' => $errors, 'dict' => $dict]);

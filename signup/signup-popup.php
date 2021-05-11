@@ -62,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			'.'.$extension;
 			//Папка назначения
 			$dest = '../uploads/avatar/';
-			if (($file_type == "image/gif") || ($file_type == "image/jpeg") || ($file_type == "image/png") || ($file_type == "image/pjepg")) {
+			if (strpos($file_type, 'image') !== false) {
 				move_uploaded_file($tmp_name, $dest.$file);
-				$sign_up['avatar_path'] = $dest.$file;
+				$sign_up['avatar_path'] = $file;
 			} else {
 				$errors['avatar'] = 'Файл с таким расширением невозможно загрузить';
 			}
@@ -129,13 +129,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$secret_key = md5(uniqid()).md5(uniqid());
 			// пароль = хэш от пароля + secretkey
 			$password = md5($password_origin.":".$secret_key);
+			$avatar_path = '/'.$sign_up['avatar_path'];
 			$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey) '.
 			'VALUES (NOW(), ?, ?, ?, ?, ?)';
 			$stmt = db_get_prepare_stmt($connect, $sql, [
 				$name,
 				$email,
 				$password,
-				$sign_up['avatar_path'],
+				$avatar_path,
 				$secret_key
 			]);
 			$res = mysqli_stmt_execute($stmt);

@@ -16,9 +16,9 @@ if ($res_cat) {
 $Js = "<script src='../js/gif.js'></script>";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$gif = $_POST;
-	$required = ['category', 'gif-title', 'gif-description'];
+	$required = ['category', 'gif-title', 'gif-url', 'gif-description'];
 	$errors = [];
-	$dict = ['gif-img' => 'Гифка', 'category' => 'Категория', 'gif-title' => 'Название', 'gif-description' => 'Описание'];
+	$dict = ['gif-img' => 'Гифка', 'category' => 'Категория', 'gif-title' => 'Название', 'gif-description' => 'Описание', 'gif-url' => 'ЧПУ'];
 	foreach($required as $key) {
 		if (empty($_POST[$key])) {
 			$errors[$key] = 'Это поле должно быть заполнено';
@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$add_form = include_template('add-form.php', ['gif' => $gif, 'categories' => $categories, 'errors' => $errors, 'dict' => $dict]);
 		$page_content = include_template('main.php', ['form' => $add_form, 'title' => 'Добавить гифку', 'isFormPage' => $isFormPage]);
 	} else {
-		$sql = 'INSERT INTO gifs (dt_add, category_id, user_id, title, description, img_path, likes_count, favs_count, views_count) '.
-		'VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)';
+		$sql = 'INSERT INTO gifs (dt_add, category_id, user_id, title, description, img_path, likes_count, favs_count, views_count, url) '.
+		'VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 		$stmt = db_get_prepare_stmt($connect, $sql, [
 			$gif['category'],
 			$user_id,
@@ -65,12 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$gif['img_path'],
 			0,
 			0,
-			1
+			0,
+			$gif['gif-url']
 		]);
 		$res = mysqli_stmt_execute($stmt);
 		if ($res) {
 			$gif_id = mysqli_insert_id($connect);
 			header('Location: /gif/gif.php?id='.$gif_id);
+			exit();
+		} else {
+			echo "ERROR";
 			exit();
 		}
 	}

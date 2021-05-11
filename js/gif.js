@@ -29,24 +29,31 @@ function postData() {
     });
 }
 
-function addItem($url, data) {
+function addItem() {
     var formAdd = $('#add-form')[0];
     var formData = new FormData(formAdd);
     $.ajax({
-        url: '/gif/add.php',
+        url: '/gif/add-ajax.php',
         type: 'POST',
         data: formData,
         cache: false,
         contentType: false,
         processData: false,
+        dataType: "json",
         beforeSend: function() {
             Before();
         },
         complete: function() {
             Complete();
         },
-        success: function(dataResult) {
-            $('body').html(dataResult);
+        success: function(data) {
+            if (data.result == "error") {
+                $('.content').html(data.add_form);
+            } 
+            if (data.result == "success") {
+                var url = '/gif/gif.php?id='+data.id;
+                $(location).attr('href', url);
+            }
         }
     });
 }

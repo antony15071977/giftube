@@ -1,6 +1,6 @@
 <?php
 session_start();
-$connect = mysqli_connect("localhost", "u1218120_default", "!4vLHr_t", "u1218120_default");
+$connect = mysqli_connect("", "u1218120_default", "!4vLHr_t", "u1218120_default");
 mysqli_set_charset($connect, "utf8");
 
 if(!$connect) {

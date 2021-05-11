@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['count_add'])) {
         foreach($comments as $comment){
             $html .= "
                 <article class='comment'>
-                    <img width='100' height='100' class='comment__picture' src='{$comment['avatar_path']}'>
+                    <img width='100' height='100' class='comment__picture' src='/uploads/avatar/{$comment['avatar_path']}'>
                     <div class='comment__data'>
                             <div class='comment__author'>{$comment['name']}</div>
                             <div class='comment__author'>[{$comment['dt_add']}]</div>

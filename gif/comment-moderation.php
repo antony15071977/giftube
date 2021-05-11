@@ -11,7 +11,7 @@ if ($res_cat) {
     $error = mysqli_error($connect);
     print('Ошибка MySQL: '.$error);
 }
-if (isset($_SESSION['user'])&&$_SESSION['user']['status']==1) {
+if (isset($_SESSION['user'])&&$_SESSION['user']['status']==3) {
     if (isset($_GET["ok"])) {
         $com_id = htmlspecialchars(intval($_GET['ok']));
         $res=mysqli_query($connect,"UPDATE comments SET moderation=1 WHERE id='".$com_id."'");

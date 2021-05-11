@@ -28,7 +28,7 @@
                     <option value="">Выберите категорию</option>
                     <?php foreach($categories as $category): ?>
 
-                        <option value="<?= $category['id']; ?>" <?php if (isset($gif['category']) && ($gif['category'] == $category['id'])) { print(' selected'); }; ?> ><?= $category['name']; ?></option>
+                        <option value="<?= $category['id']; ?>" <?php if (isset($gif['category']) && ($gif['category'] == $category['id'])) { print(' selected'); }; ?> ><?= $category['nameCat']; ?></option>
                     <?php endforeach; ?>
 
                 </select>
@@ -45,6 +45,18 @@
                 <label class="form__label" for="name">Название:</label>
                 <input class="form__input <?= $classname; ?>" type="text" name="gif-title" id="name" value="<?= $value; ?>" placeholder="Введите название">
                 <?php if(isset($errors['gif-title'])) : ?>
+                    <div class="error-notice">
+                        <span class="error-notice__icon"></span>
+                        <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <?php $classname = isset($errors['gif-url']) ? "form__input--error" : "";
+            $value = isset($gif['gif-url']) ? $gif['gif-url'] : ""; ?>
+            <div class="form__row">
+                <label class="form__label" for="name">ЧПУ:</label>
+                <input class="form__input <?= $classname; ?>" type="text" name="gif-url" id="gif-url" value="<?= $value; ?>" placeholder="Введите ЧПУ">
+                <?php if(isset($errors['gif-url'])) : ?>
                     <div class="error-notice">
                         <span class="error-notice__icon"></span>
                         <span class="error-notice__tooltip">Это поле должно быть заполнено</span>
@@ -80,6 +92,6 @@
     <!-- end Сообщение об ошибках -->
 
     <div class="form__controls">
-        <input class="button form__control" type="submit" name="" id="submit" value="Добавить">
+        <input class="button form__control" type="submit" name="" id="submit_add" onclick="addItem(); return false;" value="Добавить">
     </div>
 </form>

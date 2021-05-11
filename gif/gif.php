@@ -17,7 +17,7 @@ if ($res_cat) {
 if (isset($_GET['url'])) {
     $gif_url = '';
     $gif_url = trim(htmlentities($_GET['url']));
-    // 1. запрос для получения данных гифки по id
+    // 1. запрос для получения данных гифки по url
     $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
     'likes_count, favs_count, views_count, description, points, avg_points, votes '.
     'FROM gifs g '.

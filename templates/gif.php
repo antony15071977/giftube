@@ -11,7 +11,7 @@
         <div class="gif__picture">
             <input type="checkbox" name="" id="gifControl" value="1" class="hide">
             <label for="gifControl">Проиграть</label>
-            <img src="<?= $gif['img_path']; ?>" alt="" class="gif_img main hide">
+            <img src="/uploads/<?= $gif['img_path']; ?>" alt="" class="gif_img main hide">
         </div>
         <?php 
         if ($gif["votes"]==0) $rating = 0;
@@ -122,7 +122,7 @@
                 <?php foreach($comments as $comment) : ?>
                 <?php  $inlineEdit = (isset($_SESSION['user']) && $comment['name'] == $username) ? 'inlineEdit' :  ''; ?>
                 <article class="comment">
-                    <img class="comment__picture" src="<?= $comment['avatar_path']; ?>" alt="" width="100" height="100">
+                    <img class="comment__picture" src="/uploads/avatar/<?= $comment['avatar_path']; ?>" alt="" width="100" height="100">
                     <div class="comment__data">
                         <div class="comment__author"><?= $comment['name']; ?>
                         </div>
