@@ -1,7 +1,11 @@
 <?php
 // Получаем уникальный id сессии 
   $id_session = session_id(); 
-   
+$cron_time = filemtime("../statistic/cron.php");    //получаем время последнего изменения файла
+  if (date("d")!=date("d",$cron_time)) {    //сравниваем день изменения файла с текущим
+    file_put_contents("../statistic/cron.php","обновлено");    //перезаписываем файл cron_time
+    mysqli_query($connect, "DELETE FROM `visits` WHERE date<NOW() - INTERVAL 30 DAY;");
+    }               
   // Проверяем, присутствует ли такой id в базе данных 
   $query = "SELECT * FROM session 
             WHERE id_session = '$id_session'"; 
