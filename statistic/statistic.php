@@ -1,10 +1,70 @@
 <?php
+$bot='';
+$ip=$_SERVER['REMOTE_ADDR'];
+$REQUEST_URI=$_SERVER['REQUEST_URI'];
+$HTTP_USER_AGENT=$_SERVER['HTTP_USER_AGENT'];
+$QUERY_STRING=$_SERVER['QUERY_STRING'];
+$HTTP_REFERER=$_SERVER['HTTP_REFERER'];
+$REMOTE_HOST=$_SERVER['REMOTE_HOST'];
+if (strstr($_SERVER['HTTP_USER_AGENT'], 'Yandex')) $bot='Yandex';
+elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Google')) $bot='Google';
+elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Yahoo')) $bot='Yahoo';
+elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Mail')) $bot='Mail';
+if ($bot=='') {
+$res=mysqli_query($connect,"INSERT INTO all_visits (ip,date) VALUES
+     (INET_ATON('".$ip."'),'".time()."')");
+$res=mysqli_query($connect,"SELECT count(id) FROM all_visits WHERE
+     (ip=INET_ATON('".$ip."') and date>'".(time()-10)."') LIMIT 1");
+ $count_visit=mysqli_fetch_array($res);
+ if ($count_visit[0]>10) {
+ $res=mysqli_query($connect,"INSERT INTO black_list_ip (ip,date) VALUES
+     (INET_ATON('".$ip."'),'".time()."')");
+// А как можно ограничить по количеству запросов в сутки с одного IP. Сейчас боты атакуют с промежутком в 4-5 секунд и скрипт уже не спасает.
+// Удаляйте из БД записи старше 86400 секунд (24 часа) и в запросе SELECT count(id) замените (time()-10) на (time()-86400). В if ($count_visit[0]>10) значение 10 замените на нужное Вам количество посещений в сутки.
+ $tmestamp = time();
+$datum = date("H:i:s d.m.Y",$tmestamp);
+$subject = "Сработал автобан";
+$msg = "Пойман на странице $REQUEST_URI $datum, IP: $ip, User-агент $HTTP_USER_AGENT, Метод $REQUEST_METHOD, Строка запросов, если есть, с помощью которой была получена страница $QUERY_STRING, Адрес страницы, если есть, которая привела браузер пользователя на эту страницу $HTTP_REFERER, Удаленный хост, если есть, с которого пользователь просматривал текущую страницу $REMOTE_HOST";
+mail($email_admin, $subject, $msg);
+
+ $start_line=0;
+ $lines='';
+ $ln_hta='';
+
+ $fh=fopen("../.htaccess", "a+");
+ flock($fh, LOCK_EX);
+ fseek($fh, 0);
+ while (!feof($fh)) $lines.=fread($fh,2048);
+ $lines=explode("\n", $lines);
+
+  for ($n=0; $n<=count($lines); $n++) {
+   if (strstr($lines[$n],"Order Allow,Deny")) $start_line=$n;
+  }
+  if ($start_line!=0) for ($n=0; $n<$start_line; $n++) $ln_hta[]=$lines[$n];
+  else $ln_hta=$lines;
+
+  $ln_hta[]="Order Allow,Deny";
+  $ln_hta[]="Allow from all";
+
+  $res=mysqli_query($connect,"SELECT INET_NTOA(ip) AS ip,date FROM black_list_ip
+      ORDER BY INET_ATON(ip)");
+  while ($bad_ip=mysqli_fetch_array($res)) {
+   if (time()<($bad_ip[date]+900))$ln_hta[]=" deny from ".$bad_ip[ip];
+  }
+  $ln_hta=implode("\n",$ln_hta);
+  ftruncate($fh, 0);
+  fwrite($fh, $ln_hta);
+  flock($fh, LOCK_UN);
+  fclose($fh);
+ }
+}
 // Получаем уникальный id сессии 
   $id_session = session_id(); 
 $cron_time = filemtime("../statistic/cron.php");    //получаем время последнего изменения файла
   if (date("d")!=date("d",$cron_time)) {    //сравниваем день изменения файла с текущим
     file_put_contents("../statistic/cron.php","обновлено");    //перезаписываем файл cron_time
     mysqli_query($connect, "DELETE FROM `visits` WHERE date<NOW() - INTERVAL 30 DAY;");
+    mysqli_query($connect, "DELETE FROM `all_visits` WHERE date<NOW() - INTERVAL 1 DAY;");
     }               
   // Проверяем, присутствует ли такой id в базе данных 
   $query = "SELECT * FROM session 

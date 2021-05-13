@@ -50,6 +50,17 @@ CREATE TABLE users (
   cookie_token  CHAR(128)
 );
 
+CREATE TABLE all_visits (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  date        INT(10),
+  ip          INT(32) NOT NULL
+);
+CREATE TABLE black_list_ip (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  date        INT(10),
+  ip          INT(32) NOT NULL
+);
+
 CREATE UNIQUE INDEX email ON users(email);
 CREATE UNIQUE INDEX name ON users(name);
 

@@ -14,3 +14,4 @@ RewriteRule ^post-comment/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/$ /gif/gif.php?url=$2&
 RewriteRule ^vote/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/$ /gif/gif.php?url=$2&vote=success [L]
 
 RewriteRule ^voted/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/$ /gif/gif.php?url=$2&vote=voted [L]
+
