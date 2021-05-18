@@ -2,7 +2,7 @@
 require_once('../../config/config.php');
 require_once('functions.php');
 require_once('../../config/check_cookie.php');
-require_once('../../statistic/statistic.php');
+// require_once('../../statistic/statistic.php');
 // 1. запрос для получения списка категорий;
 $sql_cat = 'SELECT * FROM categories';
 $res_cat = mysqli_query($connect, $sql_cat);

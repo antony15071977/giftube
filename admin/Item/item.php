@@ -2,7 +2,7 @@
 require_once('../../config/config.php');
 require_once('../../config/check_cookie.php');
 require_once('functions.php');
-require_once('../../statistic/statistic.php');
+// require_once('../../statistic/statistic.php');
 if (isset($_GET["del"])) {
 	$id = htmlspecialchars(intval($_GET['del']));
     $res=mysqli_query($connect,"DELETE FROM gifs WHERE id='".$id."'");
