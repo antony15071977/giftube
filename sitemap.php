@@ -56,7 +56,13 @@ function sitemapN($i) { // файлы Sitemap
 	          <lastmod>'. date("Y-m-d H:i:s") .'</lastmod>
 	          <priority>0.8</priority>
 	          <changefreq>weekly</changefreq>
-	        </url>';
+	        </url>
+            <url>
+              <loc>'.$address_site.'amp/category/'.$url.'</loc>
+              <lastmod>'. date("Y-m-d H:i:s") .'</lastmod>
+              <priority>0.8</priority>
+              <changefreq>weekly</changefreq>
+            </url>';
 	            }
         	}
             while ($row = $result->fetch_assoc()) {
@@ -71,6 +77,12 @@ function sitemapN($i) { // файлы Sitemap
                 echo '
         <url>
           <loc>'.$address_site.$urlCat.'/'.$url.'/'.'</loc>
+          <lastmod>'. date('c', strtotime($row['dt_add'])) .'</lastmod>
+          <priority>1</priority>
+          <changefreq>daily</changefreq>
+        </url>
+        <url>
+          <loc>'.$address_site.'amp/'.$urlCat.'/'.$url.'/'.'</loc>
           <lastmod>'. date('c', strtotime($row['dt_add'])) .'</lastmod>
           <priority>1</priority>
           <changefreq>daily</changefreq>

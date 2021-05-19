@@ -18,9 +18,7 @@ if (isset($_GET['url'])) {
     $gif_url = '';
     $gif_url = trim(htmlentities($_GET['url']));
     // 1. запрос для получения данных гифки по url
-    $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-    'likes_count, favs_count, views_count, description, points, avg_points, votes '.
-    'FROM gifs g '.
+    $sql_gif = 'SELECT g.id, g.url, category_id, u.name, title, img_path, likes_count, favs_count, views_count, description, points, avg_points, votes, c.urlCat FROM gifs g '.
     'JOIN categories c ON g.category_id = c.id '.
     'JOIN users u ON g.user_id = u.id '.
     'WHERE g.url = "'.$gif_url.'"';
@@ -43,9 +41,7 @@ if (isset($_GET['id']) || isset($_POST['gif_id'])) {
     $gif_id = intval($_GET['id']) ?? intval($_POST['gif_id']);
 }
 // 2. запрос для получения данных гифки по id
-$sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-'likes_count, favs_count, views_count, description, points, avg_points, votes '.
-'FROM gifs g '.
+$sql_gif = 'SELECT g.id, g.url, category_id, u.name, title, img_path, likes_count, favs_count, views_count, description, points, avg_points, votes, c.urlCat FROM gifs g '.
 'JOIN categories c ON g.category_id = c.id '.
 'JOIN users u ON g.user_id = u.id '.
 'WHERE g.id = '.$gif_id;
@@ -107,7 +103,7 @@ if ($res_comments) {
     print('Ошибка MySQL: '.$error);
 }
 
-
+$href_amp = $address_site.'amp/'.$gif['urlCat'].'/'.$gif['url'].'/';
 // 5. запрос для списка похожих гифок
 if (!$is404error) {
     $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'WHERE category_id = '.$gif['category_id'].' AND g.id NOT IN('.$gif_id.') '.' LIMIT 6';
@@ -187,7 +183,7 @@ if (isset($_SESSION['user'])) {
 }
 if ($is404error) {
     $page_content = include_template('main.php', ['username' => $_SESSION['user']['name'], 'title' => '404 Страница не найдена', 'is404error' => $is404error]);
-    $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
+    $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'href_amp' => $href_amp, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
 } else {
     $Js = "<link rel='stylesheet' href='../rating/rating.css'>
         <script src='../js/pagination.js'></script>
@@ -196,9 +192,9 @@ if ($is404error) {
     $page_content = include_template('gif.php', ['username' => $_SESSION['user']['name'], 'errors' => $errors, 'gif' => $gif, 'count_comm' => $count_comm,  'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked, 'dict' => $dict]);
     if (isset($_SESSION['user'])) {
         $page_content = include_template('gif.php', ['username' => $_SESSION['user']['name'], 'errors' => $errors, 'gif' => $gif, 'count_comm' => $count_comm,  'comments' => $comments, 'gifs' => $similar_gifs, 'gif_id' => $gif_id, 'isGifPage' => $isGifPage, 'isFav' => $isFav, 'isLiked' => $isLiked, 'dict' => $dict]);
-        $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
+        $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'href_amp' => $href_amp, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
     } else {
-        $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'num_online' => $num_online, 'Js' => $Js, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
+        $layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'href_amp' => $href_amp, 'num_online' => $num_online, 'Js' => $Js, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => $gif['title']]);
     }
 }
 print($layout_content);

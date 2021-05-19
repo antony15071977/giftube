@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/custom.css">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="amphtml" href="<?= $href_amp; ?>">
     <script src="../js/jquery.min.js"></script>
     <script src="../js/custom.js"></script>
     <?= $Js = $Js ?? "" ?>

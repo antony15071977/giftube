@@ -3,7 +3,7 @@ require_once('../../config/config.php');
 require_once('../../config/check_cookie.php');
 require_once('../status.php');
 require_once('functions.php');
-require_once('../../statistic/statistic.php');
+// require_once('../../statistic/statistic.php');
 if (isset($_GET["del"])) {
 	$id = htmlspecialchars(intval($_GET['del']));
 	$sql_gif = 'SELECT status FROM users WHERE id = '.$id;
