@@ -1,4 +1,4 @@
-<?php print_r($category_id);
+<?php 
 if ($pages_count > 1): ?>
 <div class="pagination">
     <ul class="pagination__control">

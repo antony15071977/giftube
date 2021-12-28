@@ -8,18 +8,18 @@ function postData() {
         cache: false,
         success: function(data) {
             if (data.result == "success") {
-                $("#success-response").html("<p>Спасибо за оставленный комментарий, он будет опубликован на сайте в ближайшее время после одобрения модератором.</p>");
+                $("#success-respond").html("<p>Спасибо за оставленный ответ, он будет опубликован на сайте в ближайшее время после одобрения модератором.</p>");
                 setTimeout(function() {
-                        $("#success-response").html('');
+                        $("#success-respond").html('');
                             }, 4000);
                 $('#comment').val('');
                 checkComments();
                 checkParams();
             }
             if (data.result == "error") {
-                $("#success-response").html(data.error);
+                $("#success-respond").html(data.error);
                 setTimeout(function() {
-                $("#success-response").html('');
+                $("#success-respond").html('');
                             }, 4000);
                 $('#comment').val('');
                 checkComments();
@@ -48,11 +48,17 @@ function addItem() {
         },
         success: function(data) {
             if (data.result == "error") {
-                $('.content').html(data.add_form);
+                $('.content').html(data.message);
+                setTimeout(function() {
+                    $('.content').html(data.add_form);
+                }, 950);                
             } 
             if (data.result == "success") {
-                var url = '/gif/gif.php?id='+data.id;
-                $(location).attr('href', url);
+                $('.content').html(data.message);
+                var url = '/';
+                setTimeout(function() {
+                    $(location).attr('href', url);
+                }, 950);
             }
         }
     });
@@ -121,7 +127,7 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.result == "success") {
                     $('.comment-list').append(data.html);
-                    btn_more.text('Еще комментарии');
+                    btn_more.text('Еще ответы');
                     btn_more.attr('count_show', (count_show + 5));
                     var count_comments = $('.comment').length;
                     if (count_comments >= count_comm) {
@@ -140,7 +146,7 @@ $(document).ready(function() {
                                 },
                                 success: function(dataResult) {
                                     $('.comment-list').html(dataResult);
-                                    btn_more.text('Еще комментарии');
+                                    btn_more.text('Еще ответы');
                                     btn_more.attr('count_show', 3);
                                     $('#show_less').remove();
                                     btn_more.css('display', 'block');
@@ -236,14 +242,14 @@ $(document).ready(function() {
         });
         $(this).parent('.comment__text').removeClass('selected').addClass('inlineEdit');
         $(this).parent('.comment__text').next().next('.comment__sign').css('display', 'block');
-        $(this).parent('.comment__text').on('click', updateText).html(NewText);
+        $(this).parent('.comment__text').on('click', updateText).html(OrigText);
     });
 
     function updateText() {
         $(this).removeClass("inlineEdit");
         OrigText = $(this).html();
         $(this).next('.comment__sign').css('display', 'none');
-        $(this).addClass("selected").html('<form ><textarea class="edit" maxlength="180" minlength="3">' + OrigText + '</textarea> </form><span class="save"><img src="img/save.png" border="0" width="70" height="25"/></span> <span class="revert"><img src="img/cancel.png" border="0" width="80" height="25"/></span>').off('click', updateText);
+        $(this).addClass("selected").html('<form ><textarea class="edit" maxlength="1800" minlength="3">' + OrigText + '</textarea> </form><span class="save"><img src="img/save.png" border="0" width="70" height="25"/></span> <span class="revert"><img src="img/cancel.png" border="0" width="80" height="25"/></span>').off('click', updateText);
         $('.edit').focus();
         $("<div id='response'></div>").insertAfter($(this));
     }

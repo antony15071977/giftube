@@ -9,12 +9,7 @@ if (isset($_SESSION['user'])) {
     $gif_id = intval(trim($_GET['id']));
     }
     // 2. запрос для получения данных гифки по id
-    $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-    'likes_count, favs_count, views_count, description, points, avg_points, votes '.
-    'FROM gifs g '.
-    'JOIN categories c ON g.category_id = c.id '.
-    'JOIN users u ON g.user_id = u.id '.
-    'WHERE g.id = '.$gif_id;
+    $sql_gif = 'SELECT g.id, category_id, u.name, title likes_count, favs_count, views_count, question, points, avg_points, votes FROM gifs g JOIN categories c ON g.category_id = c.id JOIN users u ON g.user_id = u.id WHERE g.id = '.$gif_id;
     $res_gif = mysqli_query($connect, $sql_gif);
     if ($res_gif) {
         $gif = mysqli_fetch_assoc($res_gif);
@@ -38,14 +33,7 @@ if (isset($_SESSION['user'])) {
     }
     // 5. запрос для списка похожих гифок
     if (!$is404error) {
-        $sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.
-            'FROM gifs g '.
-            'JOIN categories c ON g.category_id = c.id '.
-            'JOIN users u ON g.user_id = u.id '.
-            'WHERE category_id = '.$gif['category_id'].
-            ' AND g.id NOT IN('.$gif_id.
-            ') '.
-            ' LIMIT 6';
+        $sql_similar = 'SELECT g.id, category_id, u.name, title, question, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat FROM gifs g JOIN categories c ON g.category_id = c.id JOIN users u ON g.user_id = u.id WHERE category_id = '.$gif['category_id'].' AND g.id NOT IN('.$gif_id.')  LIMIT 6';
         $res_similar = mysqli_query($connect, $sql_similar);
         if ($res_similar) {
             $similar_gifs = mysqli_fetch_all($res_similar, MYSQLI_ASSOC);
@@ -95,12 +83,7 @@ if (isset($_SESSION['user'])) {
             print('Ошибка MySQL: '.$error);
         }
         // 2. запрос для получения данных гифки по id
-        $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-        'likes_count, favs_count, views_count, description, description, points, avg_points, votes '.
-        'FROM gifs g '.
-        'JOIN categories c ON g.category_id = c.id '.
-        'JOIN users u ON g.user_id = u.id '.
-        'WHERE g.id = '.$gif_id;
+        $sql_gif = 'SELECT g.id, category_id, u.name, title, likes_count, favs_count, views_count, question, points, avg_points, votes FROM gifs g JOIN categories c ON g.category_id = c.id JOIN users u ON g.user_id = u.id WHERE g.id = '.$gif_id;
         $res_gif = mysqli_query($connect, $sql_gif);
         if ($res_gif) {
             $gif = mysqli_fetch_assoc($res_gif);
@@ -157,12 +140,7 @@ if (isset($_SESSION['user'])) {
                     }
                 }
                 // 2. запрос для получения данных гифки по id
-                $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-                'likes_count, favs_count, views_count, description, points, avg_points, votes '.
-                'FROM gifs g '.
-                'JOIN categories c ON g.category_id = c.id '.
-                'JOIN users u ON g.user_id = u.id '.
-                'WHERE g.id = '.$gif_id;
+                $sql_gif = 'SELECT g.id, category_id, u.name, title, question, likes_count, favs_count, views_count,  points, avg_points, votes FROM gifs g JOIN categories c ON g.category_id = c.id JOIN users u ON g.user_id = u.id WHERE g.id = '.$gif_id;
                 $res_gif = mysqli_query($connect, $sql_gif);
                 if ($res_gif) {
                     $gif = mysqli_fetch_assoc($res_gif);

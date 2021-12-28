@@ -13,14 +13,13 @@ else
   $start = 0;
 }
 $query = "
-SELECT * FROM gifs
+SELECT g.id, title, question, url, c.urlCat FROM gifs g JOIN categories c ON g.category_id = c.id  
 ";
 if($_POST['query'] != '')
 {
-  $query .= '
-  WHERE title LIKE "%'.str_replace(' ','%', $_POST['query']).'%" OR description LIKE "%'.str_replace(' ','%', $_POST['query']).'%"';
+  $query .= ' WHERE question LIKE "%'.str_replace(' ','%', $_POST['query']).'%"';
 }
-$query .= 'ORDER BY id ASC ';
+$query .= 'ORDER BY g.id ASC ';
 $filter_query = $query . 'LIMIT '.$start.', '.$limit.'';
 $statement = $connectSearch->prepare($query);
 $statement->execute();

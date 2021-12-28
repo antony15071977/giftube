@@ -8,14 +8,13 @@
       content="width=device-width,minimum-scale=1,initial-scale=1"
     />
     <meta name="keywords" content="Вопросы, форум<?php if (isset($gif["nameCat"])): ?>, <?= $gif["nameCat"]; ?><?php endif; ?>, <?= $title; ?>, сайт 'Форум'">
-    <meta name="description" content="Вопрос: <?= $title; ?>... в категории '<?= $gif["nameCat"]; ?>' на сайте 'Форум'">
+    <meta name="description" content="<?= $title; ?> на сайте 'Форум'">
     <script type="application/ld+json">
     {
       "@context": "http://schema.org",
-        "@type": "Article",
-        "headline": "Article headline",
-        "image": ["/img/favicon.ico"],
-        "datePublished": "<?= $gif["dt_add"]; ?>"
+        "@type": "Category",
+        "headline": "Category headline",
+        "image": ["/img/favicon.ico"]"
     }
     </script>
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
@@ -1582,7 +1581,6 @@
                 <h2 class="visually-hidden">Навигация</h2>
                 <div class="navigation__item">
                     <h3 class="navigation__title navigation__title--account">Мой форум</h3>
-                    <h3 class="navigation__title">Всего вопросов - <?= $items_count; ?></h3>
                     <?php if (isset($_SESSION['user'])): ?>
                         <nav class="navigation__links">
                             <a href="javascript:;"><?= $username; ?></a>

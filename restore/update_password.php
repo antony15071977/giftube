@@ -11,6 +11,14 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$sql_subcat = 'SELECT * FROM upcategories';
+$res_subcat = mysqli_query($connect, $sql_subcat);
+if ($res_subcat) {
+	$upcategories = mysqli_fetch_all($res_subcat, MYSQLI_ASSOC);
+} else {
+	$error = mysqli_error($connect);
+	print('Ошибка MySQL: '.$error);
+}
 if (isset($_POST["set_new_password"]) && !empty($_POST["set_new_password"])) {
 	$required = ['password', 'confirm_password'];
 	$errors = [];
@@ -57,7 +65,7 @@ if (isset($_POST["set_new_password"]) && !empty($_POST["set_new_password"])) {
 				$errors['confirm_password'] = 'Пароли должны совпадать и быть не менее 6 символов.';
 				$Js = '<script type="text/javascript" src="../js/change_pass.js"></script>';
 				$info_form = include_template('form_new_password.php', ['title' => 'Восстановление пароля', 'send_token' => $token, 'email' => $email, 'errors' => $errors, 'password' => $password, 'confirm_password' => $confirm_password, 'dict' => $dict]);
-				$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
+				$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'upcategories' => $upcategories,  'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
 				print($layout_content);
 				exit();
 			}
@@ -66,7 +74,7 @@ if (isset($_POST["set_new_password"]) && !empty($_POST["set_new_password"])) {
 			$errors['confirm_password'] = 'Не заполнено поле повторения пароля';
 			$Js = '<script type="text/javascript" src="../js/change_pass.js"></script>';
 			$info_form = include_template('form_new_password.php', ['title' => 'Восстановление пароля', 'send_token' => $token, 'email' => $email, 'errors' => $errors, 'password' => $password, 'confirm_password' => $confirm_password, 'dict' => $dict]);
-			$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
+			$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'upcategories' => $upcategories,  'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
 			print($layout_content);
 			exit();
 		}
@@ -105,5 +113,5 @@ if (isset($_POST["set_new_password"]) && !empty($_POST["set_new_password"])) {
 	$_SESSION["error_messages"] = '<p><strong>Ошибка!</strong> Вы зашли на эту страницу напрямую, поэтому нет данных для обработки. Вы можете перейти на <a href=".$address_site.">Главную страницу</a>.</p>';
 	$info_form = include_template('set_new_password.php', ['title' => 'Ошибка']);
 }
-$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
+$layout_content = include_template('layout.php', ['content' => $info_form, 'upcategories' => $upcategories, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
 print($layout_content);

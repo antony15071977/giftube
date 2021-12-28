@@ -546,7 +546,8 @@ body {
 
 .gif__picture {
   position: relative;
-
+color: #000;
+    font-size: 30px;
   margin-bottom: 15px;
 }
 

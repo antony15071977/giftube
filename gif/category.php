@@ -2,6 +2,8 @@
 require_once('../config/config.php');
 require_once('../config/functions.php');
 require_once('../statistic/statistic.php');
+$res_count_gifs_all = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs');
+$items_count_all = mysqli_fetch_assoc($res_count_gifs_all)['cnt'];
 if (isset($_GET['url'])) {
     $cat_url = '';
     $cat_url = trim(htmlentities($_GET['url']));
@@ -15,6 +17,8 @@ if (isset($_GET['url'])) {
 		print('Ошибка MySQL: '.$error);
 	}
 	$category_id = $category_name['id'];
+	$href = $address_site.'category/'.$category_name['urlCat'];
+	$href_amp = $address_site.'amp/category/'.$category_name['urlCat'];
 }
 
 if (isset($_GET['id'])) {
@@ -36,6 +40,14 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$sql_subcat = 'SELECT * FROM upcategories';
+$res_subcat = mysqli_query($connect, $sql_subcat);
+if ($res_subcat) {
+	$upcategories = mysqli_fetch_all($res_subcat, MYSQLI_ASSOC);
+} else {
+	$error = mysqli_error($connect);
+	print('Ошибка MySQL: '.$error);
+}
 // 2. запрос для получения названия категории
 $sql_cat_name = 'SELECT nameCat, urlCat FROM categories WHERE id = '.$category_id;
 $res_cat_name = mysqli_query($connect, $sql_cat_name);
@@ -45,8 +57,10 @@ if ($res_cat_name) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$href = $address_site.'category/'.$category_name['urlCat'];
+$href_amp = $address_site.'amp/category/'.$category_name['urlCat'];
 // 3. запрос для получения списка гифок по категории
-$sql_gifs = 'SELECT g.id, category_id, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat, u.name '.
+$sql_gifs = 'SELECT g.id, g.dt_add, category_id, title, likes_count, favs_count, question, views_count, points, avg_points, votes, g.url, c.urlCat, u.name, u.avatar_path '.
 'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.
 'JOIN users u ON g.user_id = u.id '.
 'WHERE g.category_id = '.$category_id.
@@ -64,25 +78,25 @@ $url = "/gif/category.php";
 $param = isset($_GET['id']) || isset($_GET['url']) ? ('&id='.$category_id.'&') : '';
 $pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'cat_id' => $category_id, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
 if ($_GET['mode'] == 'w_js') {
-    $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'url' => $category_name['urlCat'], 'title' => $category_name['nameCat']]);
-    $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Все гифки в категории «'.$category_name['nameCat'].
+    $page_content = include_template('main.php', ['gifs' => $gifs, 'pagination' => $pagination, 'url' => 'category/'.$category_name['urlCat'], 'href_amp' => $href_amp, 'title' => 'Все вопросы в категории «'.$category_name['nameCat'].'»', 'category_name' => $category_name['nameCat']]);
+    $layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'items_count' => $items_count_all, 'href' => $href, 'upcategories' => $upcategories, 'categories' => $categories, 'Js' => $Js, 'title' => 'Все вопросы в категории «'.$category_name['nameCat'].
 		'»', 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
     print($layout_content);
     exit();
 }
 if (isset($_GET['id']) && isset($_GET['page']) || isset($_GET['url']) && isset($_GET['page'])) {
-	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['nameCat'], 'url' => $category_name['urlCat'], 'pagination' => $pagination]);
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => 'Все вопросы в категории «'.$category_name['nameCat'].'»', 'category_name' => $category_name['nameCat'], 'url' => 'category/'.$category_name['urlCat'], 'pagination' => $pagination]);
 	print($page_content);
 	exit();
 } else {
-	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => $category_name['nameCat'], 'url' => $category_name['urlCat'], 'pagination' => $pagination]);
+	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => 'Все вопросы в категории «'.$category_name['nameCat'].'»', 'category_name' => $category_name['nameCat'], 'url' => 'category/'.$category_name['urlCat'], 'pagination' => $pagination]);
 }
 if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['nameCat'].
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'items_count' => $items_count_all, 'href_amp' => $href_amp, 'href' => $href, 'Js' => $Js, 'upcategories' => $upcategories, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все вопросы в категории «'.$category_name['nameCat'].
 		'»'
 	]);
 } else {
-	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все гифки в категории «'.$category_name['nameCat'].
+	$layout_content = include_template('layout.php', ['content' => $page_content, 'upcategories' => $upcategories, 'items_count' => $items_count_all, 'categories' => $categories, 'href_amp' => $href_amp, 'href' => $href, 'Js' => $Js, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Все вопросы в категории «'.$category_name['nameCat'].
 		'»'
 	]);
 }

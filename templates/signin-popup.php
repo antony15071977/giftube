@@ -21,7 +21,7 @@
         } 
         ?>
         <div class="form__row">
-            <label class="form__label" for="email">E-mail:</label>
+            <label class="form__label" for="email">E-mail:*</label>
             <input class="form__input <?= $classname; ?>" type="text" name="email" maxlength="100" id="email" required="required" value="<?= $value_email; ?>" placeholder="Укажите e-mail"><span id="email_valid">&#x2714;</span>
             <?php if(isset($errors['email'])) : ?>
                 <div class="error-notice">

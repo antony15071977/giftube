@@ -4,7 +4,7 @@ $(document).ready(function(){
         e.stopImmediatePropagation;
         jQuery.post("/rating/change_rating.php", {
             obj_id: $(this).parent().parent().attr("id").substr(3),
-            stars: $(".star").index(this)+1
+            stars: $(this).attr('data-rating')
         }, notice, "json");
     });
     function notice(data){

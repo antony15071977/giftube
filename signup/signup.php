@@ -13,9 +13,19 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$sql_subcat = 'SELECT * FROM upcategories';
+$res_subcat = mysqli_query($connect, $sql_subcat);
+if ($res_subcat) {
+	$upcategories = mysqli_fetch_all($res_subcat, MYSQLI_ASSOC);
+} else {
+	$error = mysqli_error($connect);
+	print('Ошибка MySQL: '.$error);
+}
 if (isset($_SESSION['user'])) {
 	header("Location: /");
 }
+$res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs');
+$items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
 // 2. send form
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sign_up = $_POST;
@@ -134,9 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$secret_key = md5(uniqid()).md5(uniqid());
 			// пароль = хэш от пароля + secretkey
 			$password = md5($password_origin.":".$secret_key);
-			$avatar_path = '/'.$sign_up['avatar_path'];
-			$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey) '.
-			'VALUES (NOW(), ?, ?, ?, ?, ?)';
+			$avatar_path = isset($sign_up['avatar_path']) ? '/'.$sign_up['avatar_path'] : '';
+			$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey, status) '.
+			'VALUES (NOW(), ?, ?, ?, ?, ?, 2)';
 			$stmt = db_get_prepare_stmt($connect, $sql, [
 				$name,
 				$email,
@@ -179,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							3 параметр - Время жизни куки. Мы указали 30 дней
 							*/
 							//Устанавливаем куку с токеном
-							setcookie("cookie_token", $cookie_token, time() + (1000 * 60 * 60 * 24 * 30));
+							setcookie("cookie_token", $cookie_token, time()+(1000*60*60*24*300), "/");
 								 
 							//Возвращаем пользователя на страницу, с которой пришел
 							echo "<script type='text/javascript'>
@@ -220,8 +230,10 @@ $page_content = include_template('main.php', [
 ]);
 $layout_content = include_template('layout.php', [
 	'content' => $page_content, 
-	'categories' => $categories,
+	'categories' => $categories, 
+	'upcategories' => $upcategories,
 	'signup_errors' => $errors,
+	'items_count' => $items_count,
 	'username' => $_SESSION['user']['name'], 
 	'num_visitors_hosts' => $row[0]['hosts'], 
 	'num_visitors_views' => $row[0]['views'], 

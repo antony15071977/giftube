@@ -12,45 +12,56 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
-// 2. запрос для получения списка гифок
-$gifs = [];
-$search = isset($_GET['q']) ? $_GET['q'] : '';
-$search = trim(htmlspecialchars($search));
-//переменная для получения логического списка гифок
-if ($search) {
-	$res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs WHERE MATCH(title, description) AGAINST('.'"'.$search.'"'.'IN BOOLEAN MODE)');
-	$items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
-	$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-	//сколько позиций на странице
-	$page_items = 10;
-	$offset = ($current_page - 1) * $page_items;
-	$pages_count = ceil($items_count / $page_items);
-	$pages = range(1, $pages_count);
-	$sql_gifs = 'SELECT g.id, g.dt_add, category_id, user_id, title, description, img_path, likes_count, favs_count, views_count, u.name '.
-	'FROM gifs g '.
-	'JOIN users u ON g.user_id = u.id '.
-	'JOIN categories c ON g.category_id = c.id '.
-	'WHERE MATCH(title, description) AGAINST(? IN BOOLEAN MODE) '.
-	'ORDER BY g.dt_add DESC LIMIT '.$page_items.
-	' OFFSET '.$offset;
-	$stmt = db_get_prepare_stmt($connect, $sql_gifs, [$search]);
-	mysqli_stmt_execute($stmt);
-	$res = mysqli_stmt_get_result($stmt);
-	if ($res) {
-		$gifs = mysqli_fetch_all($res, MYSQLI_ASSOC);
-	}
-}
-$param = isset($_GET['q']) ? ('&q='.$_GET['q'].'') : '';
-$url = "/search/search.php";
-$pagination = include_template('pagination.php', ['param' => $param, 'pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
-if (!$items_count) {
-	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => 'Ничего не найдено']);
+$sql_subcat = 'SELECT * FROM upcategories';
+$res_subcat = mysqli_query($connect, $sql_subcat);
+if ($res_subcat) {
+	$upcategories = mysqli_fetch_all($res_subcat, MYSQLI_ASSOC);
 } else {
-	$page_content = include_template('main.php', ['gifs' => $gifs, 'title' => 'Результаты поиска', 'pagination' => $pagination]);
+	$error = mysqli_error($connect);
+	print('Ошибка MySQL: '.$error);
 }
+
+$limit = '15';
+$page = 1;
+if($_GET['page'] > 1)
+{
+  $start = (($_GET['page'] - 1) * $limit);
+  $page = $_GET['page'];
+}
+else
+{
+  $start = 0;
+}
+$query = "
+SELECT g.id, title, question, url, c.urlCat FROM gifs g JOIN categories c ON g.category_id = c.id
+";
+if($_GET['q'] != '')
+{
+  $query .= ' WHERE question LIKE "%'.str_replace(' ','%', $_GET['q']).'%"';
+}
+$query .= 'ORDER BY g.id ASC ';
+$filter_query = $query . 'LIMIT '.$start.', '.$limit.'';
+$statement = $connectSearch->prepare($query);
+$statement->execute();
+$total_data = $statement->rowCount();
+$statement = $connectSearch->prepare($filter_query);
+$statement->execute();
+$result = $statement->fetchAll();
+$total_filter_data = $statement->rowCount();
+
+$items_count = $total_data;
+$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+$page_items = $limit;
+$offset = ($current_page - 1) * $page_items;
+$pages_count = ceil($items_count / $page_items);
+$pages = range(1, $pages_count);
+$url = "/search/fetch.php";
+$pagination = include_template('pagination.php', ['pages_count' => $pages_count, 'items_count' => $items_count, 'pages' => $pages, 'url' => $url, 'current_page' => $current_page]);
+$page_content = include_template('search.php', ['gifs' => $result, 'items_count' => $items_count, 'pagination' => $pagination, 'title' => 'Результаты поиска']);
+
 if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'Js' => $Js, 'views_stat_month' => $views_stat_month]);
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'upcategories' => $upcategories, 'categories' => $categories, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'Js' => $Js, 'views_stat_month' => $views_stat_month]);
 } else {
-	$layout_content = include_template('layout.php', ['content' => $page_content, 'categories' => $categories, 'Js' => $Js, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
+	$layout_content = include_template('layout.php', ['content' => $page_content, 'upcategories' => $upcategories, 'categories' => $categories, 'Js' => $Js, 'title' => 'Результаты поиска', 'search' => $search, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month]);
 }
 print($layout_content);

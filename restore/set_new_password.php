@@ -11,6 +11,14 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$sql_upcat = 'SELECT * FROM upcategories';
+$res_upcat = mysqli_query($connect, $sql_upcat);
+if ($res_upcat) {
+    $upcategories = mysqli_fetch_all($res_upcat, MYSQLI_ASSOC);
+} else {
+    $error = mysqli_error($connect);
+    print('Ошибка MySQL: '.$error);
+}
 if (isset($_GET['token']) && !empty($_GET['token'])) {
 	$token = trim(htmlspecialchars($_GET['token']));
 } else {
@@ -50,5 +58,5 @@ if (isset($_GET['token']) && isset($_GET['email'])) {
 		$info_form = include_template('set_new_password.php', ['title' => 'Ошибка']);
 	}
 }
-$layout_content = include_template('layout.php', ['content' => $info_form, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
+$layout_content = include_template('layout.php', ['content' => $info_form, 'upcategories' => $upcategories, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'isFormPage' => $isFormPage, 'title' => 'Восстановление пароля']);
 print($layout_content);

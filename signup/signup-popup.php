@@ -4,14 +4,14 @@ require_once('../config/config.php');
 require_once('../config/functions.php');
 require_once('../statistic/statistic.php');
 // 1. запрос для получения списка категорий;
-$sql_cat = 'SELECT * FROM categories';
-$res_cat = mysqli_query($connect, $sql_cat);
-if ($res_cat) {
-	$categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
-} else {
-	$error = mysqli_error($connect);
-	print('Ошибка MySQL: '.$error);
-}
+// $sql_cat = 'SELECT * FROM categories';
+// $res_cat = mysqli_query($connect, $sql_cat);
+// if ($res_cat) {
+// 	$categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
+// } else {
+// 	$error = mysqli_error($connect);
+// 	print('Ошибка MySQL: '.$error);
+// }
 // 2. send form
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sign_up = $_POST;
@@ -129,9 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$secret_key = md5(uniqid()).md5(uniqid());
 			// пароль = хэш от пароля + secretkey
 			$password = md5($password_origin.":".$secret_key);
-			$avatar_path = '/'.$sign_up['avatar_path'];
-			$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey) '.
-			'VALUES (NOW(), ?, ?, ?, ?, ?)';
+			$avatar_path = isset($sign_up['avatar_path']) ? '/'.$sign_up['avatar_path'] : '';
+			$sql = 'INSERT INTO users (dt_add, name, email, password, avatar_path, secretkey, status) '.
+			'VALUES (NOW(), ?, ?, ?, ?, ?, 2)';
 			$stmt = db_get_prepare_stmt($connect, $sql, [
 				$name,
 				$email,
@@ -167,10 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							Параметры функции setcookie():
 							1 параметр - Название куки
 							2 параметр - Значение куки
-							3 параметр - Время жизни куки. Мы указали 30 дней
+							3 параметр - Время жизни куки. Мы указали 300 дней
 							*/
 							//Устанавливаем куку с токеном
-							setcookie("cookie_token", $cookie_token, time() + (1000 * 60 * 60 * 24 * 30));
+							setcookie("cookie_token", $cookie_token, time()+(1000*60*60*24*300), "/");							
 								 
 							//Возвращаем пользователя на страницу, с которой пришел
 							$current_url = $_POST['location'];
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		                    			setTimeout(function() {
 		                    			var url = \"$current_url\";
                         		$(location).attr('href', url);
-										}, 350);
+										}, 750);
 		                    			});
 		                    		</script>";
 		                    exit();

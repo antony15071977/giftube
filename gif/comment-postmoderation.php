@@ -22,13 +22,23 @@ if ($res_upcat) {
 if (isset($_SESSION['user'])&&$_SESSION['user']['status']==3) {
     if (isset($_GET["ok"])) {
         $com_id = htmlspecialchars(intval($_GET['ok']));
-        $res=mysqli_query($connect,"UPDATE comments SET moderation=1 WHERE id='".$com_id."'");
+        $comment = htmlspecialchars($_GET['comment']);
+        $update_comment = "UPDATE comments SET comment_text='".$comment."' WHERE id = '".$com_id."'";
+        $res_update_comment = mysqli_query($connect, $update_comment);
         $_SESSION["success_messages"] = "Ответ одобрен и опубликован.";
     }
     if (isset($_GET["del"])) {
         $com_id = htmlspecialchars(intval($_GET['del']));
         $res=mysqli_query($connect,"DELETE FROM comments WHERE id='".$com_id."'");
         $_SESSION["success_messages"] = "Ответ удален.";
+    }
+    if (isset($_GET["del"]) && isset($_GET["user_id"])) {
+        $com_id = htmlspecialchars(intval($_GET['del']));
+        $user_id = htmlspecialchars(intval($_GET['user_id']));
+        $res=mysqli_query($connect,"DELETE FROM comments WHERE id='".$com_id."'");
+        $update_user = "UPDATE users SET status=0 WHERE id = '".$user_id."'";
+        $res_update_user = mysqli_query($connect, $update_user);
+        $_SESSION["success_messages"] = "Ответ удален. Пользователь заблокирован.";
     }
     if ($_GET["comment"]) {
         $comment = htmlspecialchars($_GET['comment']);

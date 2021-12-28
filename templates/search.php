@@ -3,17 +3,17 @@
     <h2 class="content__header-text">Результаты поиска</h2>
 </header>
 <?php if($items_count !== 0) : ?>
-    <label class="label-search">Total Records - <?= $items_count; ?></label>
+    <label class="label-search">Всего найдено - <?= $items_count; ?></label>
     <table class="table table-striped table-bordered">
       <tr>
         <th>Title</th>
-        <th>Description</th>
+        <th>Вопрос</th>
       </tr>
 
         <?php foreach ($gifs as $row): ?>
         <tr>
-          <td><a href="/gif/gif.php?id=<?= $row['id'] ?>"><?= $row['title'] ?></td></a>
-          <td><a href="/gif/gif.php?id=<?= $row['id']?>"><?= $row["description"] ?></td></a>
+          <td><a href="/<?= $row['urlCat'] ?>/<?= $row['url'] ?>/"><?= $row['title'] ?></td></a>
+          <td><a href="/<?= $row['urlCat'] ?>/<?= $row['url'] ?>/"><?= $row["question"] ?></td></a>
         </tr>
         <?php endforeach; ?>
 

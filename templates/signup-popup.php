@@ -32,7 +32,7 @@
                 <?php $classname = isset($errors['email']) ? "form__input--error" : "";
                 $value_email = isset($sign_up['email']) ? $sign_up['email'] : ""; ?>
                 <div class="form__row">
-                    <label class="form__label" for="email">E-mail:</label>
+                    <label class="form__label" for="email">E-mail:*</label>
                     <input class="form__input <?= $classname; ?>" type="text" name="email" id="email" maxlength="100" value="<?= $value_email; ?>" placeholder="Ваш e-mail" required="required"><span id="email_valid">&#x2714;</span>            
                     <?php if(isset($errors['email'])) : ?>
                         <div class="error-notice">
@@ -45,7 +45,7 @@
                 <?php $classname = isset($errors['name']) ? "form__input--error" : "";
                 $value_name = isset($sign_up['name']) ? $sign_up['name'] : ""; ?>
                 <div class="form__row">
-                    <label class="form__label" for="nickname">Имя (миним. 5 симв., опционально):</label>
+                    <label class="form__label" for="nickname">Имя (миним. 5 симв. (опционально), при отсутствии никнейма на сайте его заместит Ваш емейл):</label>
                     <input class="form__input <?= $classname; ?>" type="text" name="name" id="nickname" value="<?= $value_name; ?>" placeholder="Ваш никнейм на сайте">
                     <span id="name_valid">&#x2714;</span>
                     <?php if(isset($errors['name'])) : ?>

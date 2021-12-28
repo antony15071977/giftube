@@ -2,16 +2,15 @@
     <div class="overlay-content">Loading...</div>
 </div>
 <div class="content__main-col">
+    <a href="<?= $gif['urlCat']; ?>"><?= $gif['nameCat']; ?></a><span style="color: #3a4153; transform: rotate(90deg);display: inline-block;;"> ^</span>
+    <a href="<?= $gif['url']; ?>"><?= $gif['title']; ?></a>
     <header class="content__header">
         <h2 class="content__header-text" itemprop="name"><?= $gif['title']; ?></h2>
-        <label for="gifControl">click</label>
     </header>
 
     <div class="gif gif--large">
         <div class="gif__picture">
-            <input type="checkbox" name="" id="gifControl" value="1" class="hide">
-            <label for="gifControl">Проиграть</label>
-            <img src="/uploads/<?= $gif['img_path']; ?>" alt="" class="gif_img main hide">
+            <?= $gif['question']; ?>
         </div>
         <?php 
         if ($gif["votes"]==0) $rating = 0;
@@ -70,14 +69,16 @@
         </div>
         <div class="gif__desctiption">
             <div class="gif__description-data">
+                <?php $av_path = $gif['avatar_path'] != NULL ? $gif['avatar_path'] : 'user.svg';  ?>
+                    <img class="comment__picture" src="/uploads/avatar/<?= $av_path; ?>" alt="" width="30" height="30">
                 <span class="gif__username" itemprop="author"><?= $gif['name']; ?></span>
                 <span class="favs gif__views"><?= $gif['favs_count']; ?></span>
                 <span class="gif__views"><?= $gif['views_count']; ?></span>
                 <span class="gif__likes"><?= $gif['likes_count']; ?></span>
             </div>
-            <div itemprop="description" class="gif__description">
-                <p><?= $gif['description']; ?></p>
-            </div>
+            <h3 class="gif__desctiption-title" style="color: #000;">
+                <?= $gif['dt_add'];?>
+            </h3>
             <div style="display: none;" itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating">
                 <span itemprop="itemReviewed" itemscope="" itemtype="https://schema.org/Book">
                     <span itemprop="name"><?= $gif['title']; ?>        
@@ -114,15 +115,17 @@
         <!-- end Для зарегистрированных пользователей -->
     </div>
 
-    <h3 class="comment-list__title">Комментарии (<span id="comment-list__count"><?= $count_comm; ?></span>):</h3>
-        <div class="comment-list">
 
     <?php if ($comments != NULL): ?>
+        <h3 class="comment-list__title">Ответы (<span id="comment-list__count"><?= $count_comm; ?></span>):</h3>
+            <div class="comment-list">
+        <?php if ($comments != NULL): ?>
             
                 <?php foreach($comments as $comment) : ?>
                 <?php  $inlineEdit = (isset($_SESSION['user']) && $comment['name'] == $username) ? 'inlineEdit' :  ''; ?>
                 <article class="comment">
-                    <img class="comment__picture" src="/uploads/avatar/<?= $comment['avatar_path']; ?>" alt="" width="100" height="100">
+                    <?php $comm_av_path = $comment['avatar_path'] != NULL ? $comment['avatar_path'] : 'user.svg';  ?>
+                    <img class="comment__picture" src="/uploads/avatar/<?= $comm_av_path; ?>" alt="" width="100" height="100">
                     <div class="comment__data">
                         <div class="comment__author"><?= $comment['name']; ?>
                         </div>
@@ -130,22 +133,26 @@
                         <p class="comment__text <?= $inlineEdit; ?>" data-id="<?= $comment['id']; ?>"><?= $comment['comment_text']; ?></p>
                         <?php if (isset($_SESSION['user']) && $comment['name'] == $username): ?>
 
-                            <span class="comment__author comment__sign"><img class="comment__edit" src="img/pen.png">Нажмите на свой комментарий, чтобы отредактировать</span>
+                            <span class="comment__author comment__sign"><img class="comment__edit" src="img/pen.png">Нажмите на свой ответ, чтобы отредактировать</span>
 
                         <?php endif; ?>
                     </div>
                 </article>
             <?php endforeach; ?>
         
-     <?php endif; ?>
-    
-        </div>
-        <a class="button gif__control" href="/gif/gif.php?comments=all&id=<?= $gif['id']; ?>" id="show_more" count_show="3" count_add="5" gif_id="<?= $gif['id']; ?>" >Еще комментарии</a>
+        <?php endif; ?>
+            </div>
+
+    <?php else :?>
+        <h3 class="comment-list__title">Еще никто не ответил. <?php if (!isset($_SESSION['user'])): ?>Можно оставить свой ответ после регистрации.<?php endif; ?></h3>     
+    <?php endif; ?>
+
+        <a class="button gif__control" href="/gif/gif.php?comments=all&id=<?= $gif['id']; ?>" id="show_more" count_show="3" count_add="5" gif_id="<?= $gif['id']; ?>" >Еще ответы</a>
 
     <!-- Для зарегистрированных пользователей -->
     <?php if (isset($_SESSION['user'])): ?>
         <form class="comment-form" id="comment-form" action="/gif/gif.php?id=<?= isset($gif['id']) ? $gif['id'] : ''; ?>" method="post">
-            <label class="comment-form__label" for="comment">Добавить комментарий:</label>
+            <label class="comment-form__label" for="comment">Добавить ответ:</label>
             <!-- Сообщение об ошибках -->
             <?php if(!empty($errors)) : ?>
                 <div class="form__errors">
@@ -159,7 +166,7 @@
             <?php endif; ?>
             <!-- end Сообщение об ошибках -->
             <?php $classname = isset($errors['comment']) ? "form__input--error" : ""; ?>
-            <textarea class="comment-form__text <?= $classname; ?>" onkeyup="checkParams()" name="comment" id="comment" rows="8"  cols="80" maxlength="180" minlength="3" placeholder="Помните о правилах и этикете. Минимум 3, максимум 180 символов."></textarea>
+            <textarea class="comment-form__text <?= $classname; ?>" onkeyup="checkParams()" name="comment" id="comment" rows="8"  cols="80" maxlength="1800" minlength="3" placeholder="Помните о правилах и этикете. Минимум 3, максимум 1800 символов."></textarea>
             <?php if (isset($errors['comment'])) : ?>
                 <div class="error-notice">
                     <span class="error-notice__icon"></span>
@@ -167,14 +174,14 @@
                 </div>
             <?php endif; ?>
             <input type="hidden" name="gif_id" value="<?= isset($gif['id']) ? $gif['id'] : ''; ?>">
-            <div id="success-response">
+            <div id="success-respond">
         <?php
         if(isset($_GET["comment"]) && $_GET["comment"]=="success"){
-            $comment = "<p>Спасибо за оставленный комментарий, он будет опубликован на сайте в ближайшее время после одобрения модератором.</p>
+            $comment = "<p>Спасибо за оставленный овет, он будет опубликован на сайте в ближайшее время после одобрения модератором.</p>
             <script type=\"text/javascript\">
             $(document).ready(function() {
                 setTimeout(function() {
-                    $(\"#success-response\").html('');
+                    $(\"#success-respond\").html('');
                             }, 4000);
                 });
             </script>";
@@ -190,7 +197,7 @@
 </div>
 
 <aside class="content__additional-col">
-    <h3 class="content__additional-title">Похожие гифки:</h3>
+    <h3 class="content__additional-title">Похожие вопросы:</h3>
 
     <ul class="gif-list gif-list--vertical">
         <?php foreach ($gifs as $gif): ?>

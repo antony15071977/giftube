@@ -6,8 +6,15 @@ USE giftube;
 
 CREATE TABLE categories (
   id            INT AUTO_INCREMENT PRIMARY KEY,
+  upcategories_id            int(11) NOT NULL default 0,
   nameCat          CHAR(128) NOT NULL,
-  urlCat VARCHAR(255) NOT NULL,
+  urlCat VARCHAR(255) NOT NULL
+);
+CREATE TABLE upcategories (
+  up_id            INT AUTO_INCREMENT PRIMARY KEY,
+  rel_Cat          CHAR(128) NOT NULL,
+  name_up_Cat          CHAR(128),
+  url_up_Cat VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE gifs (
@@ -16,11 +23,10 @@ CREATE TABLE gifs (
   category_id   INT NOT NULL,
   user_id       INT NOT NULL,
   title         CHAR(128) NOT NULL,
-  description   TEXT NOT NULL,
-  img_path      CHAR(128),
-  likes_count   INT,
-  favs_count    INT,
-  views_count   INT,
+  question      LONGTEXT,
+  likes_count   INT NOT NULL default 0,
+  favs_count    INT NOT NULL default 0,
+  views_count   INT NOT NULL default 0,
   votes int(11) NOT NULL default 0,
   points int(11) NOT NULL default 0,
   url VARCHAR(255) NOT NULL,
@@ -36,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   PRIMARY KEY (`id`)
 );
 
-CREATE FULLTEXT INDEX gif_search ON gifs(title, description);
+CREATE FULLTEXT INDEX q_search ON gifs(question);
 
 CREATE TABLE users (
   id            INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,7 +50,7 @@ CREATE TABLE users (
   name          CHAR(128) NOT NULL,
   email         CHAR(128) NOT NULL,
   password      CHAR(64) NOT NULL,
-  avatar_path   CHAR(128),
+  avatar_path   CHAR(128) NULL DEFAULT,
   status    int NOT NULL default 2,
   secretkey     CHAR(128),
   cookie_token  CHAR(128)

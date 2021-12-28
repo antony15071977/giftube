@@ -71,37 +71,49 @@
 
         }if(isset($_SESSION["success_messages"]) && !empty($_SESSION["success_messages"])){
             echo $_SESSION["success_messages"];
-            unset($_SESSION["success_messages"]);
+            unset($_SESSION["success_messages"]);            
         }
     ?>
 </div>
-<?php if ($com != NULL): ?>    
+<?php if ($question != NULL && $category != NULL && $url != NULL && $user_id != NULL && $title != NULL): ?>    
     <div align="center">
-        <h2 class="content__header-text">Редактирование ответа</h2>
+        <h2 class="content__header-text">Редактирование вопроса</h2>
         <table style="border:1px solid #000; margin:5px; background-color:#eee; color: black;">
             <tr align="center">
-                <td width="190">Пользователь <b><?= $com["name"]; ?></b></td>
-                <td width="200">Item - <b><?= $com["title"]; ?></b></td>
-                <td width="170"><?= $com["dt_add"]; ?></td>
+                <td width="190">Пользователь id=<b><?= $user_id; ?></b></td>
+                <td width="200">Title - <b><?= $title; ?></b></td>
+                <td width="170">Категория - <b><?= $nameCat; ?></b>
+                </td>
                 <td></td>
             </tr>
             <tr align="center">
-                <form method="POST" action="/gif/comment-moderation.php">
+                <form method="POST" action="/gif/question.php">
                     <td colspan="3">
-                        <textarea cols="70" rows="5" name="comment"><?= $_GET['comment']; ?></textarea>
+                        <textarea cols="70" rows="5" name="question"><?= $question; ?></textarea>
                     </td>
                     <td colspan="4">
-                        <input type="hidden" name="com_id" value='<?= $com["id"]; ?>'>
-                        <input type="submit" value="Изменить">
+                        <p>Изменить категорию:</p>
+                        <select class="<?= $classname; ?>" name="category" id="category">
+                            <option value="">Изменить категорию</option>
+                            <?php foreach($categories as $cat): ?>
+                                <option value="<?= $cat['id']; ?>" <?php if (isset($category) && ($category == $cat['id'])) { print(' selected'); }; ?> ><?= $cat['nameCat']; ?></option>
+                            <?php endforeach; ?>
+
+                        </select>
+                        <br>
+                        <br>
+                        <input type="hidden" name="user_id" value='<?= $user_id; ?>'>
+                        <input type="hidden" name="title" value='<?= $title; ?>'>
+                        <input type="hidden" name="url" value='<?= $url; ?>'>
+                        <input type="submit" value="Сохранить">
                     <br>
-                    <a href="/gif/comment-moderation.php?del=<?= $com["id"]; ?>">Удалить</a>
-                    <br>
-                    <a href="/<?= $com["urlCat"]; ?>/<?= $com["url"]; ?>/">Посмотреть</a>
+                    <a href="/gif/question.php?del=<?= $user_id; ?>">Заблокировать юзера</a>
                     </td>
                 </form>
             </tr>
         </table>
             <br>
             <br>
-    </div>       
+    </div>
+
 <?php endif; ?>

@@ -7,25 +7,30 @@
             <nav class="filter">
                 <?php if(isset($_GET['tab']) && $_GET['tab'] == 'new') : ?>
 
-                    <a class="filter__item " href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые гифки</a>
+                    <a class="filter__item " href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые вопросы</a>
                     <a class="filter__item filter__item--active" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'}); return false;">Свежачок</a>
-                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые гифки</a>
+                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые вопросы</a>
 
                 <?php elseif(isset($_GET['tab']) && $_GET['tab'] == 'rating') :?>
 
-                    <a class="filter__item" href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые гифки</a>
+                    <a class="filter__item" href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые вопросы</a>
                     <a class="filter__item" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'}); return false;">Свежачок</a>
-                    <a class="filter__item filter__item--active" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые гифки</a>
+                    <a class="filter__item filter__item--active" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые вопросы</a>
 
                 <?php else :?>
 
-                    <a class="filter__item filter__item--active" href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые гифки</a>
+                    <a class="filter__item filter__item--active" href="/index/index.php" onclick="getData('/index/index.php', {top : 'top'}); return false;">Топовые вопросы</a>
                     <a class="filter__item" href="/index/index.php?mode=w_js&tab=new" onclick="getData('/index/index.php', {tab : 'new'}); return false;">Свежачок</a>
-                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые гифки</a>
+                    <a class="filter__item" href="/index/index.php?mode=w_js&tab=rating" onclick="getData('/index/index.php', {tab : 'rating'}); return false;">Рейтинговые вопросы</a>
 
                 <?php endif; ?>
             </nav>
-            <a class="button button--transparent button--transparent-thick content__header-button" href="/gif/add.php">Загрузить свою</a>
+            <?php if (isset($_SESSION['user'])): ?>
+                    <a class="button button--transparent button--transparent-thick content__header-button" href="/add/"><b>Задать вопрос</b></a>
+                <?php else : ?>
+                    <a class="button button--transparent button--transparent-thick content__header-button" href="/"><b>Задать вопрос</b><br>(только для зарегистрированных пользователей)</a>
+            <?php endif; ?>
+            
         </header>
 
     <?php else : ?>
@@ -37,7 +42,10 @@
             <div class="overlay-content">Loading...</div>
         </div>
             <h2 class="content__header-text"><?= $title; ?></h2>
-            <a class="button button--transparent content__header-button" href="/">Назад</a>
+            <a class="button button--transparent content__header-button" href="/">Домой</a>
+            <?php if(isset($category_name) || isset($up_category_name)) : ?>
+                <a class="button button--transparent content__header-button" href="/<?= $url; ?>"><?= $up_category_name; ?><?= $category_name; ?></a>
+            <?php endif; ?>            
         </header>
 
     <?php endif; ?>

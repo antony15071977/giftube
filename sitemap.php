@@ -12,7 +12,7 @@ function sitemap() { // файл индекса Sitemap
         printf("Ошибка при загрузке набора символов utf8: %s\n", $mysqli->error);
         exit();
     } else {
-        if ($result = $mysqli->query("SELECT FLOOR(id/1000) FROM gifs ORDER BY id DESC LIMIT 1;")) { // max 50000
+        if ($result = $mysqli->query("SELECT FLOOR(id/49999) FROM gifs ORDER BY id DESC LIMIT 1;")) { // max 50000
             $row = $result->fetch_row();
             $row = intval($row[0]);
             header("Content-Type: application/xml;");
@@ -34,7 +34,7 @@ function sitemapN($i) { // файлы Sitemap
         printf("Ошибка при загрузке набора символов utf8: %s\n", $mysqli->error);
         exit();
     } else {
-        if ($result = $mysqli->query("SELECT url, dt_add, category_id FROM gifs WHERE id>=". $i*1000 ." AND id<". ($i+1)*1000 ."  LIMIT 1000;")) {
+        if ($result = $mysqli->query("SELECT url, dt_add, category_id FROM gifs WHERE id>=". $i*49999 ." AND id<". ($i+1)*49999 ."  LIMIT 49999;")) {
         	$resultCategory = $mysqli->query("SELECT urlCat FROM categories;");
         	$rowCat = $resultCategory->fetch_assoc();
         	header("Content-Type: application/xml;");

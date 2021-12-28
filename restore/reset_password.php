@@ -13,6 +13,16 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$sql_subcat = 'SELECT * FROM upcategories';
+$res_subcat = mysqli_query($connect, $sql_subcat);
+if ($res_subcat) {
+	$upcategories = mysqli_fetch_all($res_subcat, MYSQLI_ASSOC);
+} else {
+	$error = mysqli_error($connect);
+	print('Ошибка MySQL: '.$error);
+}
+$res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs');
+$items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sign_in = $_POST;
 	$required = ['email', 'captcha'];
@@ -81,5 +91,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
 	$signin_form = include_template('reset_password.php');
 }
-$layout_content = include_template('layout.php', ['content' => $signin_form, 'categories' => $categories, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Помощь в восстановлении пароля']);
+$layout_content = include_template('layout.php', ['content' => $signin_form, 'upcategories' => $upcategories, 'categories' => $categories, 'items_count' => $items_count, 'username' => $_SESSION['user']['name'], 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'isFormPage' => $isFormPage, 'title' => 'Помощь в восстановлении пароля']);
 print($layout_content);

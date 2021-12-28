@@ -12,6 +12,17 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$sql_subcat = 'SELECT * FROM upcategories';
+$res_subcat = mysqli_query($connect, $sql_subcat);
+if ($res_subcat) {
+	$upcategories = mysqli_fetch_all($res_subcat, MYSQLI_ASSOC);
+} else {
+	$error = mysqli_error($connect);
+	print('Ошибка MySQL: '.$error);
+}
+$res_count_gifs = mysqli_query($connect, 'SELECT count(*) AS cnt FROM gifs');
+$items_count = mysqli_fetch_assoc($res_count_gifs)['cnt'];
+
 if (!isset($_SESSION['user'])) {
 	//  send form
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -69,10 +80,10 @@ if (!isset($_SESSION['user'])) {
 							    Параметры функции setcookie():
 							    1 параметр - Название куки
 							    2 параметр - Значение куки
-							    3 параметр - Время жизни куки. Мы указали 30 дней
+							    3 параметр - Время жизни куки. Мы указали 300 дней
 							*/
 							//Устанавливаем куку с токеном
-							setcookie("cookie_token", $cookie_token, time()+(1000* 60*60*24*30), "/");
+							setcookie("cookie_token", $cookie_token, time()+(1000*60*60*24*300), "/");
 						} else {
 							//Если галочка "запомнить меня" не была поставлена, то мы удаляем куки
 							if (isset($_COOKIE["cookie_token"])) {
@@ -114,7 +125,7 @@ if (!isset($_SESSION['user'])) {
 		exit();
 	}
 	$page_content = include_template('main.php', ['form' => $signin_form, 'title' => 'Вход для своих', 'isFormPage' => $isFormPage]);
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'signin_errors' => $errors, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'title' => 'Вход на сайт']);
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'signin_errors' => $errors, 'categories' => $categories, 'upcategories' => $upcategories, 'items_count' => $items_count, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'Js' => $Js, 'title' => 'Вход на сайт']);
 	print($layout_content);
 } else {
 	header("Location: /");

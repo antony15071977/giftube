@@ -7,7 +7,7 @@ if (isset($_GET['id']) || isset($_POST['gif_id'])) {
     $gif_id = intval($_GET['id'] ?? intval($_POST['gif_id']));
 }
 if ($_POST['content'] == 'hide') {
-    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.'AND NOT moderation = 0 ORDER BY c.dt_add DESC  LIMIT 3';
+    $sql_comments = 'SELECT c.dt_add, c.id, u.avatar_path, u.name, c.comment_text FROM comments c '.'JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC LIMIT 3';
     $res_comments = mysqli_query($connect, $sql_comments);
     if ($res_comments) {
         $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
@@ -31,12 +31,7 @@ if ($_POST['comments'] == 'count') {
     exit();
 }
 // 2. запрос для получения данных гифки по id
-$sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-'likes_count, favs_count, views_count, description '.
-'FROM gifs g '.
-'JOIN categories c ON g.category_id = c.id '.
-'JOIN users u ON g.user_id = u.id '.
-'WHERE g.id = '.$gif_id;
+$sql_gif = 'SELECT g.id, category_id, u.name, title, likes_count, favs_count, views_count, question FROM gifs g JOIN categories c ON g.category_id = c.id JOIN users u ON g.user_id = u.id WHERE g.id = '.$gif_id;
 $res_gif = mysqli_query($connect, $sql_gif);
 if ($res_gif) {
     $gif = mysqli_fetch_assoc($res_gif);
@@ -82,14 +77,14 @@ if (isset($_SESSION['user'])) {
     }
 }
 // 4. all comments
-$sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC  LIMIT 3';
+$sql_comments = 'SELECT c.dt_add, c.id, u.avatar_path, u.name, c.comment_text '.'FROM comments c '.'JOIN gifs g ON g.id = c.gif_id '.'JOIN users u ON c.user_id = u.id '.'WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC  LIMIT 3';
 $res_count_comm = mysqli_query($connect, 'SELECT count(*) AS cnt FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = "'.$gif_id.'" AND NOT moderation = 0');
 $count_comm = mysqli_fetch_assoc($res_count_comm)['cnt'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['count_add'])) {
     $gif_id = (int)$_POST['gif_id'];
     $countView = (int)$_POST['count_add'];  // количество записей, получаемых за один раз
     $startIndex = (int)$_POST['count_show']; // с какой записи начать выборку
-    $sql_comments = 'SELECT c.dt_add, c.id, avatar_path, name, comment_text FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC LIMIT '.$startIndex.', '.$countView;
+    $sql_comments = 'SELECT c.dt_add, c.id, u.avatar_path, u.name, c.comment_text FROM comments c JOIN gifs g ON g.id = c.gif_id JOIN users u ON c.user_id = u.id WHERE g.id = '.$gif_id.' AND NOT moderation = 0 ORDER BY c.dt_add DESC LIMIT '.$startIndex.', '.$countView;
     $res_comments = mysqli_query($connect, $sql_comments);
     if ($res_comments) {
         $comments = mysqli_fetch_all($res_comments, MYSQLI_ASSOC);
@@ -105,16 +100,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['count_add'])) {
     } else {
         $html = "";
         foreach($comments as $comment){
+            $comm_av_path = $comment['avatar_path'] != NULL ? $comment['avatar_path'] : 'user.svg';
             $html .= "
                 <article class='comment'>
-                    <img width='100' height='100' class='comment__picture' src='/uploads/avatar/{$comment['avatar_path']}'>
+                    <img width='100' height='100' class='comment__picture' src='/uploads/avatar/{$comm_av_path}'>
                     <div class='comment__data'>
                             <div class='comment__author'>{$comment['name']}</div>
                             <div class='comment__author'>[{$comment['dt_add']}]</div>
                             <p class='comment__text ".
                             (($comment['name'] == $_SESSION['user']['name']) ? "inlineEdit" : "")
                         ."' data-id='{$comment['id']}'>{$comment['comment_text']}</p>".
-                            (($comment['name'] == $_SESSION['user']['name']) ? "<span class='comment__author comment__sign'><img class='comment__edit' src='img/pen.png'>Нажмите на свой комментарий, чтобы отредактировать</span>" : "")
+                            (($comment['name'] == $_SESSION['user']['name']) ? "<span class='comment__author comment__sign'><img class='comment__edit' src='img/pen.png'>Нажмите на свой ответ, чтобы отредактировать</span>" : "")
                         ."</div>
                     </article>
             ";
@@ -133,7 +129,7 @@ if ($res_comments) {
     $error = mysqli_error($connect);
     print('Ошибка MySQL: '.$error);
 }
-$sql_similar = 'SELECT g.id, category_id, u.name, title, img_path, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat '.'FROM gifs g '.'JOIN categories c ON g.category_id = c.id '.'JOIN users u ON g.user_id = u.id '.'WHERE category_id = '.$gif['category_id'].' AND g.id NOT IN('.$gif_id.') '.' LIMIT 6';
+$sql_similar = 'SELECT g.id, category_id, u.name, title, question, likes_count, favs_count, views_count, points, avg_points, votes, g.url, c.urlCat FROM gifs g JOIN categories c ON g.category_id = c.id JOIN users u ON g.user_id = u.id WHERE category_id = '.$gif['category_id'].' AND g.id NOT IN('.$gif_id.')  LIMIT 6';
     $res_similar = mysqli_query($connect, $sql_similar);
     if ($res_similar) {
         $similar_gifs = mysqli_fetch_all($res_similar, MYSQLI_ASSOC);
@@ -147,12 +143,7 @@ if (isset($_SESSION['user'])) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $gif_id = intval($_POST['gif_id']);
         $comment = stripslashes($_POST['comment']);
-        $sql_gif = 'SELECT g.id, category_id, u.name, title, img_path, '.
-        'likes_count, favs_count, views_count, description '.
-        'FROM gifs g '.
-        'JOIN categories c ON g.category_id = c.id '.
-        'JOIN users u ON g.user_id = u.id '.
-        'WHERE g.id = '.$gif_id;
+        $sql_gif = 'SELECT g.id, category_id, u.name, title, likes_count, favs_count, views_count, question FROM gifs g JOIN categories c ON g.category_id = c.id JOIN users u ON g.user_id = u.id WHERE g.id = '.$gif_id;
         $res_gif = mysqli_query($connect, $sql_gif);
         if ($res_gif) {
             $gif = mysqli_fetch_assoc($res_gif);
@@ -162,7 +153,7 @@ if (isset($_SESSION['user'])) {
         }
         $required = ['comment'];
         $errors = [];
-        $dict = ['comment' => 'Комментарий'];
+        $dict = ['comment' => 'Ответ'];
         foreach($required as $key) {
             if (empty($_POST[$key])) {
                 $errors[$key] = 'Это поле должно быть заполнено';
@@ -179,16 +170,15 @@ if (isset($_SESSION['user'])) {
             $last_id = mysqli_insert_id($connect);
             if (isset($_SESSION['user'])) {
                     //Составляем заголовок письма
-                    $subject = "Новый комментарий на сайте ".$_SERVER['HTTP_HOST'];
+                    $subject = "Новый ответ на сайте ".$_SERVER['HTTP_HOST'];
                     //Устанавливаем кодировку заголовка письма и кодируем его
                     $subject = "=?utf-8?B?".base64_encode($subject).
                     "?=";
                     //Составляем тело сообщения
             $message = 'Здравствуйте!<br/><br/>Сегодня '.date("d.m.Y", time()).
-            ' пользователем '.$_SESSION['user']['name'].' был оставлен комментарий на сайте <a href="'.$address_site.
-            '">'.$_SERVER['HTTP_HOST'].
+            ' пользователем '.$_SESSION['user']['name'].' был оставлен ответ на сайте <a href="'.$address_site.'">'.$_SERVER['HTTP_HOST'].
             '</a>.
-            А вот и сам Комменарий: '.$comment.'<br>
+            А вот и сам Ответ: '.$comment.'<br>
             Чтобы одобрить и опубликовать его, нажмите на ссылку <a href="'.$address_site.'gif/comment-moderation.php?ok='.$last_id.'">"ОДОБРИТЬ"</a>.
             Чтобы удалить его безвозвратно, нажмите на ссылку <a href="'.$address_site.'gif/comment-moderation.php?del='.$last_id.'">"УДАЛИТЬ"</a>.
             Чтобы удалить его безвозвратно и занести пользователя в черный список, нажмите на ссылку <a href="'.$address_site.'gif/comment-moderation.php?del='.$last_id.'">"УДАЛИТЬ"</a>.

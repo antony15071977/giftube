@@ -88,3 +88,12 @@ $(document).ready(function(){
         }
     });
 });
+
+$(document).ready(function(){
+    $(".upcategory_after").on('click', function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation;
+        $(this).toggleClass('open_sub_after');
+        $(this).parent().next().slideToggle('slow');
+    });
+});

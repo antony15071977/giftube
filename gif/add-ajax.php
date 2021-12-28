@@ -13,44 +13,32 @@ if ($res_cat) {
 	$error = mysqli_error($connect);
 	print('Ошибка MySQL: '.$error);
 }
+$sql_subcat = 'SELECT * FROM upcategories';
+$res_subcat = mysqli_query($connect, $sql_subcat);
+if ($res_subcat) {
+	$upcategories = mysqli_fetch_all($res_subcat, MYSQLI_ASSOC);
+} else {
+	$error = mysqli_error($connect);
+	print('Ошибка MySQL: '.$error);
+}
 $Js = "<script src='../js/gif.js'></script>";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$gif = $_POST;
-	$required = ['category', 'gif-title', 'gif-url', 'gif-description'];
+	$required = ['category', 'gif-title', 'gif-url', 'gif-question'];
 	$errors = [];
-	$dict = ['gif-img' => 'Гифка', 'category' => 'Категория', 'gif-title' => 'Название', 'gif-description' => 'Описание', 'gif-url' => 'ЧПУ'];
+	$dict = ['category' => 'Категория', 'gif-title' => 'Title вопроса автоматически не заполнился, попробуйте добавить вопрос еще раз', 'gif-question' => 'Вопрос', 'gif-url' => 'Адрес вопроса автоматически не заполнился, попробуйте добавить вопрос еще раз'];
 	foreach($required as $key) {
 		if (empty($_POST[$key])) {
 			$errors[$key] = 'Это поле должно быть заполнено';
 		}
 	}
-	if (isset($_FILES['gif-img']['name'])) {
-		if (empty($_FILES['gif-img']['name'])) {
-			$errors['gif-img'] = 'Вы не загрузили файл';
-		} else {
-			$tmp_name = $_FILES['gif-img']['tmp_name'];
-			$file = $_FILES['gif-img']['name'];
-			$finfo = finfo_open(FILEINFO_MIME_TYPE);
-			$file_type = finfo_file($finfo, $tmp_name);
-			// Получаем расширение загруженного файла
-			$extension = strtolower(substr(strrchr($file, '.'), 1));
-			//Генерируем новое имя файла
-			$file = uniqid().
-			'.'.$extension;
-			//Папка назначения
-			$dest = '../uploads/';
-			if ($extension !== 'gif') {
-				$errors['gif-img'] = 'Загрузите гифку в формате GIF';
-			}
-			if ($file_size > 200000) {
-				$errors['gif-img'] = 'Максимальный размер файла: 200Кб';
-			} else {
-				move_uploaded_file($tmp_name, $dest.$file);
-				$gif['img_path'] = $dest.$file;
-			}
-		}
-	}
-	$user_id = $_SESSION['user']['id'];
+	$question = stripslashes($gif['gif-question']);
+	$user_id = intval($_SESSION['user']['id']);
+	$user_name = $_SESSION['user']['name'];
+	$url = $gif['gif-url'];
+	$title = stripslashes($gif['gif-title']);
+	$category = intval($gif['category']);
+	$nameCat = $gif['nameCat'];
 	if (count($errors)) {
 		$add_form = include_template('add-form.php', ['gif' => $gif, 'categories' => $categories, 'errors' => $errors, 'dict' => $dict]);
 		echo json_encode(array(
@@ -59,38 +47,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ));
 		exit();
 	} else {
-		$sql = 'INSERT INTO gifs (dt_add, category_id, user_id, title, description, img_path, likes_count, favs_count, views_count, url) '.
-		'VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-		$stmt = db_get_prepare_stmt($connect, $sql, [
-			$gif['category'],
-			$user_id,
-			$gif['gif-title'],
-			$gif['gif-description'],
-			$gif['img_path'],
-			0,
-			0,
-			0,
-			$gif['gif-url']
-		]);
-		$res = mysqli_stmt_execute($stmt);
-		if ($res) {
-			$gif_id = mysqli_insert_id($connect);
+		//Составляем заголовок письма
+        $subject = "Новый вопрос на сайте ".$_SERVER['HTTP_HOST'];
+        //Устанавливаем кодировку заголовка письма и кодируем его
+        $subject = "=?utf-8?B?".base64_encode($subject).
+                "?=";
+        //Составляем тело сообщения
+        $message = 'Здравствуйте!<br/><br/>Сегодня '.date("d.m.Y", time()).' пользователем <b> '.$_SESSION['user']['name'].'  </b>был задан вопрос на сайте <b> <a href="'.$address_site.
+        '">'.$_SERVER['HTTP_HOST'].'</a>.</b>
+        А вот и сам ВОПРОС: <br>"'.$question.'"<br>
+        Чтобы одобрить и опубликовать его, нажмите на ссылку <a href="'.$address_site.'gif/question.php?question='.$question.'&user_id='.$user_id.'&url='.$url.'&title='.$title.'&category='.$category.'&ok=true">"ОДОБРИТЬ"</a>.
+        Чтобы не публиковать его ничего не делайте.
+        Чтобы не публиковать его и занести пользователя в черный список, нажмите на ссылку <a href="'.$address_site.'gif/question.php?del='.$user_id.'">"ЗАНЕСТИ ЮЗЕРА В ЧЕРНЫЙ СПИСОК"</a>.
+        Чтобы отредактировать и потом опубликовать его, нажмите на ссылку <a href="'.$address_site.'gif/question.php?question='.$question.'&user_id='.$user_id.'&url='.$url.'&title='.$title.'&category='.$category.'&nameCat='.$nameCat.'&edit=true">"РЕДАКТИРОВАТЬ"</a>.
+        ';
+        //Составляем дополнительные заголовки для почтового сервиса mail.ru
+        $headers = "FROM: $email_admin\r\nReply-to: $email_admin\r\nContent-type: text/html; charset=utf-8\r\n";
+        //Отправляем сообщение с ссылкой для подтверждения регистрации на указанную почту и проверяем отправлена ли она успешно или нет. 
+
+		if (!mail($email_admin, $subject, $message, $headers)) {
+			$add_form = include_template('add-form.php', ['gif' => $gif, 'categories' => $categories]);
+			echo json_encode(array(
+            'result'    => 'error',
+            'message'   => '<p style="color:red; font-size:22px;">Произошла непредвиденная ошибка, попробуйте еще раз</p>',
+            'add_form' => $add_form
+            ));
+        exit();
+		} else {
 			echo json_encode(array(
                 'result'    => 'success',
-                'id'      => $gif_id
+                'message'      => '<p style="color:green; font-size:22px;">Ваш вопрос в ближайшее время появится на сайте после одобрения модератором</p>'
             ));
 		exit();
-		} else {
-			echo "ERROR";
-			exit();
 		}
 	}
 } else {
 	$add_form = include_template('add-form.php', ['gif' => $gif, 'categories' => $categories]);
 }
-$page_content = include_template('main.php', ['form' => $add_form, 'title' => 'Добавить гифку', 'isFormPage' => $isFormPage]);
+$page_content = include_template('main.php', ['form' => $add_form, 'title' => 'Задать вопрос', 'isFormPage' => $isFormPage]);
 if (isset($_SESSION['user'])) {
-	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Добавление новой гифки']);
+	$layout_content = include_template('layout.php', ['username' => $_SESSION['user']['name'], 'content' => $page_content, 'Js' => $Js, 'categories' => $categories, 'upcategories' => $upcategories, 'num_online' => $num_online, 'num_visitors_hosts' => $row[0]['hosts'], 'num_visitors_views' => $row[0]['views'], 'hosts_stat_month' => $hosts_stat_month, 'views_stat_month' => $views_stat_month, 'title' => 'Задать вопрос']);
 } else {
 	header('Location: /');
 }
